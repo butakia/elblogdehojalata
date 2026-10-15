@@ -1,76 +1,70 @@
 import Link from "next/link";
 import Image from "next/image";
-import StoryCard from "@/components/StoryCard";
-import { allStories, formatDate, LOGO, microcuentos, drawings } from "@/lib/content";
+import House, { ROOMS } from "@/components/House";
+import { formatDate } from "@/lib/content";
+import { getStories } from "@/lib/stories";
 
-export default function Home() {
-  const featured = allStories[0];
-  const latest = allStories.slice(1, 7);
-  const micro = microcuentos.items[0];
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const recent = (await getStories()).slice(0, 5);
 
   return (
     <>
-      <section className="hero">
-        <div className="hero-art">
-          <Image src={LOGO} alt="Un gato de Cheshire a rayas sonríe, dibujado con tinta sepia" width={520} height={520} priority sizes="(max-width: 760px) 70vw, 420px" />
+      <div className="wrap">
+        <div className="banner">
+          <Image src="/img/2021-06-elgatokesonrie.png" alt="El blog de Hojalata: y el gato que sonríe en la copa del abeto del relato" width={1400} height={225} priority sizes="(max-width: 1120px) 100vw, 1120px" />
         </div>
-        <div className="hero-text">
+      </div>
+
+      <section className="wrap welcome">
+        <div className="welcome-text">
           <p className="eyebrow">Saludos, visitante</p>
-          <h1>
-            Una casa de <em>hojalata</em> donde alojo mis cuentos
-          </h1>
-          <p className="lead">Recorre el salón de los cuentos, asómate al balcón de los microcuentos o revisa mis bocetos en la cochera. El gato ya te vio llegar.</p>
-          <div className="actions">
-            <Link href="/cuentos" className="btn primary">Entrar al salón</Link>
-            <Link href="/dibujos" className="btn">Ver dibujos</Link>
-          </div>
+          <h1>Esta es una casa de hojalata</h1>
+          <p>
+            Te invito a recorrerla y descubrir algunos de los textos que alojo celosamente en el <Link href="/cuentos">salón de los cuentos</Link>.
+          </p>
+          <p>
+            También puedes mirar mis bocetos e ilustraciones en la <Link href="/dibujos">cochera de los dibujos</Link>.
+          </p>
+          <p className="aside">
+            Todo sea dicho, construí esta morada junto a la de mi vecino{" "}
+            <a href="https://javierbanchii.wordpress.com/" target="_blank" rel="noopener noreferrer">Javier Banchii</a>, quien también exhibe sus escritos.
+          </p>
+        </div>
+        <div className="welcome-house">
+          <House />
+          <p className="hint">Toca una puerta o una ventana para entrar.</p>
         </div>
       </section>
 
-      <section className="wrap section">
-        <div className="section-head">
-          <h2>Lo último que escribí</h2>
-          <Link href="/cuentos">Ver todos →</Link>
-        </div>
-        <Link href={`/cuentos/${featured.slug}`} className="featured">
-          <div className="featured-cover">
-            {featured.cover && <Image src={featured.cover} alt="" fill sizes="(max-width: 760px) 100vw, 50vw" priority />}
-          </div>
-          <div className="featured-body">
-            <p className="meta"><span className="chip">{featured.kind}</span> {featured.minutes} min · {formatDate(featured.date)}</p>
-            <h3>{featured.title}</h3>
-            <p className="excerpt">{featured.excerpt}</p>
-            <span className="btn primary">Leer cuento</span>
-          </div>
-        </Link>
-        <div className="grid">
-          {latest.map((s) => (
-            <StoryCard key={s.slug} story={s} />
+      <section className="wrap section rooms-section">
+        <h2>Las habitaciones</h2>
+        <ul className="rooms">
+          {ROOMS.map((r) => (
+            <li key={r.href}>
+              <Link href={r.href}>
+                <strong>{r.name}</strong>
+                <span>{r.text}</span>
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
-      <section className="band">
-        <div className="wrap section narrow">
-          <p className="eyebrow">Balcón de los microcuentos</p>
-          <h2>{micro.title}</h2>
-          <div className="prose" dangerouslySetInnerHTML={{ __html: micro.html }} />
-          <Link href="/microcuentos" className="btn">Más microcuentos</Link>
-        </div>
-      </section>
-
-      <section className="wrap section">
-        <div className="section-head">
-          <h2>Cochera de los dibujos</h2>
-          <Link href="/dibujos">Ver galería →</Link>
-        </div>
-        <div className="strip">
-          {drawings.slice(0, 6).map((d, i) => (
-            <Link key={d.src} href="/dibujos" className="strip-item">
-              <Image src={d.src} alt={`Dibujo ${i + 1}`} width={d.w} height={d.h} sizes="(max-width: 640px) 60vw, 240px" />
-            </Link>
+      <section className="wrap section narrow">
+        <h2>Lo último que dejé en la casa</h2>
+        <ul className="link-list recent">
+          {recent.map((s) => (
+            <li key={s.slug}>
+              <Link href={`/cuentos/${s.slug}`}>
+                <strong>{s.title}</strong>
+                <span>{s.kind} · {formatDate(s.date)}</span>
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
+        <p className="more"><Link href="/cuentos">Pasar al salón →</Link></p>
       </section>
     </>
   );

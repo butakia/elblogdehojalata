@@ -1,0 +1,106 @@
+/* ───────── Casa de hojalata (home) ───────── */
+:root, [data-theme="tinta"] { --tin: #cbb892; --tin-rib: rgba(43, 29, 18, 0.16); }
+[data-theme="hojalata"] { --tin: #3a4049; --tin-rib: rgba(255, 255, 255, 0.1); }
+[data-theme="cheshire"] { --tin: #6a3aa8; --tin-rib: rgba(255, 255, 255, 0.14); }
+
+.banner { margin-top: 1rem; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: #fffdf4; box-shadow: var(--shadow); }
+.banner img { width: 100%; height: clamp(84px, 16vw, 190px); object-fit: cover; object-position: 50% 52%; }
+.welcome { display: grid; gap: 1.5rem; padding-block: 2rem 1rem; align-items: center; }
+.welcome-text h1 { font-size: clamp(1.9rem, 6.5vw, 3rem); }
+.welcome-text p { max-width: 34rem; font-size: 1.12rem; }
+.welcome-text .aside { font-style: italic; color: var(--muted); font-size: 1rem; }
+.welcome-text a { color: var(--accent); }
+.welcome-house { text-align: center; }
+.hint { font-family: var(--font-hand), cursive; font-size: 1.3rem; color: var(--muted); margin: 0.3rem 0 0; }
+@media (min-width: 860px) { .welcome { grid-template-columns: 1fr 1fr; gap: 3rem; padding-block: 3rem 2rem; } }
+.house { width: min(100%, 460px); height: auto; overflow: visible; }
+.house .h-roof { fill: var(--tin); }
+.house .h-wall { fill: var(--surface); }
+.house .h-ground { fill: var(--ink); }
+.house .h-room { fill: var(--bg-2); stroke: var(--ink); stroke-width: 3; transition: fill 0.2s; }
+.house .h-outline { stroke: var(--ink); stroke-width: 3; }
+.house line.h-outline, .house path.h-outline, .house circle.h-outline, .house polygon.h-outline { fill: none; }
+.house rect.h-outline.h-wall { fill: var(--surface); }
+.house rect.h-roof.h-outline { fill: var(--tin); }
+.house .h-rib { stroke: var(--tin-rib); stroke-width: 2; }
+.house .h-knob { fill: var(--accent); }
+.house a { cursor: pointer; }
+.house a:hover .h-room, .house a:focus-visible .h-room { fill: var(--accent); }
+.house a:focus-visible { outline: none; }
+.rooms-section h2 { text-align: center; }
+.rooms { list-style: none; padding: 0; margin: 1rem 0 0; display: grid; gap: 0.7rem; }
+@media (min-width: 640px) { .rooms { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1000px) { .rooms { grid-template-columns: repeat(4, 1fr); } }
+.rooms a { display: flex; flex-direction: column; gap: 0.2rem; height: 100%; padding: 1rem 1.1rem; border: 1px dashed var(--line); border-radius: var(--radius); text-decoration: none; background: color-mix(in srgb, var(--surface) 60%, transparent); transition: border-color 0.2s, transform 0.2s; }
+.rooms a:hover { border-color: var(--accent); transform: translateY(-2px); }
+.rooms strong { font-family: var(--font-head); font-size: 1.15rem; }
+.rooms span { color: var(--muted); font-size: 0.92rem; }
+.recent a { align-items: baseline; }
+.recent span { text-align: right; }
+.more { text-align: right; margin: 0.8rem 0 0; }
+.more a { color: var(--accent); }
+
+/* ───────── Lecturas y comentarios ───────── */
+.views { white-space: nowrap; }
+.story-head.no-cover { margin-top: 2.2rem; }
+.draft-banner { background: var(--accent); color: var(--accent-ink); padding: 0.5rem 0.8rem; border-radius: var(--radius); font-size: 0.9rem; }
+.comments { width: min(680px, 100% - 2rem); margin: 3rem auto 1rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+.comments h2 small { color: var(--muted); font-size: 0.6em; }
+.empty-note { color: var(--muted); font-style: italic; }
+.comment-list { list-style: none; margin: 1rem 0 1.5rem; padding: 0; display: grid; gap: 1rem; }
+.comment-list li { display: flex; gap: 0.8rem; }
+.avatar { flex: none; width: 2.4rem; height: 2.4rem; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font-weight: 700; font-family: var(--font-head); }
+.who { margin: 0; font-size: 0.9rem; }
+.who time { color: var(--muted); font-size: 0.78rem; margin-left: 0.4rem; }
+.said { margin: 0.15rem 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.comment-form, .story-form { display: grid; gap: 0.9rem; }
+.comment-form label, .story-form label, .field .label { display: grid; gap: 0.3rem; font-size: 0.9rem; font-weight: 600; }
+.comment-form small, .field small { font-weight: 400; color: var(--muted); }
+.comment-form input, .comment-form textarea, .story-form input, .story-form select, .link-row input {
+  width: 100%; padding: 0.7rem 0.9rem; font: inherit; font-size: 1rem; font-weight: 400; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: var(--radius);
+}
+.comment-form textarea { resize: vertical; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.form-row { display: flex; align-items: center; flex-wrap: wrap; gap: 0.8rem; }
+.err { color: #d4483b; margin: 0; font-size: 0.9rem; }
+.ok { color: var(--accent); margin: 0; font-size: 0.9rem; }
+.btn:disabled { opacity: 0.55; cursor: progress; }
+
+/* ───────── Panel y editor ───────── */
+.admin-head { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: flex-end; }
+.admin-head .actions { margin: 0; }
+.notice { background: color-mix(in srgb, var(--accent) 18%, transparent); border: 1px solid var(--accent); padding: 0.8rem 1rem; border-radius: var(--radius); font-size: 0.92rem; }
+.admin-block { margin-top: 2rem; }
+.admin-block h2 small { color: var(--muted); font-size: 0.6em; }
+.admin-list { list-style: none; margin: 0; padding: 0; }
+.admin-list li { display: flex; justify-content: space-between; gap: 1rem; padding: 0.9rem 0; border-bottom: 1px solid var(--line); }
+.admin-list small { display: block; color: var(--muted); }
+.admin-list .said { font-size: 0.95rem; }
+.row-actions { display: flex; gap: 0.9rem; align-items: flex-start; white-space: nowrap; font-size: 0.9rem; }
+.row-actions a { color: var(--accent); }
+.link-danger { background: none; border: 0; padding: 0; color: #d4483b; text-decoration: underline; }
+.title-input { font-family: var(--font-head); font-size: 1.5rem !important; }
+.dropzone { border: 2px dashed var(--line); border-radius: var(--radius); padding: 1.4rem; text-align: center; transition: border-color 0.2s, background 0.2s; }
+.dropzone.over { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.dropzone p { margin: 0 0 0.6rem; color: var(--muted); font-weight: 400; }
+.link-row { display: flex; gap: 0.5rem; margin-top: 0.6rem; }
+.cover-preview { display: grid; gap: 0.6rem; justify-items: start; }
+.cover-preview img { max-height: 220px; width: auto; border-radius: var(--radius); border: 1px solid var(--line); }
+.editor { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.editor.over { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
+.editor-bar { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 0.25rem; align-items: center; padding: 0.4rem; background: var(--bg-2); border-bottom: 1px solid var(--line); border-radius: var(--radius) var(--radius) 0 0; }
+.editor-bar button { min-width: 2.3rem; height: 2.3rem; padding: 0 0.55rem; background: transparent; border: 1px solid transparent; border-radius: 6px; font-size: 0.85rem; }
+.editor-bar button:hover { background: var(--surface); border-color: var(--line); }
+.editor-bar .b { font-weight: 800; }
+.editor-bar .sep { width: 1px; height: 1.4rem; background: var(--line); margin: 0 0.2rem; }
+.editor-area { min-height: 340px; padding: 1rem 1.1rem; outline: none; font-size: 1.1rem; }
+.editor-area:empty::before { content: attr(data-placeholder); color: var(--muted); }
+.editor-area img { max-width: 100%; height: auto; }
+.editor-foot { display: flex; justify-content: space-between; gap: 1rem; padding: 0.4rem 0.8rem; font-size: 0.8rem; color: var(--muted); border-top: 1px solid var(--line); }
+.sticky-actions { position: sticky; bottom: calc(68px + env(safe-area-inset-bottom)); padding: 0.6rem 0; background: linear-gradient(to top, var(--bg) 70%, transparent); }
+@media (min-width: 820px) { .sticky-actions { bottom: 0; } }
+.footer-admin { opacity: 0.55; }
+@media (min-width: 820px) { .editor-bar { position: sticky; top: 56px; z-index: 5; flex-wrap: wrap; overflow: visible; } }
+.editor-bar button { flex: none; white-space: nowrap; }
+.story-form, .story-form > *, .field, .editor { min-width: 0; max-width: 100%; }
+.story-form { grid-template-columns: minmax(0, 1fr); }

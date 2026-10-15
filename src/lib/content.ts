@@ -14,14 +14,6 @@ export const LOGO = "/img/2021-06-elgatoblanco.webp";
 export const AUTHOR = "Angel Oliden";
 export const INSTAGRAM = "elhombrede_hojalata";
 
-export function getStory(slug: string) {
-  return allStories.find((s) => s.slug === slug);
-}
-
-export function neighbours(slug: string) {
-  const i = allStories.findIndex((s) => s.slug === slug);
-  return { newer: allStories[i - 1], older: allStories[i + 1] };
-}
 
 export function formatDate(iso: string) {
   return new Intl.DateTimeFormat("es-PE", { month: "long", year: "numeric" }).format(new Date(iso));

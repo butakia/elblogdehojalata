@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
-import { microcuentos, allStories } from "@/lib/content";
 import Link from "next/link";
+import { microcuentos } from "@/lib/content";
+import { getStories } from "@/lib/stories";
 
 export const metadata: Metadata = { title: "Balcón de los microcuentos" };
+export const dynamic = "force-dynamic";
 
-export default function Micro() {
-  const short = allStories.filter((s) => s.kind === "microcuento");
+export default async function Micro() {
+  const short = (await getStories()).filter((s) => s.kind === "microcuento");
   return (
     <div className="wrap section narrow">
       <header className="page-head">

@@ -1,0 +1,8 @@
+/** Contador de lecturas simulado: estable por cuento y que crece con el tiempo. */
+export function simulatedViews(slug: string, dateIso: string) {
+  let h = 2166136261;
+  for (const ch of slug) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0;
+  const base = 90 + (h % 420);
+  const days = Math.max(0, (Date.now() - new Date(dateIso).getTime()) / 86_400_000);
+  return base + Math.floor(Math.sqrt(days) * (6 + (h % 9)));
+}

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, Lora, Caveat } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
+import "./extra.css";
 import { Header, BottomNav } from "@/components/SiteChrome";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { AUTHOR, INSTAGRAM } from "@/lib/content";
@@ -39,7 +40,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <p className="hand">Gracias por pasar por esta casa de hojalata.</p>
           <p>
             © {new Date().getFullYear()} {AUTHOR} · <a href={`https://instagram.com/${INSTAGRAM}`} target="_blank" rel="noopener noreferrer">@{INSTAGRAM}</a> ·{" "}
-            <Link href="/propuestas">Propuestas de diseño</Link>
+            <Link href="/propuestas">Propuestas de diseño</Link> · <Link href="/admin" className="footer-admin">Entrar</Link>
           </p>
         </footer>
         <BottomNav />

@@ -11,3 +11,13 @@ Diseños: Tinta, Hojalata y Cheshire (botón ◐, o `?tema=hojalata`).
 
 ## Vercel
 Importar la carpeta en vercel.com (framework Next.js, sin variables de entorno).
+
+## Admin, comentarios y almacenamiento
+- Panel: `/admin` (enlace "Entrar" en el pie). En local la clave es `hojalata` (archivo `.env.local`).
+- Comentarios y cuentos nuevos se guardan en `.data/store.json` en local.
+- Imágenes subidas en local van a `public/uploads/`.
+
+### En Vercel (para que lo subido sea permanente)
+1. Variables de entorno: `ADMIN_PASSWORD` (tu clave) y opcionalmente `ADMIN_SECRET`.
+2. Storage → conectar **Upstash Redis** (crea `UPSTASH_REDIS_REST_URL` / `_TOKEN`; también sirven `KV_REST_API_*`).
+3. Storage → crear un **Blob** (crea `BLOB_READ_WRITE_TOKEN`) para las imágenes.
