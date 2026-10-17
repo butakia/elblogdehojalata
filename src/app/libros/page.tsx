@@ -17,6 +17,11 @@ export default function Libros() {
             <div>
               <h2>{b.title}</h2>
               {b.subtitle && <p className="sub">{b.subtitle}</p>}
+              <div className="synopsis">
+                {b.synopsis.map((p, i) => (
+                  <p key={i}>{p}</p>
+                ))}
+              </div>
               <p className={`stock ${b.physical ? "yes" : "no"}`}>
                 Ejemplares físicos: {b.physical ? "disponibles" : "no disponibles"}
               </p>
@@ -25,25 +30,6 @@ export default function Libros() {
                   Comprar ahora
                 </a>
               </div>
-              <details>
-                <summary>Más información</summary>
-                <div className="synopsis">
-                  <h3>Sinopsis</h3>
-                  {b.synopsis.map((p, i) => (
-                    <p key={i}>{p}</p>
-                  ))}
-                </div>
-                <dl>
-                  <dt>Formato</dt>
-                  <dd>{b.format}</dd>
-                  {b.details.map(([k, v]) => (
-                    <div key={k} style={{ display: "contents" }}>
-                      <dt>{k}</dt>
-                      <dd>{v}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </details>
             </div>
           </article>
         ))}

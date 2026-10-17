@@ -18,15 +18,15 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: [{ color: "#f7f2e8" }],
+  themeColor: "#15171b",
 };
 
 // Aplica el diseño elegido antes de pintar (evita parpadeo). ?tema=tinta|hojalata
-const themeScript = `(function(){try{var q=new URLSearchParams(location.search).get('tema');var t=q||localStorage.getItem('hojalata-theme')||'tinta';if(t!=='hojalata')t='tinta';if(q)localStorage.setItem('hojalata-theme',t);document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme='tinta';}})();`;
+const themeScript = `(function(){try{var q=new URLSearchParams(location.search).get('tema');var t=q||localStorage.getItem('hojalata-theme')||'hojalata';if(t!=='tinta')t='hojalata';if(q)localStorage.setItem('hojalata-theme',t);document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme='hojalata';}})();`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="es" data-theme="tinta" suppressHydrationWarning className={serif.variable}>
+    <html lang="es" data-theme="hojalata" suppressHydrationWarning className={serif.variable}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

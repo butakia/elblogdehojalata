@@ -3,11 +3,10 @@ import type { ReactNode } from "react";
 
 const svg = { width: 36, height: 36, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.5, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true } as const;
 
-const CARDS: { href: string; title: string; text: string; icon: ReactNode }[] = [
+const CARDS: { href: string; title: string; icon: ReactNode }[] = [
   {
     href: "/cuentos",
     title: "Cuentos",
-    text: "Cuentos y microcuentos para leer sin prisa.",
     icon: (
       <svg {...svg}>
         <path d="M2.5 5.5c2.8-1 6-.9 9.5 1v13c-3.5-1.9-6.7-2-9.5-1v-13Z" />
@@ -18,7 +17,6 @@ const CARDS: { href: string; title: string; text: string; icon: ReactNode }[] = 
   {
     href: "/libros",
     title: "Libros",
-    text: "Mis libros publicados y dónde conseguirlos.",
     icon: (
       <svg {...svg}>
         <path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5v-15Z" />
@@ -30,7 +28,6 @@ const CARDS: { href: string; title: string; text: string; icon: ReactNode }[] = 
   {
     href: "/textamentos",
     title: "Textamentos",
-    text: "Pensamientos, proyectos y novedades.",
     icon: (
       <svg {...svg}>
         <path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19l-4 1Z" />
@@ -41,7 +38,6 @@ const CARDS: { href: string; title: string; text: string; icon: ReactNode }[] = 
   {
     href: "/proyectos",
     title: "Proyectos",
-    text: "Lo que estoy construyendo, como Buscamundos.",
     icon: (
       <svg {...svg}>
         <circle cx="12" cy="12" r="9" />
@@ -53,7 +49,6 @@ const CARDS: { href: string; title: string; text: string; icon: ReactNode }[] = 
   {
     href: "/sobre",
     title: "Sobre mí",
-    text: "Quién escribe en esta casa de hojalata.",
     icon: (
       <svg {...svg}>
         <circle cx="12" cy="8" r="3.5" />
@@ -71,7 +66,6 @@ export default function HomeCards() {
           <Link href={c.href}>
             <span className="icon">{c.icon}</span>
             <strong>{c.title}</strong>
-            <span className="txt">{c.text}</span>
           </Link>
         </li>
       ))}
