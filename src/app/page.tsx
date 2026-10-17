@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import RoomsCarousel from "@/components/RoomsCarousel";
-import { formatDate } from "@/lib/content";
+import StoryRow from "@/components/StoryRow";
 import { BOOKS } from "@/lib/books";
 import { getPosts, getStories } from "@/lib/stories";
 
@@ -35,7 +35,7 @@ export default async function Home() {
         <RoomsCarousel rooms={ROOMS} />
       </section>
 
-      <section className="wrap section">
+      <section className="wrap section books-section">
         <div className="section-head">
           <h2>Mis libros</h2>
           <Link href="/libros">Ver libros</Link>
@@ -43,7 +43,7 @@ export default async function Home() {
         <div className="shelf">
           {BOOKS.map((b) => (
             <Link key={b.slug} href={`/libros#${b.slug}`}>
-              <Image src={b.cover} alt={`Portada de ${b.title}`} width={300} height={440} sizes="104px" />
+              <Image src={b.cover} alt={`Portada de ${b.title}`} width={300} height={440} sizes="(max-width: 720px) 104px, 190px" />
               <span>{b.title}</span>
             </Link>
           ))}
@@ -58,12 +58,7 @@ export default async function Home() {
           </div>
           <ul className="link-list">
             {stories.slice(0, 5).map((s) => (
-              <li key={s.slug}>
-                <Link href={`/cuentos/${s.slug}`}>
-                  <strong>{s.title}</strong>
-                  <span>{formatDate(s.date)}</span>
-                </Link>
-              </li>
+              <StoryRow key={s.slug} item={s} base="/cuentos" />
             ))}
           </ul>
         </div>
@@ -77,12 +72,7 @@ export default async function Home() {
           ) : (
             <ul className="link-list">
               {posts.slice(0, 5).map((p) => (
-                <li key={p.slug}>
-                  <Link href={`/textamentos/${p.slug}`}>
-                    <strong>{p.title}</strong>
-                    <span>{formatDate(p.date)}</span>
-                  </Link>
-                </li>
+                <StoryRow key={p.slug} item={p} base="/textamentos" />
               ))}
             </ul>
           )}

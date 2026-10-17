@@ -353,3 +353,27 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .rooms a span { font-family: var(--font-display), serif; font-size: 1.18rem; font-weight: 600; line-height: 1.08; }
 .rooms a:hover { border-color: var(--accent); transform: translateY(-2px); }
 @media (min-width: 720px) { .rooms-rail { margin-inline: 0; padding-inline: 0; } .rooms a { width: 176px; height: 100px; } .rooms a span { font-size: 1.3rem; } }
+
+/* Filas con miniatura */
+.row-thumb { display: flex !important; align-items: center !important; justify-content: flex-start !important; gap: 0.9rem; text-align: left; }
+.row-thumb .thumb { flex: none; width: 56px; height: 56px; border-radius: 10px; overflow: hidden; background: var(--bg-2); border: 1px solid var(--line); display: grid; place-items: center; }
+.row-thumb .thumb img { width: 100%; height: 100%; object-fit: cover; }
+.row-thumb .thumb.blank b { font-family: var(--font-display), serif; font-size: 1.6rem; color: var(--accent); opacity: 0.7; }
+.row-thumb .info { display: flex; flex-direction: column; min-width: 0; }
+.row-thumb .info strong { line-height: 1.25; }
+.row-thumb .date { color: var(--muted); font-size: 0.82rem; white-space: normal; }
+@media (min-width: 720px) { .row-thumb .thumb { width: 64px; height: 64px; } .row-thumb .info strong { font-size: 1.1rem; } }
+
+/* Mis libros en escritorio: centrado y más grande */
+@media (min-width: 720px) {
+  .books-section .section-head { flex-direction: column; align-items: center; gap: 0.2rem; margin-bottom: 1.4rem; }
+  .books-section .section-head h2 { font-size: 2.3rem; }
+  .shelf { justify-content: center; gap: 3.2rem; }
+  .shelf a { width: 190px; }
+  .shelf span { font-size: 1.35rem; text-align: center; margin-top: 0.9rem; }
+}
+.two-col { grid-template-columns: minmax(0, 1fr); }
+.two-col > div { min-width: 0; }
+@media (min-width: 820px) { .two-col { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.row-thumb .info { white-space: normal; color: var(--ink); font-size: inherit; }
+.row-thumb .info .date { color: var(--muted); font-size: 0.82rem; }
