@@ -6,7 +6,17 @@ import { plainText } from "./sanitize";
 export type Section = "cuento" | "textamento" | "ensayo";
 export type CoverStyle = "right" | "left" | "center" | "banner";
 export type CoverSize = "s" | "m" | "l";
-export type StoredStory = Story & { custom: true; draft?: boolean; section?: Section; coverStyle?: CoverStyle; coverSize?: CoverSize };
+export type StoredStory = Story & {
+  custom: true;
+  draft?: boolean;
+  section?: Section;
+  coverStyle?: CoverStyle;
+  coverSize?: CoverSize;
+  updatedAt?: string;
+};
+
+/** Copia de trabajo (autoguardado) de un texto ya publicado: no toca la versión pública. */
+export type Wip = { title: string; html: string; cover: string | null; coverStyle: CoverStyle; coverSize: CoverSize; savedAt: string };
 
 export async function getCustomStories() {
   return getJSON<StoredStory[]>("stories", []);
@@ -16,13 +26,24 @@ export async function saveCustomStories(list: StoredStory[]) {
   await setJSON("stories", list);
 }
 
+export async function getWip(slug: string): Promise<Wip | null> {
+  return (await getJSON<Record<string, Wip>>("wip", {}))[slug] ?? null;
+}
+
+export async function setWip(slug: string, wip: Wip | null) {
+  const all = await getJSON<Record<string, Wip>>("wip", {});
+  if (wip) all[slug] = wip;
+  else delete all[slug];
+  await setJSON("wip", all);
+}
+
 /** Cuentos importados del blog original + los publicados desde el panel. */
 export async function getStories({ includeDrafts = false } = {}): Promise<Story[]> {
   const custom = (await getCustomStories()).filter((s) => (includeDrafts || !s.draft) && (!s.section || s.section === "cuento"));
   return [...custom, ...allStories].sort((a, b) => b.date.localeCompare(a.date));
 }
 
-/** Textamentos: el blog de pensamientos, proyectos y notas. */
+/** Textamentos y ensayos: textos propios fuera de los cuentos. */
 export async function getPosts({ includeDrafts = false, section = "textamento" }: { includeDrafts?: boolean; section?: Section } = {}): Promise<StoredStory[]> {
   return (await getCustomStories()).filter((s) => s.section === section && (includeDrafts || !s.draft)).sort((a, b) => b.date.localeCompare(a.date));
 }
@@ -45,7 +66,7 @@ export function slugify(title: string) {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "")
-      .slice(0, 70) || "cuento"
+      .slice(0, 70) || "sin-titulo"
   );
 }
 
@@ -58,4 +79,12 @@ export function deriveFields(html: string) {
     kind: words < 450 ? "microcuento" : "cuento",
     excerpt: plain.length > 200 ? plain.slice(0, 200).replace(/\s\S*$/, "") + "…" : plain,
   };
+}
+
+export function uniqueSlug(title: string, list: StoredStory[]) {
+  const taken = new Set([...allStories.map((s) => s.slug), ...list.map((s) => s.slug)]);
+  const base = slugify(title);
+  let slug = base;
+  for (let i = 2; taken.has(slug); i++) slug = `${base}-${i}`;
+  return slug;
 }

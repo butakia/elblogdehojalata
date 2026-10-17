@@ -11,10 +11,11 @@ const display = Cormorant_Garamond({ variable: "--font-display", subsets: ["lati
 const body = Newsreader({ variable: "--font-body", subsets: ["latin"], style: ["normal", "italic"], display: "swap" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : `http://localhost:${process.env.PORT ?? 3100}`)),
   title: { default: "El blog de Hojalata", template: "%s · El blog de Hojalata" },
   description: "Cuentos y libros de Angel Oliden.",
-  openGraph: { title: "El blog de Hojalata", description: "Cuentos y libros de Angel Oliden.", locale: "es_PE", type: "website", images: ["/img/2021-06-elgatoblanco.webp"] },
+  openGraph: { type: "website", siteName: "El blog de Hojalata", locale: "es_PE", title: "El blog de Hojalata", description: "Cuentos y libros de Angel Oliden.", images: [{ url: "/og/default", width: 1200, height: 630, alt: "El blog de Hojalata" }] },
+  twitter: { card: "summary_large_image", title: "El blog de Hojalata", description: "Cuentos y libros de Angel Oliden.", images: ["/og/default"] },
 };
 
 export const viewport: Viewport = {

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import ReaderTools from "@/components/ReaderTools";
 import ViewCounter from "@/components/ViewCounter";
 import CommentForm from "@/components/CommentForm";
+import ShareButtons from "@/components/ShareButtons";
 import { AUTHOR, AUTHOR_PHOTO, bodyWithoutCover, formatDate } from "@/lib/content";
 import { getPosts, getStories, getStory, neighbours, type Section } from "@/lib/stories";
 import { getComments } from "@/lib/comments";
@@ -60,6 +61,7 @@ export default async function StoryView({ slug, section }: { slug: string; secti
         )}
         <div dangerouslySetInnerHTML={{ __html: bodyWithoutCover(story.html, story.cover) }} />
       </div>
+      <div className="story-share"><ShareButtons title={story.title} /></div>
       <nav className="story-nav" aria-label="Más textos">
         {older ? (
           <Link href={`${base}/${older.slug}`}><small>← Anterior</small>{older.title}</Link>

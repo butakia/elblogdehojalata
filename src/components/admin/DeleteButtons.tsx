@@ -1,13 +1,23 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { deleteComment, deleteStory, replyToComment } from "@/app/admin/actions";
+import { deleteComment, deleteStory, replyToComment, setDraftStatus } from "@/app/admin/actions";
 
 export function DeleteStoryButton({ slug, title }: { slug: string; title: string }) {
   const [pending, start] = useTransition();
   return (
-    <button className="link-danger" disabled={pending} onClick={() => confirm(`¿Eliminar «${title}»? No se puede deshacer.`) && start(() => deleteStory(slug))}>
+    <button className="link-danger" disabled={pending} onClick={() => confirm(`¿Eliminar «${title}»? Se guarda una copia en la papelera, pero desaparece de la web.`) && start(() => deleteStory(slug))}>
       Eliminar
+    </button>
+  );
+}
+
+/** Publicar un borrador o pasar un texto publicado a borrador. */
+export function PublishToggle({ slug, draft }: { slug: string; draft: boolean }) {
+  const [pending, start] = useTransition();
+  return (
+    <button className="linklike" disabled={pending} onClick={() => start(() => setDraftStatus(slug, !draft))}>
+      {draft ? "Publicar" : "Pasar a borrador"}
     </button>
   );
 }
