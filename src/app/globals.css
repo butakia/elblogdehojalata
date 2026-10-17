@@ -91,10 +91,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .btn:disabled { opacity: 0.55; cursor: progress; }
 
 /* ───────── Inicio ───────── */
-.hero { padding-block: 1.4rem 0.4rem; display: grid; gap: 1rem; justify-items: start; }
-.hero-art { display: block; }
-.hero-art img { width: min(46vw, 200px); height: auto; }
-@media (min-width: 720px) { .hero { grid-template-columns: 230px minmax(0, 1fr); align-items: center; gap: 2.5rem; padding-block: 2.5rem 1rem; } .hero-art img { width: 230px; } }
+.hero { padding-block: 1.6rem 0.4rem; display: grid; grid-template-columns: minmax(0, 1fr) min(32vw, 132px); gap: 1.1rem; align-items: center; }
+.hero-art { display: block; order: 2; }
+.hero-art img { width: 100%; height: auto; }
+@media (min-width: 720px) { .hero { grid-template-columns: 240px minmax(0, 1fr); gap: 3rem; padding-block: 2.8rem 1rem; } .hero-art { order: 0; } }
 .art-light { display: none !important; }
 [data-theme="tinta"] .art-light { display: block !important; }
 [data-theme="tinta"] .art-dark { display: none !important; }
@@ -339,3 +339,12 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .about-text .contact { margin-top: 1rem; padding-top: 0.8rem; border-top: 1px solid var(--line); }
 .about-text .contact p { margin: 0.2rem 0; }
 @media (min-width: 720px) { .about-photo { width: 132px; height: 132px; } .about-text p { font-size: 1.1rem; } }
+
+/* Habitaciones: tarjetas en pantallas grandes */
+@media (min-width: 720px) {
+  .rooms { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .rooms a { flex-direction: column-reverse; align-items: flex-start; justify-content: space-between; min-height: 132px; padding: 1.3rem 1.4rem; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; font-size: 1.6rem; box-shadow: 0 10px 24px -18px rgba(0,0,0,0.7); }
+  .rooms a::after { font-size: 1.4rem; }
+  .rooms a:hover { transform: translateY(-3px); border-color: var(--accent); background: var(--surface); }
+}
+@media (min-width: 1040px) { .rooms { grid-template-columns: repeat(5, minmax(0, 1fr)); } .rooms a { font-size: 1.45rem; } }

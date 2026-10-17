@@ -8,8 +8,8 @@ export const dynamic = "force-dynamic";
 
 const ROOMS = [
   { href: "/cuentos", name: "Salón de los cuentos" },
-  { href: "/libros", name: "Biblioteca de los libros" },
-  { href: "/textamentos", name: "Balcón de los textamentos" },
+  { href: "/libros", name: "Balcón de los libros" },
+  { href: "/textamentos", name: "Jardín de los textamentos" },
   { href: "/proyectos", name: "Cochera de los proyectos" },
   { href: "/sobre", name: "Cuarto del autor" },
 ];
@@ -21,8 +21,8 @@ export default async function Home() {
     <>
       <section className="wrap hero">
         <div className="hero-art">
-          <Image src="/img/gato-blanco.png" alt="Un gato de Cheshire sonríe, dibujado a tinta" width={900} height={872} priority className="art-dark" sizes="(max-width: 720px) 46vw, 230px" />
-          <Image src="/img/gato-tinta.png" alt="" aria-hidden width={900} height={872} className="art-light" loading="eager" sizes="(max-width: 720px) 46vw, 230px" />
+          <Image src="/img/gato-blanco.png" alt="Un gato de Cheshire sonríe, dibujado a tinta" width={900} height={872} priority className="art-dark" sizes="(max-width: 720px) 130px, 230px" />
+          <Image src="/img/gato-tinta.png" alt="" aria-hidden width={900} height={872} className="art-light" loading="eager" sizes="(max-width: 720px) 130px, 230px" />
         </div>
         <div>
           <h1>Saludos, visitante</h1>
