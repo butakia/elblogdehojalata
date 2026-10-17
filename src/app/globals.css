@@ -331,12 +331,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .reader-tools { justify-content: center; }
 }
 
-/* Habitaciones de la casa */
-.rooms { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; grid-template-columns: minmax(0, 1fr); }
-@media (min-width: 560px) { .rooms { grid-template-columns: 1fr 1fr; } }
-.rooms a { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.85rem 1.1rem; border: 1px dashed var(--line); border-radius: 12px; text-decoration: none; font-family: var(--font-display), serif; font-size: 1.4rem; font-weight: 600; line-height: 1.15; transition: border-color 0.15s, background 0.15s; }
-.rooms a::after { content: "→"; color: var(--accent); font-family: var(--font-body), serif; font-size: 1.1rem; }
-.rooms a:hover { border-color: var(--accent); background: color-mix(in srgb, var(--surface) 70%, transparent); }
 
 /* Sobre mí */
 .about-head { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.2rem; }
@@ -347,11 +341,15 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .about-text .contact p { margin: 0.2rem 0; }
 @media (min-width: 720px) { .about-photo { width: 132px; height: 132px; } .about-text p { font-size: 1.1rem; } }
 
-/* Habitaciones: tarjetas en pantallas grandes */
-@media (min-width: 720px) {
-  .rooms { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
-  .rooms a { flex-direction: column-reverse; align-items: flex-start; justify-content: space-between; min-height: 132px; padding: 1.3rem 1.4rem; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; font-size: 1.6rem; box-shadow: 0 10px 24px -18px rgba(0,0,0,0.7); }
-  .rooms a::after { font-size: 1.4rem; }
-  .rooms a:hover { transform: translateY(-3px); border-color: var(--accent); background: var(--surface); }
-}
-@media (min-width: 1040px) { .rooms { grid-template-columns: repeat(5, minmax(0, 1fr)); } .rooms a { font-size: 1.45rem; } }
+
+/* Habitaciones: tarjetas pequeñas (carrusel automático si no caben) */
+.rooms-rail { overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; margin-inline: -1.4rem; padding-inline: 1.4rem; }
+.rooms-rail::-webkit-scrollbar { display: none; }
+.rooms-rail.loop { -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent); mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent); }
+.rooms { list-style: none; margin: 0; padding: 0; display: flex; gap: 0; width: max-content; }
+.rooms li { flex: none; margin-right: 0.75rem; }
+.rooms a { display: flex; flex-direction: column; justify-content: space-between; width: 148px; height: 92px; padding: 0.75rem 0.85rem; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; text-decoration: none; transition: border-color 0.15s, transform 0.15s; }
+.rooms a::before { content: "→"; color: var(--accent); font-size: 1rem; line-height: 1; }
+.rooms a span { font-family: var(--font-display), serif; font-size: 1.18rem; font-weight: 600; line-height: 1.08; }
+.rooms a:hover { border-color: var(--accent); transform: translateY(-2px); }
+@media (min-width: 720px) { .rooms-rail { margin-inline: 0; padding-inline: 0; } .rooms a { width: 176px; height: 100px; } .rooms a span { font-size: 1.3rem; } }

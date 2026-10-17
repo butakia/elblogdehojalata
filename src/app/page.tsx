@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import RoomsCarousel from "@/components/RoomsCarousel";
 import { formatDate } from "@/lib/content";
 import { BOOKS } from "@/lib/books";
 import { getPosts, getStories } from "@/lib/stories";
@@ -30,17 +31,26 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="wrap section" style={{ paddingBlock: "1.2rem 0.5rem" }}>
-        <ul className="rooms">
-          {ROOMS.map((r) => (
-            <li key={r.href}>
-              <Link href={r.href}>{r.name}</Link>
-            </li>
-          ))}
-        </ul>
+      <section className="wrap" style={{ paddingBlock: "1.2rem 0.5rem" }}>
+        <RoomsCarousel rooms={ROOMS} />
       </section>
 
-      <section className="wrap section two-col">
+      <section className="wrap section">
+        <div className="section-head">
+          <h2>Mis libros</h2>
+          <Link href="/libros">Ver libros</Link>
+        </div>
+        <div className="shelf">
+          {BOOKS.map((b) => (
+            <Link key={b.slug} href={`/libros#${b.slug}`}>
+              <Image src={b.cover} alt={`Portada de ${b.title}`} width={300} height={440} sizes="104px" />
+              <span>{b.title}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="wrap section two-col" style={{ paddingTop: 0 }}>
         <div>
           <div className="section-head">
             <h2>Últimos cuentos</h2>
@@ -76,21 +86,6 @@ export default async function Home() {
               ))}
             </ul>
           )}
-        </div>
-      </section>
-
-      <section className="wrap section" style={{ paddingTop: 0 }}>
-        <div className="section-head">
-          <h2>Mis libros</h2>
-          <Link href="/libros">Ver libros</Link>
-        </div>
-        <div className="shelf">
-          {BOOKS.map((b) => (
-            <Link key={b.slug} href={`/libros#${b.slug}`}>
-              <Image src={b.cover} alt={`Portada de ${b.title}`} width={300} height={440} sizes="104px" />
-              <span>{b.title}</span>
-            </Link>
-          ))}
         </div>
       </section>
     </>
