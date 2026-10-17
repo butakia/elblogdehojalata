@@ -71,12 +71,12 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 .bottom-nav {
   position: fixed; inset: auto 0 0 0; z-index: 30;
-  display: grid; grid-template-columns: repeat(5, 1fr);
+  display: flex; overflow-x: auto; scrollbar-width: none;
   padding-bottom: env(safe-area-inset-bottom);
   background: var(--bg-2);
   border-top: 1px solid var(--line);
 }
-.bottom-nav a { display: grid; place-items: center; padding: 0.85rem 0; text-decoration: none; font-size: 0.8rem; color: var(--muted); }
+.bottom-nav a { flex: 1 0 auto; display: grid; place-items: center; padding: 0.85rem 0.3rem; text-decoration: none; font-size: 0.72rem; color: var(--muted); white-space: nowrap; }
 .bottom-nav a[aria-current="page"] { color: var(--accent); font-weight: 700; }
 @media (min-width: 720px) { .bottom-nav { display: none; } body { padding-bottom: 0; } }
 
@@ -210,8 +210,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 /* ───────── Sobre mí ───────── */
 .about { display: grid; gap: 1.4rem; }
 @media (min-width: 640px) { .about { grid-template-columns: 220px minmax(0, 1fr); gap: 2rem; align-items: start; } }
-.about-photo { width: min(220px, 60%); border-radius: var(--radius); border: 1px solid var(--line); background: #fff; }
-@media (min-width: 640px) { .about-photo { width: 100%; } }
+.about-photo { width: min(200px, 56%); aspect-ratio: 1; object-fit: cover; object-position: 50% 30%; border-radius: 50%; border: 1px solid var(--line); background: #fff; }
+@media (min-width: 640px) { .about-photo { width: 200px; } }
 .about p { text-align: justify; hyphens: auto; }
 .about .contact { margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid var(--line); text-align: left; }
 .about .contact p { text-align: left; margin: 0.3rem 0; }
@@ -275,7 +275,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 /* Tarjetas del inicio y Textamentos */
 .home-cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.9rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-@media (min-width: 820px) { .home-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.1rem; } }
+.home-cards li:last-child:nth-child(odd) { grid-column: 1 / -1; }
+@media (min-width: 900px) { .home-cards { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1rem; } .home-cards li:last-child:nth-child(odd) { grid-column: auto; } }
 .home-cards a { display: flex; flex-direction: column; gap: 0.35rem; height: 100%; padding: 1.1rem 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); text-decoration: none; transition: border-color 0.15s, transform 0.15s; }
 .home-cards a:hover { border-color: var(--accent); transform: translateY(-2px); }
 .home-cards .icon { color: var(--accent); display: block; margin-bottom: 0.3rem; }
@@ -288,3 +289,11 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .posts a { display: block; padding: 1.1rem 0; text-decoration: none; }
 .posts h2 { margin-bottom: 0.2rem; }
 .posts a:hover h2 { text-decoration: underline; text-decoration-color: var(--accent); }
+
+/* Proyectos */
+.projects { display: grid; gap: 1.2rem; }
+.project { padding: 1.3rem 1.2rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.project h2 { margin-bottom: 0.3rem; }
+.project p { margin: 0 0 0.7rem; }
+.status { display: inline-block; font-size: 0.88rem; padding: 0.15rem 0.7rem; border: 1px solid var(--accent); color: var(--accent); border-radius: 999px; margin-bottom: 0.8rem; }
+.project .tags { color: var(--muted); font-size: 0.92rem; margin: 0; }

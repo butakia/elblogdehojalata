@@ -21,8 +21,11 @@ export default function Sobre() {
             He publicado <em>Un padre temporal y otros cuentos</em> y <em>La flor y el bastardo</em>. Puedes conocerlos en la sección de <Link href="/libros">libros</Link>.
           </p>
           <p>
-            Construí esta morada junto a la de mi vecino{" "}
-            <a href="https://javierbanchii.wordpress.com/" target="_blank" rel="noopener noreferrer">Javier Banchii</a>, quien también exhibe sus escritos.
+            <em>
+              Todo sea dicho, construí esta morada junto a la de mi vecino{" "}
+              <a href="https://www.facebook.com/javier.banchii/" target="_blank" rel="noopener noreferrer">Javier Banchii</a>, quien también exhibe sus escritos en este{" "}
+              <a href="https://javierbanchii.wordpress.com/" target="_blank" rel="noopener noreferrer">enlace</a>.
+            </em>
           </p>
           <div className="contact">
             <p>
