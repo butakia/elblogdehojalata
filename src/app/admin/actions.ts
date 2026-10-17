@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { checkPassword, endSession, rateLimit, requireAdmin, startSession } from "@/lib/auth";
 import { removeComment, setReply } from "@/lib/comments";
 import { sanitizeHtml } from "@/lib/sanitize";
-import { deriveFields, getCustomStories, saveCustomStories, slugify, type Section, type StoredStory } from "@/lib/stories";
+import { deriveFields, getCustomStories, saveCustomStories, slugify, type CoverSize, type CoverStyle, type Section, type StoredStory } from "@/lib/stories";
 import { allStories } from "@/lib/content";
 
 export async function login(_prev: { error?: string }, form: FormData) {
@@ -22,7 +22,7 @@ export async function logout() {
   redirect("/");
 }
 
-export type SaveInput = { originalSlug?: string; title: string; html: string; cover: string | null; draft: boolean; section?: Section };
+export type SaveInput = { originalSlug?: string; title: string; html: string; cover: string | null; draft: boolean; section?: Section; coverStyle?: CoverStyle; coverSize?: CoverSize };
 
 export async function saveStory(input: SaveInput): Promise<{ ok: true; slug: string } | { ok: false; error: string }> {
   await requireAdmin();
@@ -53,6 +53,8 @@ export async function saveStory(input: SaveInput): Promise<{ ok: true; slug: str
     cover,
     ...deriveFields(html),
     custom: true,
+    coverStyle: ["right", "left", "center", "banner"].includes(input.coverStyle ?? "") ? input.coverStyle : "right",
+    coverSize: ["s", "m", "l"].includes(input.coverSize ?? "") ? input.coverSize : "m",
     section: existing ? existing.section : input.section === "textamento" ? "textamento" : undefined,
     draft: input.draft || undefined,
   };

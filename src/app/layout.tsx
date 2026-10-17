@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Newsreader } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
+import "./extras.css";
 import { Header, BottomNav } from "@/components/SiteChrome";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { AUTHOR } from "@/lib/content";

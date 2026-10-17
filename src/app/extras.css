@@ -1,0 +1,73 @@
+/* ───── Portadas de libros del mismo tamaño ───── */
+.shelf img,
+.book-cover {
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  height: auto;
+}
+
+/* ───── Extracto sin cursiva ───── */
+.row-thumb .info .date { font-style: normal; }
+
+/* ───── Hover de las habitaciones: no recortar la tarjeta elevada ───── */
+.rooms-rail { padding-block: 10px; margin-block: -10px; }
+
+/* ───── Imágenes dentro del texto: flotan y el texto se acomoda alrededor ───── */
+.story-body { display: flow-root; }
+.prose figure { margin: 0.35em 0 0.8em; }
+.prose figure img { width: 100%; height: auto; border-radius: 6px; margin: 0; }
+.prose figure:not([class]),
+.prose figure.img-right { float: right; width: 42%; margin: 0.35em 0 0.8em 1.1rem; }
+.prose figure.img-left { float: left; width: 42%; margin: 0.35em 1.1rem 0.8em 0; }
+.prose figure.img-center { float: none; width: 60%; margin: 1.4em auto; }
+.prose figure.img-s { width: 30%; }
+.prose figure.img-m { width: 42%; }
+.prose figure.img-l { width: 58%; }
+.prose figure.img-center.img-s { width: 40%; }
+.prose figure.img-center.img-m { width: 60%; }
+.prose figure.img-center.img-l { width: 100%; }
+@media (min-width: 720px) {
+  .prose figure:not([class]),
+  .prose figure.img-right,
+  .prose figure.img-left { max-width: 320px; }
+  .prose figure.img-l { max-width: 420px; }
+}
+.story-banner { position: relative; width: 100%; height: min(52vh, 460px); background: var(--bg-2); }
+.story-banner img { object-fit: cover; object-position: center 25%; }
+
+/* ───── Editor: imagen seleccionada y barra de imagen ───── */
+.editor-area figure { cursor: pointer; }
+.editor-area figure.selected img { outline: 3px solid var(--accent); outline-offset: 2px; }
+.editor-area figure.img-center, .editor-area figure.img-s, .editor-area figure.img-m, .editor-area figure.img-l { cursor: pointer; }
+.image-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.5rem; padding: 0.5rem 0.6rem; background: color-mix(in srgb, var(--accent) 14%, var(--bg-2)); border-bottom: 1px solid var(--line); font-size: 0.9rem; }
+.image-bar .lbl { font-weight: 700; margin-right: 0.2rem; }
+.image-bar .group { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; background: var(--surface); }
+.image-bar button { border: 0; background: transparent; padding: 0.35rem 0.8rem; font-size: 0.9rem; color: var(--ink); }
+.image-bar button.on { background: var(--accent); color: var(--accent-ink); font-weight: 700; }
+.image-bar .danger { color: #c0392b; border: 0; background: none; text-decoration: underline; margin-left: auto; padding: 0.35rem 0.4rem; }
+
+/* ───── Opciones de portada en el formulario ───── */
+.cover-opts { display: grid; gap: 0.7rem; margin-top: 0.8rem; }
+.cover-opts .row { display: flex; flex-wrap: wrap; gap: 0.4rem 0.6rem; align-items: center; }
+.cover-opts .row > span { font-weight: 600; min-width: 5.5rem; font-size: 0.95rem; }
+.cover-opts .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; background: var(--surface); }
+.cover-opts .seg button { border: 0; background: transparent; padding: 0.4rem 0.9rem; font-size: 0.92rem; color: var(--ink); }
+.cover-opts .seg button.on { background: var(--accent); color: var(--accent-ink); font-weight: 700; }
+
+/* ───── Cargador con la sonrisa del gato ───── */
+.cat-loader { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; background: color-mix(in srgb, var(--bg) 95%, transparent); backdrop-filter: blur(6px); animation: loader-in 0.18s ease-out both; }
+.cat-loader svg { width: 132px; height: 132px; color: var(--ink); overflow: visible; }
+.cat-loader .ring { transform-origin: 50px 50px; animation: loader-spin 1.1s linear infinite; }
+.cat-loader .grin { animation: grin 1.6s ease-in-out infinite; transform-origin: 50px 52px; }
+@keyframes loader-spin { to { transform: rotate(360deg); } }
+@keyframes grin { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+@keyframes loader-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .cat-loader .ring, .cat-loader .grin { animation: none; } }
+@media (max-width: 719px) {
+  .prose figure:not([class]), .prose figure.img-right, .prose figure.img-left, .prose figure.img-m { width: 37%; }
+  .prose figure.img-s { width: 28%; }
+  .prose figure.img-l { width: 50%; }
+  .prose figure.img-center.img-s { width: 40%; }
+  .prose figure.img-center.img-m { width: 60%; }
+  .prose figure.img-center.img-l { width: 100%; }
+}

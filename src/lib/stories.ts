@@ -4,7 +4,9 @@ import { getJSON, setJSON } from "./store";
 import { plainText } from "./sanitize";
 
 export type Section = "cuento" | "textamento";
-export type StoredStory = Story & { custom: true; draft?: boolean; section?: Section };
+export type CoverStyle = "right" | "left" | "center" | "banner";
+export type CoverSize = "s" | "m" | "l";
+export type StoredStory = Story & { custom: true; draft?: boolean; section?: Section; coverStyle?: CoverStyle; coverSize?: CoverSize };
 
 export async function getCustomStories() {
   return getJSON<StoredStory[]>("stories", []);
@@ -26,7 +28,7 @@ export async function getPosts({ includeDrafts = false } = {}): Promise<StoredSt
 }
 
 export async function getStory(slug: string) {
-  const all = [...(await getCustomStories()), ...allStories] as (Story & { draft?: boolean; section?: Section })[];
+  const all = [...(await getCustomStories()), ...allStories] as (Story & { draft?: boolean; section?: Section; coverStyle?: CoverStyle; coverSize?: CoverSize })[];
   return all.find((s) => s.slug === slug);
 }
 

@@ -17,7 +17,7 @@ export default async function Editar({ params }: { params: Promise<{ slug: strin
       <header className="page-head">
         <h1>Editar cuento</h1>
       </header>
-      <StoryForm section={story.section === "textamento" ? "textamento" : "cuento"} story={{ slug: story.slug, title: story.title, html: story.html, cover: story.cover, draft: !!story.draft }} />
+      <StoryForm section={story.section === "textamento" ? "textamento" : "cuento"} story={{ slug: story.slug, title: story.title, html: story.html, cover: story.cover, draft: !!story.draft, coverStyle: story.coverStyle, coverSize: story.coverSize }} />
     </div>
   );
 }

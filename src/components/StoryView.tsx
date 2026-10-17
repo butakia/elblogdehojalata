@@ -28,11 +28,17 @@ export default async function StoryView({ slug, section }: { slug: string; secti
   const comments = await getComments(story.slug);
   const { base, back } = LABELS[section];
 
+  // La portada va dentro del texto (flotante), salvo que se elija "banner".
+  const coverStyle = story.coverStyle ?? "right";
+  const coverSize = story.coverSize ?? "m";
+  const banner = !!story.cover && coverStyle === "banner";
+  const floating = !!story.cover && !banner;
+
   return (
     <article className="story">
       <ReaderTools />
-      {story.cover && (
-        <div className="story-cover">
+      {banner && story.cover && (
+        <div className="story-banner">
           <Image src={story.cover} alt="" fill priority sizes="100vw" />
         </div>
       )}
@@ -45,7 +51,14 @@ export default async function StoryView({ slug, section }: { slug: string; secti
           {section === "cuento" && <> · <ViewCounter value={simulatedViews(story.slug, story.date)} /></>}
         </p>
       </header>
-      <div className="prose story-body" dangerouslySetInnerHTML={{ __html: bodyWithoutCover(story.html, story.cover) }} />
+      <div className="prose story-body">
+        {floating && story.cover && (
+          <figure className={`img-${coverStyle} img-${coverSize}`}>
+            <Image src={story.cover} alt="" width={640} height={640} sizes="(max-width: 720px) 45vw, 320px" priority />
+          </figure>
+        )}
+        <div dangerouslySetInnerHTML={{ __html: bodyWithoutCover(story.html, story.cover) }} />
+      </div>
       <nav className="story-nav" aria-label="Más textos">
         {older ? (
           <Link href={`${base}/${older.slug}`}><small>← Anterior</small>{older.title}</Link>

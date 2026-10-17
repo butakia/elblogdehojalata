@@ -4,18 +4,32 @@ import { useEffect, useRef, useState } from "react";
 import { importUrl, uploadFile } from "./upload";
 
 type Props = { initialHtml: string; onChange: (html: string) => void };
+type Align = "left" | "center" | "right";
+type Size = "s" | "m" | "l";
+
+const ALIGNS: [Align, string][] = [["left", "Izquierda"], ["center", "Centro"], ["right", "Derecha"]];
+const SIZES: [Size, string][] = [["s", "Pequeña"], ["m", "Mediana"], ["l", "Grande"]];
 
 function escapeHtml(s: string) {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function figureState(fig: HTMLElement): { align: Align; size: Size } {
+  const c = fig.classList;
+  const align: Align = c.contains("img-left") ? "left" : c.contains("img-center") ? "center" : "right";
+  const size: Size = c.contains("img-s") ? "s" : c.contains("img-l") ? "l" : "m";
+  return { align, size };
 }
 
 export default function RichEditor({ initialHtml, onChange }: Props) {
   const box = useRef<HTMLDivElement>(null);
   const picker = useRef<HTMLInputElement>(null);
   const saved = useRef<Range | null>(null);
+  const fig = useRef<HTMLElement | null>(null);
   const [words, setWords] = useState(0);
   const [status, setStatus] = useState("");
   const [over, setOver] = useState(false);
+  const [img, setImg] = useState<{ align: Align; size: Size } | null>(null);
 
   useEffect(() => {
     if (!box.current) return;
@@ -61,7 +75,43 @@ export default function RichEditor({ initialHtml, onChange }: Props) {
 
   function insertImage(url: string) {
     restore();
-    document.execCommand("insertHTML", false, `<figure><img src="${url}" alt=""></figure><p><br></p>`);
+    document.execCommand("insertHTML", false, `<figure class="img-right img-m"><img src="${url}" alt=""></figure><p><br></p>`);
+    sync();
+  }
+
+  // ── imagen seleccionada (posición y tamaño, estilo Word) ──
+  function selectFigure(f: HTMLElement | null) {
+    box.current?.querySelectorAll("figure.selected").forEach((e) => e.classList.remove("selected"));
+    fig.current = f;
+    if (f) {
+      f.classList.add("selected");
+      setImg(figureState(f));
+    } else setImg(null);
+  }
+
+  function setAlign(a: Align) {
+    const f = fig.current;
+    if (!f) return;
+    f.classList.remove("img-left", "img-right", "img-center");
+    f.classList.add(`img-${a}`);
+    if (!f.classList.contains("img-s") && !f.classList.contains("img-m") && !f.classList.contains("img-l")) f.classList.add("img-m");
+    setImg(figureState(f));
+    sync();
+  }
+
+  function setSize(s: Size) {
+    const f = fig.current;
+    if (!f) return;
+    f.classList.remove("img-s", "img-m", "img-l");
+    f.classList.add(`img-${s}`);
+    if (!f.classList.contains("img-left") && !f.classList.contains("img-center") && !f.classList.contains("img-right")) f.classList.add("img-right");
+    setImg(figureState(f));
+    sync();
+  }
+
+  function removeFigure() {
+    fig.current?.remove();
+    selectFigure(null);
     sync();
   }
 
@@ -104,8 +154,8 @@ export default function RichEditor({ initialHtml, onChange }: Props) {
         <Btn label="Cita" title="Cita" run={() => cmd("formatBlock", "blockquote")} />
         <Btn label="Normal" title="Párrafo normal" run={() => cmd("formatBlock", "p")} />
         <span className="sep" />
-        <Btn label="Izquierda" title="Alinear a la izquierda" run={() => cmd("justifyLeft")} />
-        <Btn label="Centrar" title="Centrar" run={() => cmd("justifyCenter")} />
+        <Btn label="Izquierda" title="Alinear el texto a la izquierda" run={() => cmd("justifyLeft")} />
+        <Btn label="Centrar" title="Centrar el texto" run={() => cmd("justifyCenter")} />
         <Btn label="Justificar" title="Justificar el texto" run={() => cmd("justifyFull")} />
         <span className="sep" />
         <Btn label="Enlace" title="Insertar enlace" run={addLink} />
@@ -116,6 +166,22 @@ export default function RichEditor({ initialHtml, onChange }: Props) {
         <Btn label="↷" title="Rehacer" run={() => cmd("redo")} />
         <input ref={picker} type="file" accept="image/*" multiple hidden onChange={(e) => { handleFiles(Array.from(e.target.files || [])); e.target.value = ""; }} />
       </div>
+      {img && (
+        <div className="image-bar" role="toolbar" aria-label="Imagen seleccionada">
+          <span className="lbl">Imagen</span>
+          <div className="group" role="group" aria-label="Posición">
+            {ALIGNS.map(([id, label]) => (
+              <button key={id} type="button" className={img.align === id ? "on" : ""} onMouseDown={(e) => e.preventDefault()} onClick={() => setAlign(id)}>{label}</button>
+            ))}
+          </div>
+          <div className="group" role="group" aria-label="Tamaño">
+            {SIZES.map(([id, label]) => (
+              <button key={id} type="button" className={img.size === id ? "on" : ""} onMouseDown={(e) => e.preventDefault()} onClick={() => setSize(id)}>{label}</button>
+            ))}
+          </div>
+          <button type="button" className="danger" onMouseDown={(e) => e.preventDefault()} onClick={removeFigure}>Quitar imagen</button>
+        </div>
+      )}
       <div
         ref={box}
         className="editor-area prose"
@@ -129,6 +195,7 @@ export default function RichEditor({ initialHtml, onChange }: Props) {
         onBlur={remember}
         onKeyUp={remember}
         onMouseUp={remember}
+        onClick={(e) => selectFigure((e.target as HTMLElement).closest("figure"))}
         onPaste={(e) => {
           const files = Array.from(e.clipboardData.files);
           if (files.length) {
@@ -161,7 +228,7 @@ export default function RichEditor({ initialHtml, onChange }: Props) {
       />
       <div className="editor-foot">
         <span>{words} palabras · ≈ {Math.max(1, Math.round(words / 200))} min</span>
-        <span role="status">{status}</span>
+        <span role="status">{status || (img ? "" : "Toca una imagen para cambiar su posición y tamaño")}</span>
       </div>
     </div>
   );
