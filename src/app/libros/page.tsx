@@ -13,7 +13,7 @@ export default function Libros() {
       <div className="books">
         {BOOKS.map((b) => (
           <article key={b.slug} className="book" id={b.slug}>
-            <Image src={b.cover} alt={`Portada de ${b.title}`} width={440} height={700} className="book-cover" sizes="220px" />
+            <Image src={b.cover} alt={`Portada de ${b.title}`} width={440} height={700} className="book-cover" sizes="(max-width: 760px) 230px, 250px" />
             <div>
               <h2>{b.title}</h2>
               {b.subtitle && <p className="sub">{b.subtitle}</p>}
@@ -23,11 +23,11 @@ export default function Libros() {
                 ))}
               </div>
               <p className={`stock ${b.physical ? "yes" : "no"}`}>
-                Ejemplares físicos: {b.physical ? "disponibles" : "no disponibles"}
+                Ejemplares físicos {b.physical ? "disponibles" : "no disponibles"}
               </p>
               <div className="book-actions">
                 <a href={b.amazon} target="_blank" rel="noopener noreferrer" className="btn primary">
-                  Comprar ahora
+                  Comprar ahora <span aria-hidden>→</span>
                 </a>
               </div>
             </div>

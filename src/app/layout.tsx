@@ -1,12 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Source_Serif_4 } from "next/font/google";
+import { Cormorant_Garamond, Newsreader } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 import { Header, BottomNav } from "@/components/SiteChrome";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { AUTHOR } from "@/lib/content";
 
-const serif = Source_Serif_4({ variable: "--font-serif", subsets: ["latin"], display: "swap" });
+const display = Cormorant_Garamond({ variable: "--font-display", subsets: ["latin"], weight: ["500", "600", "700"], display: "swap" });
+const body = Newsreader({ variable: "--font-body", subsets: ["latin"], style: ["normal", "italic"], display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000"),
@@ -26,7 +27,7 @@ const themeScript = `(function(){try{var q=new URLSearchParams(location.search).
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="es" data-theme="hojalata" suppressHydrationWarning className={serif.variable}>
+    <html lang="es" data-theme="hojalata" suppressHydrationWarning className={`${display.variable} ${body.variable}`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

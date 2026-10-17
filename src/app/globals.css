@@ -1,8 +1,6 @@
 /* ───────── Temas (oscuro por defecto) ───────── */
 :root,
 [data-theme="hojalata"] {
-  --font-display: var(--font-serif);
-  --font-body: var(--font-serif);
   --bg: #15171b;
   --bg-2: #1c1f25;
   --surface: #21252c;
@@ -33,25 +31,25 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font-family: var(--font-serif), Georgia, serif;
-  line-height: 1.6;
-  font-size: 1.0625rem;
+  font-family: var(--font-body), Georgia, serif;
+  line-height: 1.7;
+  font-size: 1.125rem;
   padding-bottom: calc(64px + env(safe-area-inset-bottom));
 }
 img { max-width: 100%; height: auto; display: block; }
 a { color: inherit; text-decoration-color: var(--accent); text-underline-offset: 3px; }
-h1, h2, h3 { font-weight: 600; line-height: 1.2; margin: 0 0 0.5em; text-wrap: balance; }
-h1 { font-size: clamp(1.8rem, 5.5vw, 2.6rem); }
-h2 { font-size: clamp(1.3rem, 3.5vw, 1.7rem); }
-h3 { font-size: 1.15rem; }
+h1, h2, h3 { font-family: var(--font-display), Georgia, serif; font-weight: 600; line-height: 1.12; margin: 0 0 0.5em; text-wrap: balance; }
+h1 { font-size: clamp(2.5rem, 9vw, 3.6rem); }
+h2 { font-size: clamp(1.8rem, 5.5vw, 2.3rem); }
+h3 { font-size: 1.5rem; }
 button { font: inherit; color: inherit; cursor: pointer; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
-.wrap { width: min(1040px, 100% - 2rem); margin-inline: auto; }
-.narrow { width: min(700px, 100% - 2rem); }
-.section { padding-block: clamp(1.5rem, 4vw, 2.75rem); }
+.wrap { width: min(1040px, 100% - 2.8rem); margin-inline: auto; }
+.narrow { width: min(700px, 100% - 2.8rem); }
+.section { padding-block: clamp(2rem, 6vw, 3.5rem); }
 .lead { font-size: 1.1rem; color: var(--muted); max-width: 40rem; }
-.page-head { margin-bottom: 1.5rem; }
+.page-head { margin-bottom: 2rem; }
 .muted { color: var(--muted); }
 
 /* ───────── Cabecera ───────── */
@@ -64,7 +62,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   border-bottom: 1px solid var(--line);
 }
 .brand { display: flex; align-items: center; gap: 0.65rem; text-decoration: none; min-width: 0; }
-.brand-name { font-weight: 700; font-size: 1.15rem; line-height: 1.15; }
+.brand-name { font-family: var(--font-display), serif; font-weight: 700; font-size: 1.65rem; line-height: 1.1; }
 .top-nav { display: none; gap: 1.6rem; }
 .top-nav a { text-decoration: none; padding: 0.25rem 0; border-bottom: 2px solid transparent; }
 .top-nav a:hover, .top-nav a[aria-current="page"] { border-color: var(--accent); }
@@ -84,27 +82,29 @@ button { font: inherit; color: inherit; cursor: pointer; }
 @media (min-width: 720px) { .bottom-nav { display: none; } body { padding-bottom: 0; } }
 
 .btn {
-  display: inline-block; padding: 0.65rem 1.25rem; border: 1.5px solid var(--ink); border-radius: var(--radius);
-  text-decoration: none; font-weight: 600; font-size: 0.95rem; background: transparent; line-height: 1.2; text-align: center;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.8rem 1.7rem; border: 1.5px solid color-mix(in srgb, var(--ink) 55%, transparent); border-radius: 999px;
+  text-decoration: none; font-weight: 600; font-size: 1rem; background: transparent; line-height: 1.2; text-align: center; transition: transform 0.15s, background 0.2s, box-shadow 0.2s;
 }
-.btn:hover { background: color-mix(in srgb, var(--ink) 8%, transparent); }
-.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
-.btn.primary:hover { filter: brightness(1.08); }
+.btn:hover { background: color-mix(in srgb, var(--ink) 10%, transparent); transform: translateY(-1px); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); box-shadow: 0 8px 20px -10px var(--accent); }
+.btn.primary:hover { filter: brightness(1.08); background: var(--accent); }
 .btn:disabled { opacity: 0.55; cursor: progress; }
 
 /* ───────── Inicio ───────── */
-.banner { margin-top: 0.8rem; }
-.banner img {
-  width: 100%; height: clamp(90px, 17vw, 190px); object-fit: cover; object-position: 50% 52%;
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent), linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
-  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent), linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
-  -webkit-mask-composite: source-in; mask-composite: intersect;
-}
-[data-theme="tinta"] .banner img { mix-blend-mode: multiply; }
-:root .banner img, [data-theme="hojalata"] .banner img { filter: invert(1) hue-rotate(180deg) sepia(0.35) brightness(0.82); mix-blend-mode: screen; }
-[data-theme="tinta"] .banner img { filter: none; mix-blend-mode: multiply; }
-.intro { padding-block: 1.8rem 0.5rem; max-width: 36rem; }
-.intro p { font-size: 1.15rem; }
+.hero { text-align: center; padding-block: 1.6rem 0.5rem; }
+.hero-art { display: grid; place-items: center; }
+.hero-art img { width: min(78vw, 400px); height: auto; }
+.art-light { display: none !important; }
+[data-theme="tinta"] .art-light { display: block !important; }
+[data-theme="tinta"] .art-dark { display: none !important; }
+.tagline { margin: 0.2rem auto 1.8rem; font-style: italic; color: var(--muted); font-size: 1.05rem; max-width: 22rem; }
+.hero h1 { margin-bottom: 0.4em; }
+.hero p.greet { max-width: 30rem; margin: 0 auto; font-size: 1.2rem; }
+.shelf { display: flex; justify-content: center; gap: 1.4rem; margin-top: 0.8rem; flex-wrap: wrap; }
+.shelf a { display: block; width: min(150px, 38vw); text-decoration: none; }
+.shelf img { width: 100%; border: 1px solid var(--line); box-shadow: 0 10px 24px -12px rgba(0,0,0,.6); transition: transform .2s; }
+.shelf a:hover img { transform: translateY(-4px); }
+.shelf span { display: block; margin-top: 0.6rem; font-family: var(--font-display), serif; font-size: 1.15rem; font-weight: 600; line-height: 1.2; text-align: center; }
 .section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: 0.4rem; }
 .section-head a { color: var(--accent); font-size: 0.95rem; }
 .link-list { list-style: none; padding: 0; margin: 0; }
@@ -196,27 +196,24 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .ok { color: var(--accent); margin: 0; font-size: 0.9rem; }
 
 /* ───────── Libros ───────── */
-.books { display: grid; gap: 2.2rem; }
-.book { display: grid; gap: 1.2rem; grid-template-columns: minmax(0, 1fr); align-items: start; }
-@media (min-width: 640px) { .book { grid-template-columns: 220px minmax(0, 1fr); gap: 1.8rem; } }
-.book-cover { width: min(220px, 60%); border: 1px solid var(--line); box-shadow: 0 8px 22px -12px rgba(0, 0, 0, 0.45); }
-@media (min-width: 640px) { .book-cover { width: 100%; } }
-.book h2 { margin-bottom: 0.2rem; }
-.book .sub { color: var(--muted); margin: 0 0 0.8rem; }
-.stock { display: inline-block; font-size: 0.9rem; margin: 0 0 1rem; padding: 0.2rem 0.7rem; border-radius: 999px; border: 1px solid var(--line); }
-.stock.yes { border-color: var(--accent); color: var(--accent); }
-.stock.no { color: var(--muted); }
-.book-actions { display: flex; flex-wrap: wrap; gap: 0.7rem; }
-.book details { margin-top: 1.1rem; border-top: 1px solid var(--line); padding-top: 0.9rem; }
-.book summary { cursor: pointer; font-weight: 600; color: var(--accent); list-style: none; }
-.book summary::-webkit-details-marker { display: none; }
-.book summary::after { content: " ▾"; }
-.book details[open] summary::after { content: " ▴"; }
-.book .synopsis { margin-top: 0.8rem; text-align: justify; hyphens: auto; }
+.books { display: grid; gap: 2rem; }
+.book { display: grid; gap: 1.6rem; grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; padding: 2rem 1.5rem 2.2rem; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; }
+.book-cover { width: min(230px, 66%); height: auto; border-radius: 4px; box-shadow: 0 18px 36px -16px rgba(0,0,0,0.65); }
+.book h2 { margin: 0; }
+.book .sub { font-family: var(--font-display), serif; font-style: italic; font-size: 1.35rem; color: var(--muted); margin: 0.1rem 0 1rem; }
+.book .synopsis { font-style: italic; line-height: 1.8; max-width: 34rem; margin-inline: auto; }
 .book .synopsis p { margin: 0 0 0.9em; }
-.book dl { margin: 1rem 0 0; display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 1rem; font-size: 0.95rem; }
-.book dt { color: var(--muted); }
-.book dd { margin: 0; }
+.stock { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.98rem; margin: 0.6rem 0 1.4rem; color: var(--muted); }
+.stock::before { content: ""; width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--muted); }
+.stock.yes { color: var(--ink); }
+.stock.yes::before { background: #6fbf73; }
+.book-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; }
+@media (min-width: 760px) {
+  .book { grid-template-columns: 250px minmax(0, 1fr); gap: 3rem; justify-items: stretch; text-align: left; padding: 2.4rem 2.6rem; align-items: center; }
+  .book-cover { width: 100%; }
+  .book .synopsis { margin-inline: 0; }
+  .book-actions { justify-content: flex-start; }
+}
 
 /* ───────── Sobre mí ───────── */
 .about { display: grid; gap: 1.4rem; }
@@ -310,3 +307,20 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 .book .synopsis { margin: 0.4rem 0 0.9rem; }
 .book .stock { margin-top: 0; }
+
+/* Móvil: títulos centrados y más aire */
+@media (max-width: 719px) {
+  .site-header { justify-content: center; padding-block: 0.8rem; }
+  .page-head { text-align: center; }
+  .page-head .lead { margin-inline: auto; }
+  .section-head { flex-direction: column; align-items: center; gap: 0.1rem; text-align: center; margin-bottom: 0.8rem; }
+  .two-col { text-align: center; }
+  .empty-note { text-align: center; }
+  .link-list a { flex-direction: column; align-items: center; gap: 0.15rem; text-align: center; padding: 1rem 0; }
+  .section { padding-block: 2.2rem; }
+  .about { text-align: center; justify-items: center; }
+  .about p { text-align: center; }
+  .project { text-align: center; }
+  .posts a { text-align: center; }
+  .comments h2, .story-head { text-align: center; }
+}
