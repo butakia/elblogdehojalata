@@ -2,15 +2,19 @@
 
 import { useEffect, useState } from "react";
 
+// Tamaños de lectura en rem; el estándar (índice 2) es mediano.
+const SIZES = [1.0, 1.1, 1.2, 1.35, 1.5, 1.7];
+const DEFAULT = 2;
+
 export default function ReaderTools() {
   const [progress, setProgress] = useState(0);
-  const [size, setSize] = useState(0);
+  const [size, setSize] = useState(DEFAULT);
 
   useEffect(() => {
     try {
-      const saved = Number(localStorage.getItem("hojalata-size"));
+      const saved = Number(localStorage.getItem("hojalata-size-v2"));
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      if (saved) setSize(saved);
+      if (Number.isInteger(saved) && saved >= 0 && saved < SIZES.length && localStorage.getItem("hojalata-size-v2") !== null) setSize(saved);
     } catch {}
     const onScroll = () => {
       const h = document.documentElement;
@@ -22,9 +26,9 @@ export default function ReaderTools() {
   }, []);
 
   useEffect(() => {
-    document.documentElement.style.setProperty("--read-scale", String(1 + size * 0.1));
+    document.documentElement.style.setProperty("--read-size", `${SIZES[size]}rem`);
     try {
-      localStorage.setItem("hojalata-size", String(size));
+      localStorage.setItem("hojalata-size-v2", String(size));
     } catch {}
   }, [size]);
 
@@ -34,8 +38,9 @@ export default function ReaderTools() {
         <i style={{ width: `${progress}%` }} />
       </div>
       <div className="reader-tools" role="group" aria-label="Tamaño de letra">
-        <button onClick={() => setSize(Math.max(-2, size - 1))} aria-label="Letra más pequeña">A−</button>
-        <button onClick={() => setSize(Math.min(4, size + 1))} aria-label="Letra más grande">A+</button>
+        <span>Letra</span>
+        <button className="minus" onClick={() => setSize(Math.max(0, size - 1))} disabled={size === 0} aria-label="Achicar letra">A−</button>
+        <button className="plus" onClick={() => setSize(Math.min(SIZES.length - 1, size + 1))} disabled={size === SIZES.length - 1} aria-label="Agrandar letra">A+</button>
       </div>
     </>
   );
