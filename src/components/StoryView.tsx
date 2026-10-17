@@ -30,6 +30,7 @@ export default async function StoryView({ slug, section }: { slug: string; secti
 
   return (
     <article className="story">
+      <ReaderTools />
       {story.cover && (
         <div className="story-cover">
           <Image src={story.cover} alt="" fill priority sizes="100vw" />
@@ -38,9 +39,9 @@ export default async function StoryView({ slug, section }: { slug: string; secti
       <header className="story-head">
         {story.draft && <p className="draft-banner">Borrador: solo tú lo ves. <Link href={`/admin/editar/${story.slug}`}>Editar</Link></p>}
         <h1>{story.title}</h1>
-        <ReaderTools />
+        <p className="byline">{AUTHOR}</p>
         <p className="meta">
-          {AUTHOR} · {story.minutes} min de lectura · {formatDate(story.date)}
+          {story.minutes} min de lectura · {formatDate(story.date)}
           {section === "cuento" && <> · <ViewCounter value={simulatedViews(story.slug, story.date)} /></>}
         </p>
       </header>
