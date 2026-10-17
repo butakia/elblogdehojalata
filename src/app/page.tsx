@@ -6,6 +6,14 @@ import { getPosts, getStories } from "@/lib/stories";
 
 export const dynamic = "force-dynamic";
 
+const ROOMS = [
+  { href: "/cuentos", name: "Salón de los cuentos" },
+  { href: "/libros", name: "Biblioteca de los libros" },
+  { href: "/textamentos", name: "Balcón de los textamentos" },
+  { href: "/proyectos", name: "Cochera de los proyectos" },
+  { href: "/sobre", name: "Cuarto del autor" },
+];
+
 export default async function Home() {
   const [stories, posts] = await Promise.all([getStories(), getPosts()]);
 
@@ -13,12 +21,23 @@ export default async function Home() {
     <>
       <section className="wrap hero">
         <div className="hero-art">
-          <Image src="/img/gato-blanco.png" alt="El blog de Hojalata: un gato de Cheshire sonríe" width={900} height={872} priority className="art-dark" sizes="(max-width: 520px) 78vw, 400px" />
-          <Image src="/img/gato-tinta.png" alt="" aria-hidden width={900} height={872} className="art-light" loading="eager" sizes="(max-width: 520px) 78vw, 400px" />
+          <Image src="/img/gato-blanco.png" alt="Un gato de Cheshire sonríe, dibujado a tinta" width={900} height={872} priority className="art-dark" sizes="(max-width: 720px) 46vw, 230px" />
+          <Image src="/img/gato-tinta.png" alt="" aria-hidden width={900} height={872} className="art-light" loading="eager" sizes="(max-width: 720px) 46vw, 230px" />
         </div>
-        <p className="tagline">y el gato que sonríe en la copa del abeto del relato</p>
-        <h1>Saludos, visitante</h1>
-        <p className="greet">Te invito a recorrer esta casa de hojalata y descubrir algunos de los textos que alojo celosamente en ella.</p>
+        <div>
+          <h1>Saludos, visitante</h1>
+          <p className="greet">Te invito a recorrer esta casa de hojalata y descubrir algunos de los textos que alojo celosamente en ella.</p>
+        </div>
+      </section>
+
+      <section className="wrap section" style={{ paddingBlock: "1.2rem 0.5rem" }}>
+        <ul className="rooms">
+          {ROOMS.map((r) => (
+            <li key={r.href}>
+              <Link href={r.href}>{r.name}</Link>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section className="wrap section two-col">
@@ -60,14 +79,15 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="wrap section">
-        <div className="section-head" style={{ justifyContent: "center" }}>
+      <section className="wrap section" style={{ paddingTop: 0 }}>
+        <div className="section-head">
           <h2>Mis libros</h2>
+          <Link href="/libros">Ver libros</Link>
         </div>
         <div className="shelf">
           {BOOKS.map((b) => (
             <Link key={b.slug} href={`/libros#${b.slug}`}>
-              <Image src={b.cover} alt={`Portada de ${b.title}`} width={300} height={440} sizes="150px" />
+              <Image src={b.cover} alt={`Portada de ${b.title}`} width={300} height={440} sizes="104px" />
               <span>{b.title}</span>
             </Link>
           ))}

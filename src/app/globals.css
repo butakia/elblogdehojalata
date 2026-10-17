@@ -91,20 +91,20 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .btn:disabled { opacity: 0.55; cursor: progress; }
 
 /* ───────── Inicio ───────── */
-.hero { text-align: center; padding-block: 1.6rem 0.5rem; }
-.hero-art { display: grid; place-items: center; }
-.hero-art img { width: min(78vw, 400px); height: auto; }
+.hero { padding-block: 1.4rem 0.4rem; display: grid; gap: 1rem; justify-items: start; }
+.hero-art { display: block; }
+.hero-art img { width: min(46vw, 200px); height: auto; }
+@media (min-width: 720px) { .hero { grid-template-columns: 230px minmax(0, 1fr); align-items: center; gap: 2.5rem; padding-block: 2.5rem 1rem; } .hero-art img { width: 230px; } }
 .art-light { display: none !important; }
 [data-theme="tinta"] .art-light { display: block !important; }
 [data-theme="tinta"] .art-dark { display: none !important; }
-.tagline { margin: 0.2rem auto 1.8rem; font-style: italic; color: var(--muted); font-size: 1.05rem; max-width: 22rem; }
-.hero h1 { margin-bottom: 0.4em; }
-.hero p.greet { max-width: 30rem; margin: 0 auto; font-size: 1.2rem; }
-.shelf { display: flex; justify-content: center; gap: 1.4rem; margin-top: 0.8rem; flex-wrap: wrap; }
-.shelf a { display: block; width: min(150px, 38vw); text-decoration: none; }
+.hero h1 { font-size: clamp(2.2rem, 8vw, 3.1rem); margin-bottom: 0.3em; }
+.hero p.greet { max-width: 30rem; margin: 0; font-size: 1.1rem; }
+.shelf { display: flex; justify-content: flex-start; gap: 1.2rem; margin-top: 0.8rem; flex-wrap: wrap; }
+.shelf a { display: block; width: min(104px, 28vw); text-decoration: none; }
 .shelf img { width: 100%; border: 1px solid var(--line); box-shadow: 0 10px 24px -12px rgba(0,0,0,.6); transition: transform .2s; }
 .shelf a:hover img { transform: translateY(-4px); }
-.shelf span { display: block; margin-top: 0.6rem; font-family: var(--font-display), serif; font-size: 1.15rem; font-weight: 600; line-height: 1.2; text-align: center; }
+.shelf span { display: block; margin-top: 0.5rem; font-family: var(--font-display), serif; font-size: 1rem; font-weight: 600; line-height: 1.2; }
 .section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: 0.4rem; }
 .section-head a { color: var(--accent); font-size: 0.95rem; }
 .link-list { list-style: none; padding: 0; margin: 0; }
@@ -195,25 +195,26 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .err { color: #c0392b; margin: 0; font-size: 0.9rem; }
 .ok { color: var(--accent); margin: 0; font-size: 0.9rem; }
 
-/* ───────── Libros ───────── */
-.books { display: grid; gap: 2rem; }
-.book { display: grid; gap: 1.6rem; grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; padding: 2rem 1.5rem 2.2rem; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; }
-.book-cover { width: min(230px, 66%); height: auto; border-radius: 4px; box-shadow: 0 18px 36px -16px rgba(0,0,0,0.65); }
-.book h2 { margin: 0; }
-.book .sub { font-family: var(--font-display), serif; font-style: italic; font-size: 1.35rem; color: var(--muted); margin: 0.1rem 0 1rem; }
-.book .synopsis { font-style: italic; line-height: 1.8; max-width: 34rem; margin-inline: auto; }
-.book .synopsis p { margin: 0 0 0.9em; }
-.stock { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.98rem; margin: 0.6rem 0 1.4rem; color: var(--muted); }
-.stock::before { content: ""; width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--muted); }
+/* ───────── Libros (catálogo) ───────── */
+.books { display: grid; gap: 0.9rem; grid-template-columns: minmax(0, 1fr); }
+.book { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 0.9rem; align-items: start; padding: 0.9rem; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; text-align: left; }
+.book-cover { width: 100%; height: auto; border-radius: 3px; box-shadow: 0 10px 22px -10px rgba(0,0,0,0.65); }
+.book h2 { font-size: 1.35rem; margin: 0; }
+.book .sub { font-family: var(--font-display), serif; font-style: italic; font-size: 1.05rem; color: var(--muted); margin: 0 0 0.4rem; line-height: 1.2; }
+.book .synopsis { font-style: italic; font-size: 0.95rem; line-height: 1.5; }
+.book .synopsis p { margin: 0 0 0.5em; }
+.stock { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.85rem; margin: 0.2rem 0 0.7rem; color: var(--muted); }
+.stock::before { content: ""; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--muted); }
 .stock.yes { color: var(--ink); }
 .stock.yes::before { background: #6fbf73; }
-.book-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; }
-@media (min-width: 760px) {
-  .book { grid-template-columns: 250px minmax(0, 1fr); gap: 3rem; justify-items: stretch; text-align: left; padding: 2.4rem 2.6rem; align-items: center; }
-  .book-cover { width: 100%; }
-  .book .synopsis { margin-inline: 0; }
-  .book-actions { justify-content: flex-start; }
+.book-actions { display: flex; }
+.btn.small { padding: 0.5rem 1.1rem; font-size: 0.92rem; }
+@media (min-width: 560px) {
+  .book { grid-template-columns: 130px minmax(0, 1fr); gap: 1.4rem; padding: 1.3rem; }
+  .book h2 { font-size: 1.7rem; }
+  .book .synopsis { font-size: 1.02rem; }
 }
+@media (min-width: 960px) { .books { grid-template-columns: 1fr 1fr; gap: 1.2rem; } }
 
 /* ───────── Sobre mí ───────── */
 .about { display: grid; gap: 1.4rem; }
@@ -308,19 +309,33 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .book .synopsis { margin: 0.4rem 0 0.9rem; }
 .book .stock { margin-top: 0; }
 
-/* Móvil: títulos centrados y más aire */
+/* Móvil */
 @media (max-width: 719px) {
   .site-header { justify-content: center; padding-block: 0.8rem; }
   .page-head { text-align: center; }
   .page-head .lead { margin-inline: auto; }
-  .section-head { flex-direction: column; align-items: center; gap: 0.1rem; text-align: center; margin-bottom: 0.8rem; }
-  .two-col { text-align: center; }
-  .empty-note { text-align: center; }
-  .link-list a { flex-direction: column; align-items: center; gap: 0.15rem; text-align: center; padding: 1rem 0; }
-  .section { padding-block: 2.2rem; }
-  .about { text-align: center; justify-items: center; }
-  .about p { text-align: center; }
-  .project { text-align: center; }
-  .posts a { text-align: center; }
+  .section { padding-block: 1.8rem; }
+  .section-head { margin-bottom: 0.3rem; }
+  .section-head h2 { font-size: 1.5rem; }
+  .link-list a { padding: 0.65rem 0; }
+  .link-list strong { font-size: 1rem; font-weight: 600; }
+  .link-list span { font-size: 0.8rem; }
+  .project, .posts a { text-align: center; }
   .comments h2, .story-head { text-align: center; }
 }
+
+/* Habitaciones de la casa */
+.rooms { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 560px) { .rooms { grid-template-columns: 1fr 1fr; } }
+.rooms a { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.85rem 1.1rem; border: 1px dashed var(--line); border-radius: 12px; text-decoration: none; font-family: var(--font-display), serif; font-size: 1.4rem; font-weight: 600; line-height: 1.15; transition: border-color 0.15s, background 0.15s; }
+.rooms a::after { content: "→"; color: var(--accent); font-family: var(--font-body), serif; font-size: 1.1rem; }
+.rooms a:hover { border-color: var(--accent); background: color-mix(in srgb, var(--surface) 70%, transparent); }
+
+/* Sobre mí */
+.about-head { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.2rem; }
+.about-head h1 { margin: 0; font-size: clamp(2.2rem, 8vw, 3rem); }
+.about-photo { width: 92px; height: 92px; aspect-ratio: 1; object-fit: cover; object-position: 50% 30%; border-radius: 50%; border: 1px solid var(--line); background: #fff; flex: none; }
+.about-text p { font-size: 1.02rem; line-height: 1.6; text-align: left; margin: 0 0 0.8em; }
+.about-text .contact { margin-top: 1rem; padding-top: 0.8rem; border-top: 1px solid var(--line); }
+.about-text .contact p { margin: 0.2rem 0; }
+@media (min-width: 720px) { .about-photo { width: 132px; height: 132px; } .about-text p { font-size: 1.1rem; } }
