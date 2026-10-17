@@ -17,7 +17,7 @@ const when = (iso: string) => new Intl.DateTimeFormat("es-PE", { dateStyle: "med
 export default async function Admin() {
   await requireAdmin();
   const [mine, comments] = await Promise.all([getCustomStories(), getAllComments()]);
-  const paths = new Map(mine.map((s) => [s.slug, s.section === "textamento" ? "textamentos" : "cuentos"]));
+  const paths = new Map(mine.map((s) => [s.slug, s.section === "textamento" ? "textamentos" : s.section === "ensayo" ? "ensayos" : "cuentos"]));
   const titles = new Map([...mine, ...allStories].map((s) => [s.slug, s.title]));
   const flat = Object.entries(comments)
     .flatMap(([slug, list]) => list.map((c) => ({ ...c, slug })))
@@ -31,6 +31,7 @@ export default async function Admin() {
         <div className="actions">
           <Link href="/admin/nuevo" className="btn primary">Nuevo cuento</Link>
           <Link href="/admin/nuevo?seccion=textamento" className="btn">Nuevo textamento</Link>
+          <Link href="/admin/nuevo?seccion=ensayo" className="btn">Nuevo ensayo</Link>
           <form action={logout}><button className="btn">Salir</button></form>
         </div>
       </header>
@@ -51,10 +52,10 @@ export default async function Admin() {
               <li key={s.slug}>
                 <div className="grow">
                   <strong>{s.title}</strong>
-                  <small>{s.section === "textamento" ? "Textamento" : "Cuento"} · {s.words} palabras{s.draft ? " · borrador" : ""}</small>
+                  <small>{s.section === "textamento" ? "Textamento" : s.section === "ensayo" ? "Ensayo" : "Cuento"} · {s.words} palabras{s.draft ? " · borrador" : ""}</small>
                 </div>
                 <div className="row-actions">
-                  <Link href={`/${s.section === "textamento" ? "textamentos" : "cuentos"}/${s.slug}`}>Ver</Link>
+                  <Link href={`/${paths.get(s.slug)}/${s.slug}`}>Ver</Link>
                   <Link href={`/admin/editar/${s.slug}`}>Editar</Link>
                   <DeleteStoryButton slug={s.slug} title={s.title} />
                 </div>

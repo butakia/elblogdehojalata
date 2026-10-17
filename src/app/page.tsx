@@ -11,6 +11,7 @@ const ROOMS = [
   { href: "/cuentos", name: "Salón de los cuentos" },
   { href: "/libros", name: "Balcón de los libros" },
   { href: "/textamentos", name: "Jardín de los textamentos" },
+  { href: "/ensayos", name: "Cocina de los ensayos" },
   { href: "/proyectos", name: "Cochera de los proyectos" },
   { href: "/sobre", name: "Cuarto del autor" },
 ];

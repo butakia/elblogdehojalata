@@ -13,7 +13,7 @@ type Initial = { slug: string; title: string; html: string; cover: string | null
 const STYLES: [CoverStyle, string][] = [["right", "Derecha"], ["left", "Izquierda"], ["center", "Centro"], ["banner", "Banner arriba"]];
 const SIZES: [CoverSize, string][] = [["s", "Pequeña"], ["m", "Mediana"], ["l", "Grande"]];
 
-export default function StoryForm({ story, section = "cuento" }: { story?: Initial; section?: "cuento" | "textamento" }) {
+export default function StoryForm({ story, section = "cuento" }: { story?: Initial; section?: "cuento" | "textamento" | "ensayo" }) {
   const router = useRouter();
   const [title, setTitle] = useState(story?.title ?? "");
   const [html, setHtml] = useState(story?.html ?? "");
@@ -22,7 +22,7 @@ export default function StoryForm({ story, section = "cuento" }: { story?: Initi
   const [coverSize, setCoverSize] = useState<CoverSize>(story?.coverSize ?? "m");
   const [error, setError] = useState("");
   const [pending, start] = useTransition();
-  const base = section === "textamento" ? "/textamentos" : "/cuentos";
+  const base = section === "textamento" ? "/textamentos" : section === "ensayo" ? "/ensayos" : "/cuentos";
 
   function submit(draft: boolean) {
     setError("");

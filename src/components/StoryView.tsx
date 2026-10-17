@@ -15,15 +15,16 @@ const dateTime = (iso: string) => new Intl.DateTimeFormat("es-PE", { dateStyle: 
 const LABELS = {
   cuento: { base: "/cuentos", back: "Volver a los cuentos" },
   textamento: { base: "/textamentos", back: "Volver a Textamentos" },
+  ensayo: { base: "/ensayos", back: "Volver a la cocina de los ensayos" },
 } as const;
 
 /** Vista de lectura compartida por Cuentos y Textamentos. */
 export default async function StoryView({ slug, section }: { slug: string; section: Section }) {
   const story = await getStory(slug);
   const admin = await isAdmin();
-  const own: Section = story?.section === "textamento" ? "textamento" : "cuento";
+  const own: Section = story?.section === "textamento" || story?.section === "ensayo" ? story.section : "cuento";
   if (!story || own !== section || (story.draft && !admin)) notFound();
-  const list = section === "textamento" ? await getPosts() : await getStories();
+  const list = section === "cuento" ? await getStories() : await getPosts({ section });
   const { newer, older } = neighbours(list, story.slug);
   const comments = await getComments(story.slug);
   const { base, back } = LABELS[section];

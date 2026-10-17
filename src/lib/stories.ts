@@ -3,7 +3,7 @@ import { allStories, type Story } from "./content";
 import { getJSON, setJSON } from "./store";
 import { plainText } from "./sanitize";
 
-export type Section = "cuento" | "textamento";
+export type Section = "cuento" | "textamento" | "ensayo";
 export type CoverStyle = "right" | "left" | "center" | "banner";
 export type CoverSize = "s" | "m" | "l";
 export type StoredStory = Story & { custom: true; draft?: boolean; section?: Section; coverStyle?: CoverStyle; coverSize?: CoverSize };
@@ -18,13 +18,13 @@ export async function saveCustomStories(list: StoredStory[]) {
 
 /** Cuentos importados del blog original + los publicados desde el panel. */
 export async function getStories({ includeDrafts = false } = {}): Promise<Story[]> {
-  const custom = (await getCustomStories()).filter((s) => (includeDrafts || !s.draft) && s.section !== "textamento");
+  const custom = (await getCustomStories()).filter((s) => (includeDrafts || !s.draft) && (!s.section || s.section === "cuento"));
   return [...custom, ...allStories].sort((a, b) => b.date.localeCompare(a.date));
 }
 
 /** Textamentos: el blog de pensamientos, proyectos y notas. */
-export async function getPosts({ includeDrafts = false } = {}): Promise<StoredStory[]> {
-  return (await getCustomStories()).filter((s) => s.section === "textamento" && (includeDrafts || !s.draft)).sort((a, b) => b.date.localeCompare(a.date));
+export async function getPosts({ includeDrafts = false, section = "textamento" }: { includeDrafts?: boolean; section?: Section } = {}): Promise<StoredStory[]> {
+  return (await getCustomStories()).filter((s) => s.section === section && (includeDrafts || !s.draft)).sort((a, b) => b.date.localeCompare(a.date));
 }
 
 export async function getStory(slug: string) {

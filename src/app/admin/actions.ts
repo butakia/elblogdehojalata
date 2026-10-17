@@ -55,18 +55,18 @@ export async function saveStory(input: SaveInput): Promise<{ ok: true; slug: str
     custom: true,
     coverStyle: ["right", "left", "center", "banner"].includes(input.coverStyle ?? "") ? input.coverStyle : "right",
     coverSize: ["s", "m", "l"].includes(input.coverSize ?? "") ? input.coverSize : "m",
-    section: existing ? existing.section : input.section === "textamento" ? "textamento" : undefined,
+    section: existing ? existing.section : input.section === "textamento" || input.section === "ensayo" ? input.section : undefined,
     draft: input.draft || undefined,
   };
   await saveCustomStories(existing ? list.map((s) => (s.slug === slug ? story : s)) : [story, ...list]);
-  for (const p of ["/", "/cuentos", "/textamentos", `/cuentos/${slug}`, `/textamentos/${slug}`]) revalidatePath(p);
+  for (const p of ["/", "/cuentos", "/textamentos", "/ensayos", `/cuentos/${slug}`, `/textamentos/${slug}`, `/ensayos/${slug}`]) revalidatePath(p);
   return { ok: true, slug };
 }
 
 export async function deleteStory(slug: string) {
   await requireAdmin();
   await saveCustomStories((await getCustomStories()).filter((s) => s.slug !== slug));
-  for (const p of ["/", "/cuentos", "/textamentos", "/admin"]) revalidatePath(p);
+  for (const p of ["/", "/cuentos", "/textamentos", "/ensayos", "/admin"]) revalidatePath(p);
 }
 
 export async function deleteComment(slug: string, id: string) {
