@@ -1,46 +1,39 @@
 # El blog de Hojalata
 
-Rediseño de https://elblogdehojalata.wordpress.com (Next.js, 100 % estático).
+Rediseño de https://elblogdehojalata.wordpress.com hecho con Next.js.
 
-- `npm run dev` — localhost:3000
-- `npm run dev:mobile` — expone el servidor en la red local (puerto 3100) y muestra la URL para el celular
-- `npm run start:mobile` — build de producción en la red local
-- `npm run extract` — vuelve a generar `content/` e `public/img` desde `scripts/raw-posts.json`
+## Comandos
+- `npm run dev:mobile`: servidor local (puerto 3100) abierto a tu red Wi-Fi; muestra la URL para el celular.
+- `npm run build` y `npm start`: versión de producción.
+- `npm run lint`: revisión del código.
+- `npm run extract`: vuelve a generar `content/` e `public/img` desde `scripts/raw-posts.json`.
 
-Diseños: Tinta y Hojalata (botón ◐, o `?tema=hojalata`). Secciones: Inicio, Cuentos, Libros, Sobre mí. Los libros se editan en `src/lib/books.ts`.
+Secciones: Inicio, Cuentos, Libros, Sobre mí y Proyectos. Textamentos y Cocina de los ensayos solo se abren desde las tarjetas del inicio. Los libros se editan en `src/lib/books.ts` y los proyectos en `src/lib/projects.ts`.
+
+Diseños: oscuro (por defecto) y claro (botón ◐, o `?tema=tinta`).
+
+## Panel de administración
+- Entrada: enlace "Entrar" del pie, o `/admin`. En local la clave es `hojalata` (archivo `.env.local`).
+- Todo lo que escribes se **autoguarda**: en el servidor cada pocos segundos y en tu dispositivo al instante. Si algo falla, al reabrir te ofrece recuperarlo.
+- Los textos nuevos nacen como **borrador** (solo los ves con la sesión de administrador). Publicas cuando quieras y puedes volver a pasarlos a borrador.
+- Si editas algo ya publicado, los cambios se autoguardan aparte y la versión pública no cambia hasta que pulses "Guardar cambios".
+- **Ideas**: `/admin/ideas`. En local se reflejan también en `ideas/ideas.md` (carpeta ignorada por git).
+- **Respaldo**: botón "Descargar respaldo completo". Lo eliminado queda en una papelera interna.
 
 ## Publicar en Vercel (guía rápida)
-
 Qué son las dos piezas que faltan:
-- **Redis (Upstash)** es la libreta donde se guardan los textos, ideas y comentarios. Sin ella, en Vercel se perderían.
-- **Blob** es la carpeta donde se guardan las imágenes que subes desde el panel.
+- **Redis (Upstash)**: la libreta donde se guardan textos, ideas y comentarios. Sin ella, en Vercel se perderían.
+- **Blob**: la carpeta donde se guardan las imágenes que subes desde el panel.
 
 Pasos:
-1. Subir esta carpeta a un repositorio de GitHub e **importarlo** en vercel.com (Framework: Next.js; no cambiar nada más).
-2. En el proyecto: **Settings > Environment Variables** y crear  con tu clave del panel.
-3. En el proyecto: **Storage > Create** y elegir **Upstash for Redis** (plan gratuito). Conectarlo al proyecto: Vercel agrega solo  y .
-4. **Storage > Create > Blob** y conectarlo al proyecto: Vercel agrega solo .
+1. Subir esta carpeta a un repositorio de GitHub e **importarlo** en vercel.com (Framework: Next.js; no hace falta cambiar nada más).
+2. En el proyecto, **Settings > Environment Variables**: crear `ADMIN_PASSWORD` con tu clave del panel.
+3. **Storage > Create > Upstash for Redis** (plan gratuito) y conectarlo al proyecto. Vercel agrega `KV_REST_API_URL` y `KV_REST_API_TOKEN`.
+4. **Storage > Create > Blob** y conectarlo al proyecto. Vercel agrega `BLOB_READ_WRITE_TOKEN`.
 5. **Deployments > Redeploy** para que tome las variables.
-6. Entrar a  con tu clave: en la sección **Conexiones** deben salir tres puntos verdes.
+6. Entrar a `/admin`: en **Conexiones** deben salir tres puntos verdes.
 
-Variables posibles en .
-
-## Admin, comentarios y almacenamiento
-- Panel: `/admin` (enlace "Entrar" en el pie). En local la clave es `hojalata` (archivo `.env.local`).
-- Comentarios y cuentos nuevos se guardan en `.data/store.json` en local.
-- Imágenes subidas en local van a `public/uploads/`.
-
-### En Vercel (para que lo subido sea permanente)
-1. Variables de entorno: `ADMIN_PASSWORD` (tu clave) y opcionalmente `ADMIN_SECRET`.
-2. Storage → conectar **Upstash Redis** (crea `UPSTASH_REDIS_REST_URL` / `_TOKEN`; también sirven `KV_REST_API_*`).
-3. Storage → crear un **Blob** (crea `BLOB_READ_WRITE_TOKEN`) para las imágenes.
-
-## Escribir desde el panel
-- Todo lo que escribes se **autoguarda** (en el servidor cada pocos segundos y en tu dispositivo al instante). Si algo falla, al reabrir te ofrece recuperarlo.
-- Los textos nuevos nacen como **borrador** (solo visibles con la sesión de administrador). Publica cuando quieras; puedes volver a pasarlos a borrador.
-- Si editas algo ya publicado, los cambios se autoguardan aparte y la versión pública no cambia hasta que pulses "Guardar cambios".
-- **Ideas**: `/admin/ideas`. En local se refleja también en `ideas/ideas.md` (carpeta ignorada por git) para poder leerlas y trabajarlas juntos.
-- **Respaldo**: botón "Descargar respaldo completo" en el panel. Lo eliminado queda en una papelera.
+Todas las variables posibles están en `.env.example`. Con dominio propio, define también `NEXT_PUBLIC_SITE_URL`.
 
 ## Compartir
-Cada cuento, textamento y ensayo publica su título, un resumen breve y su imagen (`/og/<slug>`, 1200x630) para WhatsApp, Facebook, etc. En producción define `NEXT_PUBLIC_SITE_URL` si usas un dominio propio.
+Cada cuento, textamento y ensayo publica título, resumen breve e imagen (`/og/<slug>`, 1200x630) para WhatsApp, Facebook y similares.
