@@ -38,7 +38,6 @@ export default function RoomsCarousel({ rooms }: { rooms: Room[] }) {
     const ro = new ResizeObserver(measure);
     ro.observe(el);
     return () => ro.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loop]);
 
   // Desplazamiento automático lento

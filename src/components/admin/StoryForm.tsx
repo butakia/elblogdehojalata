@@ -65,7 +65,9 @@ export default function StoryForm({ story, wip, section = "cuento" }: { story?: 
     }
     setHtml(h);
   };
-  latest.current = content;
+  useEffect(() => {
+    latest.current = content;
+  });
 
   // ── Recuperación al abrir: copia del dispositivo o copia de trabajo del servidor ──
   useEffect(() => {
@@ -80,7 +82,6 @@ export default function StoryForm({ story, wip, section = "cuento" }: { story?: 
       }
     } catch {}
     if (wip && textOf(wip) !== textOf(initialContent) && (!found || Date.parse(wip.savedAt) >= Date.parse(found.at))) found = { source: "server", at: wip.savedAt, content: wip };
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (found) setBanner(found);
     mounted.current = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -106,7 +107,7 @@ export default function StoryForm({ story, wip, section = "cuento" }: { story?: 
   }
 
   // ── Autoguardado en el servidor (cola de una sola vuelta) ──
-  const runSave = useCallback(async () => {
+  const runSave = useCallback(async function run(): Promise<void> {
     if (inFlight.current) { again.current = true; return; }
     const c = latest.current;
     const mine = snap(c);
@@ -128,10 +129,10 @@ export default function StoryForm({ story, wip, section = "cuento" }: { story?: 
     } catch {
       setStatus((s) => ({ ...s, kind: "offline" }));
       clearTimeout(retry.current);
-      retry.current = setTimeout(runSave, 8000);
+      retry.current = setTimeout(run, 8000);
     } finally {
       inFlight.current = false;
-      if (again.current) { again.current = false; runSave(); }
+      if (again.current) { again.current = false; run(); }
     }
   }, [section]);
 

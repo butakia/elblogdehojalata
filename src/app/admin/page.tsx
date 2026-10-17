@@ -113,6 +113,21 @@ export default async function Admin() {
       </section>
 
       <section className="admin-block">
+        <h2>Conexiones</h2>
+        <ul className="status-list">
+          <li className={storeKind === "redis" ? "yes" : "no"}>
+            Textos, ideas y comentarios: {storeKind === "redis" ? "guardados en Redis (permanente)" : "guardados en un archivo local (solo para pruebas)"}
+          </li>
+          <li className={process.env.BLOB_READ_WRITE_TOKEN ? "yes" : "no"}>
+            Imágenes subidas: {process.env.BLOB_READ_WRITE_TOKEN ? "guardadas en Vercel Blob (permanente)" : "guardadas en una carpeta local (solo para pruebas)"}
+          </li>
+          <li className={process.env.ADMIN_PASSWORD ? "yes" : "no"}>
+            Clave del panel: {process.env.ADMIN_PASSWORD ? "definida en el servidor" : "clave de desarrollo (cámbiala antes de publicar)"}
+          </li>
+        </ul>
+      </section>
+
+      <section className="admin-block">
         <h2>Respaldo</h2>
         <p className="muted">Descarga una copia de todo lo que escribiste (textos, ideas, comentarios y papelera). Hazlo de vez en cuando.</p>
         <p><a className="btn" href="/api/admin/export?type=all">Descargar respaldo completo</a></p>

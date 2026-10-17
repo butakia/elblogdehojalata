@@ -1,5 +1,3 @@
-import fs from "node:fs/promises";
-import path from "node:path";
 import sharp from "sharp";
 import { getStory } from "@/lib/stories";
 
@@ -10,30 +8,35 @@ const W = 1200;
 const H = 630;
 const BG = "#15171b";
 
-async function readCover(src: string): Promise<Buffer | null> {
+/** Lee una imagen: rutas del propio sitio por HTTP (en Vercel los archivos públicos no están en disco) o URL externa. */
+async function readImage(src: string, origin: string): Promise<Buffer | null> {
   try {
-    if (src.startsWith("/")) return await fs.readFile(path.join(process.cwd(), "public", src.split("?")[0]));
-    const r = await fetch(src, { signal: AbortSignal.timeout(8000) });
+    const url = src.startsWith("/") ? new URL(src, origin).toString() : src;
+    const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
     return r.ok ? Buffer.from(await r.arrayBuffer()) : null;
   } catch {
     return null;
   }
 }
 
-async function fallback() {
-  const cat = await sharp(path.join(process.cwd(), "public", "img", "gato-blanco.png")).resize({ height: 460 }).toBuffer();
-  return sharp({ create: { width: W, height: H, channels: 3, background: BG } }).composite([{ input: cat, gravity: "center" }]).jpeg({ quality: 86 }).toBuffer();
+async function fallback(origin: string) {
+  const cat = await readImage("/img/gato-blanco.png", origin);
+  const base = sharp({ create: { width: W, height: H, channels: 3, background: BG } });
+  if (!cat) return base.jpeg({ quality: 86 }).toBuffer();
+  const resized = await sharp(cat).resize({ height: 460 }).toBuffer();
+  return base.composite([{ input: resized, gravity: "center" }]).jpeg({ quality: 86 }).toBuffer();
 }
 
 /** Imagen 1200x630 para las vistas previas al compartir: la imagen del texto o, si no tiene, el gato. */
-export async function GET(_req: Request, { params }: { params: Promise<{ slug: string }> }) {
+export async function GET(req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  const origin = new URL(req.url).origin;
   let out: Buffer | null = null;
 
   if (slug !== "default") {
     const story = await getStory(slug);
     if (story && !story.draft && story.cover) {
-      const src = await readCover(story.cover);
+      const src = await readImage(story.cover, origin);
       if (src) {
         try {
           out = await sharp(src).rotate().resize(W, H, { fit: "cover", position: "attention" }).jpeg({ quality: 84 }).toBuffer();
@@ -41,7 +44,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ slug: s
       }
     }
   }
-  if (!out) out = await fallback();
+  if (!out) out = await fallback(origin);
 
   return new Response(new Uint8Array(out), {
     headers: { "Content-Type": "image/jpeg", "Cache-Control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400" },

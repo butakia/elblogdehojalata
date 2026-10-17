@@ -9,8 +9,21 @@ Rediseño de https://elblogdehojalata.wordpress.com (Next.js, 100 % estático).
 
 Diseños: Tinta y Hojalata (botón ◐, o `?tema=hojalata`). Secciones: Inicio, Cuentos, Libros, Sobre mí. Los libros se editan en `src/lib/books.ts`.
 
-## Vercel
-Importar la carpeta en vercel.com (framework Next.js, sin variables de entorno).
+## Publicar en Vercel (guía rápida)
+
+Qué son las dos piezas que faltan:
+- **Redis (Upstash)** es la libreta donde se guardan los textos, ideas y comentarios. Sin ella, en Vercel se perderían.
+- **Blob** es la carpeta donde se guardan las imágenes que subes desde el panel.
+
+Pasos:
+1. Subir esta carpeta a un repositorio de GitHub e **importarlo** en vercel.com (Framework: Next.js; no cambiar nada más).
+2. En el proyecto: **Settings > Environment Variables** y crear  con tu clave del panel.
+3. En el proyecto: **Storage > Create** y elegir **Upstash for Redis** (plan gratuito). Conectarlo al proyecto: Vercel agrega solo  y .
+4. **Storage > Create > Blob** y conectarlo al proyecto: Vercel agrega solo .
+5. **Deployments > Redeploy** para que tome las variables.
+6. Entrar a  con tu clave: en la sección **Conexiones** deben salir tres puntos verdes.
+
+Variables posibles en .
 
 ## Admin, comentarios y almacenamiento
 - Panel: `/admin` (enlace "Entrar" en el pie). En local la clave es `hojalata` (archivo `.env.local`).

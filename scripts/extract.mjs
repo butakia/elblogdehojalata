@@ -44,7 +44,6 @@ async function clean(html) {
 }
 
 const text = (html) => cheerio.load(html, null, false).text().replace(/\s+/g, " ").trim();
-const skipPosts = new Set([283, 590 * 0]);
 const stories = [];
 const pages = {};
 for (const p of raw) {

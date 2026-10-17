@@ -139,8 +139,8 @@ export default function RichEditor({ initialHtml, onChange }: Props) {
     }
   }
 
-  const Btn = ({ label, title, run, strong }: { label: React.ReactNode; title: string; run: () => void; strong?: boolean }) => (
-    <button type="button" title={title} aria-label={title} onMouseDown={(e) => { e.preventDefault(); remember(); }} onClick={run} className={strong ? "b" : ""}>
+  const tool = (label: React.ReactNode, title: string, run: () => void, strong = false) => (
+    <button key={title} type="button" title={title} aria-label={title} onMouseDown={(e) => { e.preventDefault(); remember(); }} onClick={run} className={strong ? "b" : ""}>
       {label}
     </button>
   );
@@ -148,22 +148,22 @@ export default function RichEditor({ initialHtml, onChange }: Props) {
   return (
     <div className={`editor ${over ? "over" : ""}`}>
       <div className="editor-bar" role="toolbar" aria-label="Formato">
-        <Btn label="N" title="Negrita" run={() => cmd("bold")} strong />
-        <Btn label={<i>K</i>} title="Cursiva" run={() => cmd("italic")} />
-        <Btn label="Título" title="Subtítulo" run={() => cmd("formatBlock", "h2")} />
-        <Btn label="Cita" title="Cita" run={() => cmd("formatBlock", "blockquote")} />
-        <Btn label="Normal" title="Párrafo normal" run={() => cmd("formatBlock", "p")} />
+        {tool("N", "Negrita", () => cmd("bold"), true)}
+        {tool(<i>K</i>, "Cursiva", () => cmd("italic"))}
+        {tool("Título", "Subtítulo", () => cmd("formatBlock", "h2"))}
+        {tool("Cita", "Cita", () => cmd("formatBlock", "blockquote"))}
+        {tool("Normal", "Párrafo normal", () => cmd("formatBlock", "p"))}
         <span className="sep" />
-        <Btn label="Izquierda" title="Alinear el texto a la izquierda" run={() => cmd("justifyLeft")} />
-        <Btn label="Centrar" title="Centrar el texto" run={() => cmd("justifyCenter")} />
-        <Btn label="Justificar" title="Justificar el texto" run={() => cmd("justifyFull")} />
+        {tool("Izquierda", "Alinear el texto a la izquierda", () => cmd("justifyLeft"))}
+        {tool("Centrar", "Centrar el texto", () => cmd("justifyCenter"))}
+        {tool("Justificar", "Justificar el texto", () => cmd("justifyFull"))}
         <span className="sep" />
-        <Btn label="Enlace" title="Insertar enlace" run={addLink} />
-        <Btn label="Imagen" title="Subir imagen" run={() => { remember(); picker.current?.click(); }} />
-        <Btn label="Imagen por enlace" title="Imagen desde un enlace" run={() => { remember(); imageFromLink(); }} />
+        {tool("Enlace", "Insertar enlace", addLink)}
+        {tool("Imagen", "Subir imagen", () => { remember(); picker.current?.click(); })}
+        {tool("Imagen por enlace", "Imagen desde un enlace", () => { remember(); imageFromLink(); })}
         <span className="sep" />
-        <Btn label="↶" title="Deshacer" run={() => cmd("undo")} />
-        <Btn label="↷" title="Rehacer" run={() => cmd("redo")} />
+        {tool("↶", "Deshacer", () => cmd("undo"))}
+        {tool("↷", "Rehacer", () => cmd("redo"))}
         <input ref={picker} type="file" accept="image/*" multiple hidden onChange={(e) => { handleFiles(Array.from(e.target.files || [])); e.target.value = ""; }} />
       </div>
       {img && (

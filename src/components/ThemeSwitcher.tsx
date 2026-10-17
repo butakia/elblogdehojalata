@@ -17,7 +17,7 @@ export default function ThemeSwitcher() {
   }, []);
 
   function pick(id: string) {
-    document.documentElement.dataset.theme = id;
+    document.documentElement.setAttribute("data-theme", id);
     try {
       localStorage.setItem("hojalata-theme", id);
     } catch {}
