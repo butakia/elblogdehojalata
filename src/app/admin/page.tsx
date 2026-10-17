@@ -6,6 +6,7 @@ import { requireAdmin } from "@/lib/auth";
 import { getAllComments } from "@/lib/comments";
 import { allStories } from "@/lib/content";
 import { getCustomStories } from "@/lib/stories";
+
 import { storeKind } from "@/lib/store";
 
 export const metadata: Metadata = { title: "Panel", robots: { index: false } };
@@ -16,6 +17,7 @@ const when = (iso: string) => new Intl.DateTimeFormat("es-PE", { dateStyle: "med
 export default async function Admin() {
   await requireAdmin();
   const [mine, comments] = await Promise.all([getCustomStories(), getAllComments()]);
+  const paths = new Map(mine.map((s) => [s.slug, s.section === "textamento" ? "textamentos" : "cuentos"]));
   const titles = new Map([...mine, ...allStories].map((s) => [s.slug, s.title]));
   const flat = Object.entries(comments)
     .flatMap(([slug, list]) => list.map((c) => ({ ...c, slug })))
@@ -28,6 +30,7 @@ export default async function Admin() {
         <h1>Panel</h1>
         <div className="actions">
           <Link href="/admin/nuevo" className="btn primary">Nuevo cuento</Link>
+          <Link href="/admin/nuevo?seccion=textamento" className="btn">Nuevo textamento</Link>
           <form action={logout}><button className="btn">Salir</button></form>
         </div>
       </header>
@@ -39,19 +42,19 @@ export default async function Admin() {
       )}
 
       <section className="admin-block">
-        <h2>Mis cuentos <small>({mine.length})</small></h2>
+        <h2>Mis publicaciones <small>({mine.length})</small></h2>
         {mine.length === 0 ? (
-          <p className="empty-note">Aún no has subido cuentos desde el panel. Los {allStories.length} del blog original ya están publicados.</p>
+          <p className="empty-note">Aún no has publicado nada desde el panel. Los {allStories.length} del blog original ya están publicados.</p>
         ) : (
           <ul className="admin-list">
             {mine.map((s) => (
               <li key={s.slug}>
                 <div className="grow">
                   <strong>{s.title}</strong>
-                  <small>{s.words} palabras{s.draft ? " · borrador" : ""}</small>
+                  <small>{s.section === "textamento" ? "Textamento" : "Cuento"} · {s.words} palabras{s.draft ? " · borrador" : ""}</small>
                 </div>
                 <div className="row-actions">
-                  <Link href={`/cuentos/${s.slug}`}>Ver</Link>
+                  <Link href={`/${s.section === "textamento" ? "textamentos" : "cuentos"}/${s.slug}`}>Ver</Link>
                   <Link href={`/admin/editar/${s.slug}`}>Editar</Link>
                   <DeleteStoryButton slug={s.slug} title={s.title} />
                 </div>
@@ -70,7 +73,7 @@ export default async function Admin() {
             {flat.map((c) => (
               <li key={c.id} style={{ flexWrap: "wrap" }}>
                 <div className="grow">
-                  <strong>{c.name}</strong> en <Link href={`/cuentos/${c.slug}#comentarios`}>{titles.get(c.slug) ?? c.slug}</Link>
+                  <strong>{c.name}</strong> en <Link href={`/${paths.get(c.slug) ?? "cuentos"}/${c.slug}#comentarios`}>{titles.get(c.slug) ?? c.slug}</Link>
                   <small>{when(c.date)}</small>
                   <p className="said">{c.text}</p>
                   {c.reply && (

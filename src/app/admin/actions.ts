@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { checkPassword, endSession, rateLimit, requireAdmin, startSession } from "@/lib/auth";
 import { removeComment, setReply } from "@/lib/comments";
 import { sanitizeHtml } from "@/lib/sanitize";
-import { deriveFields, getCustomStories, saveCustomStories, slugify, type StoredStory } from "@/lib/stories";
+import { deriveFields, getCustomStories, saveCustomStories, slugify, type Section, type StoredStory } from "@/lib/stories";
 import { allStories } from "@/lib/content";
 
 export async function login(_prev: { error?: string }, form: FormData) {
@@ -22,7 +22,7 @@ export async function logout() {
   redirect("/");
 }
 
-export type SaveInput = { originalSlug?: string; title: string; html: string; cover: string | null; draft: boolean };
+export type SaveInput = { originalSlug?: string; title: string; html: string; cover: string | null; draft: boolean; section?: Section };
 
 export async function saveStory(input: SaveInput): Promise<{ ok: true; slug: string } | { ok: false; error: string }> {
   await requireAdmin();
@@ -53,17 +53,18 @@ export async function saveStory(input: SaveInput): Promise<{ ok: true; slug: str
     cover,
     ...deriveFields(html),
     custom: true,
+    section: existing ? existing.section : input.section === "textamento" ? "textamento" : undefined,
     draft: input.draft || undefined,
   };
   await saveCustomStories(existing ? list.map((s) => (s.slug === slug ? story : s)) : [story, ...list]);
-  for (const p of ["/", "/cuentos", `/cuentos/${slug}`]) revalidatePath(p);
+  for (const p of ["/", "/cuentos", "/textamentos", `/cuentos/${slug}`, `/textamentos/${slug}`]) revalidatePath(p);
   return { ok: true, slug };
 }
 
 export async function deleteStory(slug: string) {
   await requireAdmin();
   await saveCustomStories((await getCustomStories()).filter((s) => s.slug !== slug));
-  for (const p of ["/", "/cuentos", "/admin"]) revalidatePath(p);
+  for (const p of ["/", "/cuentos", "/textamentos", "/admin"]) revalidatePath(p);
 }
 
 export async function deleteComment(slug: string, id: string) {

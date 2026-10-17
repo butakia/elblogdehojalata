@@ -71,12 +71,12 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 .bottom-nav {
   position: fixed; inset: auto 0 0 0; z-index: 30;
-  display: grid; grid-template-columns: repeat(4, 1fr);
+  display: grid; grid-template-columns: repeat(5, 1fr);
   padding-bottom: env(safe-area-inset-bottom);
   background: var(--bg-2);
   border-top: 1px solid var(--line);
 }
-.bottom-nav a { display: grid; place-items: center; padding: 0.85rem 0; text-decoration: none; font-size: 0.9rem; color: var(--muted); }
+.bottom-nav a { display: grid; place-items: center; padding: 0.85rem 0; text-decoration: none; font-size: 0.8rem; color: var(--muted); }
 .bottom-nav a[aria-current="page"] { color: var(--accent); font-weight: 700; }
 @media (min-width: 720px) { .bottom-nav { display: none; } body { padding-bottom: 0; } }
 
@@ -272,3 +272,19 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .theme-menu small { color: var(--muted); }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+
+/* Tarjetas del inicio y Textamentos */
+.home-cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.9rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 820px) { .home-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.1rem; } }
+.home-cards a { display: flex; flex-direction: column; gap: 0.35rem; height: 100%; padding: 1.1rem 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); text-decoration: none; transition: border-color 0.15s, transform 0.15s; }
+.home-cards a:hover { border-color: var(--accent); transform: translateY(-2px); }
+.home-cards .icon { color: var(--accent); display: block; margin-bottom: 0.3rem; }
+.home-cards strong { font-size: 1.15rem; }
+.home-cards .txt { color: var(--muted); font-size: 0.92rem; line-height: 1.4; }
+.two-col { display: grid; gap: 2rem; }
+@media (min-width: 820px) { .two-col { grid-template-columns: 1fr 1fr; gap: 3rem; } }
+.posts { list-style: none; margin: 0; padding: 0; }
+.posts li { border-bottom: 1px solid var(--line); }
+.posts a { display: block; padding: 1.1rem 0; text-decoration: none; }
+.posts h2 { margin-bottom: 0.2rem; }
+.posts a:hover h2 { text-decoration: underline; text-decoration-color: var(--accent); }

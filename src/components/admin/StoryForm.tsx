@@ -8,20 +8,21 @@ import RichEditor from "./RichEditor";
 
 type Initial = { slug: string; title: string; html: string; cover: string | null; draft: boolean };
 
-export default function StoryForm({ story }: { story?: Initial }) {
+export default function StoryForm({ story, section = "cuento" }: { story?: Initial; section?: "cuento" | "textamento" }) {
   const router = useRouter();
   const [title, setTitle] = useState(story?.title ?? "");
   const [html, setHtml] = useState(story?.html ?? "");
   const [cover, setCover] = useState<string | null>(story?.cover ?? null);
   const [error, setError] = useState("");
   const [pending, start] = useTransition();
+  const base = section === "textamento" ? "/textamentos" : "/cuentos";
 
   function submit(draft: boolean) {
     setError("");
     start(async () => {
-      const res = await saveStory({ originalSlug: story?.slug, title, html, cover, draft });
+      const res = await saveStory({ originalSlug: story?.slug, title, html, cover, draft, section });
       if (!res.ok) return setError(res.error);
-      router.push(draft ? "/admin" : `/cuentos/${res.slug}`);
+      router.push(draft ? "/admin" : `${base}/${res.slug}`);
       router.refresh();
     });
   }
