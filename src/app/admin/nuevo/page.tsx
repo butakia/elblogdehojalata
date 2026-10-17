@@ -10,7 +10,6 @@ export default async function Nuevo() {
   return (
     <div className="wrap section">
       <header className="page-head">
-        <p className="eyebrow">Panel de la casa</p>
         <h1>Nuevo cuento</h1>
       </header>
       <StoryForm />

@@ -66,9 +66,7 @@ export default function RichEditor({ initialHtml, onChange }: Props) {
   }
 
   async function handleFiles(files: File[]) {
-    const imgs = files.filter((f) => f.type.startsWith("image/"));
-    if (!imgs.length) return;
-    for (const f of imgs) {
+    for (const f of files.filter((f) => f.type.startsWith("image/"))) {
       setStatus(`Subiendo ${f.name}…`);
       try {
         insertImage((await uploadFile(f)).url);
@@ -100,22 +98,22 @@ export default function RichEditor({ initialHtml, onChange }: Props) {
   return (
     <div className={`editor ${over ? "over" : ""}`}>
       <div className="editor-bar" role="toolbar" aria-label="Formato">
-        <Btn label="N" title="Negrita (Ctrl+B)" run={() => cmd("bold")} strong />
-        <Btn label={<i>K</i>} title="Cursiva (Ctrl+I)" run={() => cmd("italic")} />
-        <span className="sep" />
+        <Btn label="N" title="Negrita" run={() => cmd("bold")} strong />
+        <Btn label={<i>K</i>} title="Cursiva" run={() => cmd("italic")} />
         <Btn label="Título" title="Subtítulo" run={() => cmd("formatBlock", "h2")} />
-        <Btn label="¶" title="Párrafo normal" run={() => cmd("formatBlock", "p")} />
-        <Btn label="❝" title="Cita" run={() => cmd("formatBlock", "blockquote")} />
-        <Btn label="• Lista" title="Lista" run={() => cmd("insertUnorderedList")} />
+        <Btn label="Cita" title="Cita" run={() => cmd("formatBlock", "blockquote")} />
+        <Btn label="Normal" title="Párrafo normal" run={() => cmd("formatBlock", "p")} />
+        <span className="sep" />
+        <Btn label="Izquierda" title="Alinear a la izquierda" run={() => cmd("justifyLeft")} />
+        <Btn label="Centrar" title="Centrar" run={() => cmd("justifyCenter")} />
+        <Btn label="Justificar" title="Justificar el texto" run={() => cmd("justifyFull")} />
         <span className="sep" />
         <Btn label="Enlace" title="Insertar enlace" run={addLink} />
         <Btn label="Imagen" title="Subir imagen" run={() => { remember(); picker.current?.click(); }} />
-        <Btn label="Imagen (enlace)" title="Imagen desde un enlace" run={() => { remember(); imageFromLink(); }} />
-        <Btn label="· · ·" title="Separador" run={() => cmd("insertHorizontalRule")} />
+        <Btn label="Imagen por enlace" title="Imagen desde un enlace" run={() => { remember(); imageFromLink(); }} />
         <span className="sep" />
         <Btn label="↶" title="Deshacer" run={() => cmd("undo")} />
         <Btn label="↷" title="Rehacer" run={() => cmd("redo")} />
-        <Btn label="Tx" title="Quitar formato" run={() => cmd("removeFormat")} />
         <input ref={picker} type="file" accept="image/*" multiple hidden onChange={(e) => { handleFiles(Array.from(e.target.files || [])); e.target.value = ""; }} />
       </div>
       <div
@@ -126,7 +124,7 @@ export default function RichEditor({ initialHtml, onChange }: Props) {
         role="textbox"
         aria-multiline="true"
         aria-label="Texto del cuento"
-        data-placeholder="Escribe aquí tu cuento… También puedes arrastrar imágenes."
+        data-placeholder="Escribe aquí tu cuento. También puedes arrastrar imágenes."
         onInput={sync}
         onBlur={remember}
         onKeyUp={remember}
@@ -139,7 +137,6 @@ export default function RichEditor({ initialHtml, onChange }: Props) {
             handleFiles(files);
             return;
           }
-          // pega siempre como texto plano, respetando los párrafos
           e.preventDefault();
           const text = e.clipboardData.getData("text/plain");
           const html = text.split(/\n{2,}/).map((p) => `<p>${escapeHtml(p).replace(/\n/g, "<br>")}</p>`).join("");

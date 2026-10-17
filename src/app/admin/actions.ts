@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { checkPassword, endSession, rateLimit, requireAdmin, startSession } from "@/lib/auth";
-import { removeComment } from "@/lib/comments";
+import { removeComment, setReply } from "@/lib/comments";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { deriveFields, getCustomStories, saveCustomStories, slugify, type StoredStory } from "@/lib/stories";
 import { allStories } from "@/lib/content";
@@ -22,7 +22,7 @@ export async function logout() {
   redirect("/");
 }
 
-export type SaveInput = { originalSlug?: string; title: string; html: string; cover: string | null; draft: boolean; kind: "auto" | "cuento" | "microcuento" };
+export type SaveInput = { originalSlug?: string; title: string; html: string; cover: string | null; draft: boolean };
 
 export async function saveStory(input: SaveInput): Promise<{ ok: true; slug: string } | { ok: false; error: string }> {
   await requireAdmin();
@@ -44,7 +44,6 @@ export async function saveStory(input: SaveInput): Promise<{ ok: true; slug: str
     for (let i = 2; taken.has(slug); i++) slug = `${base}-${i}`;
   }
 
-  const derived = deriveFields(html);
   const story: StoredStory = {
     id: existing?.id ?? Date.now(),
     slug,
@@ -52,26 +51,33 @@ export async function saveStory(input: SaveInput): Promise<{ ok: true; slug: str
     date: existing?.date ?? new Date().toISOString(),
     html,
     cover,
-    ...derived,
-    kind: input.kind === "auto" ? derived.kind : input.kind,
+    ...deriveFields(html),
     custom: true,
     draft: input.draft || undefined,
   };
   await saveCustomStories(existing ? list.map((s) => (s.slug === slug ? story : s)) : [story, ...list]);
-  for (const p of ["/", "/cuentos", "/microcuentos", `/cuentos/${slug}`]) revalidatePath(p);
+  for (const p of ["/", "/cuentos", `/cuentos/${slug}`]) revalidatePath(p);
   return { ok: true, slug };
 }
 
 export async function deleteStory(slug: string) {
   await requireAdmin();
   await saveCustomStories((await getCustomStories()).filter((s) => s.slug !== slug));
-  for (const p of ["/", "/cuentos", "/microcuentos"]) revalidatePath(p);
-  revalidatePath("/admin");
+  for (const p of ["/", "/cuentos", "/admin"]) revalidatePath(p);
 }
 
 export async function deleteComment(slug: string, id: string) {
   await requireAdmin();
   await removeComment(slug, id);
+  revalidatePath("/admin");
+  revalidatePath(`/cuentos/${slug}`);
+}
+
+/** Respuesta pública del autor. Texto vacío = quitar la respuesta. */
+export async function replyToComment(slug: string, id: string, text: string) {
+  await requireAdmin();
+  const clean = text.trim().slice(0, 1500);
+  await setReply(slug, id, clean || null);
   revalidatePath("/admin");
   revalidatePath(`/cuentos/${slug}`);
 }

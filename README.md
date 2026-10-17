@@ -7,7 +7,7 @@ Rediseño de https://elblogdehojalata.wordpress.com (Next.js, 100 % estático).
 - `npm run start:mobile` — build de producción en la red local
 - `npm run extract` — vuelve a generar `content/` e `public/img` desde `scripts/raw-posts.json`
 
-Diseños: Tinta, Hojalata y Cheshire (botón ◐, o `?tema=hojalata`).
+Diseños: Tinta y Hojalata (botón ◐, o `?tema=hojalata`). Secciones: Inicio, Cuentos, Libros, Sobre mí. Los libros se editan en `src/lib/books.ts`.
 
 ## Vercel
 Importar la carpeta en vercel.com (framework Next.js, sin variables de entorno).

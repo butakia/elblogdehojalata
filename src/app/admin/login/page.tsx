@@ -11,8 +11,7 @@ export default async function Login() {
   return (
     <div className="wrap section narrow">
       <header className="page-head">
-        <p className="eyebrow">Zona privada</p>
-        <h1>La llave de la casa</h1>
+        <h1>Entrar al panel</h1>
       </header>
       {adminEnabled() ? <LoginForm /> : <p className="lead">El panel está desactivado: define la variable ADMIN_PASSWORD en el servidor.</p>}
     </div>

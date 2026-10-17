@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { logout } from "./actions";
-import { DeleteCommentButton, DeleteStoryButton } from "@/components/admin/DeleteButtons";
+import { CommentActions, DeleteStoryButton } from "@/components/admin/DeleteButtons";
 import { requireAdmin } from "@/lib/auth";
 import { getAllComments } from "@/lib/comments";
 import { allStories } from "@/lib/content";
@@ -10,6 +10,8 @@ import { storeKind } from "@/lib/store";
 
 export const metadata: Metadata = { title: "Panel", robots: { index: false } };
 export const dynamic = "force-dynamic";
+
+const when = (iso: string) => new Intl.DateTimeFormat("es-PE", { dateStyle: "medium", timeStyle: "short" }).format(new Date(iso));
 
 export default async function Admin() {
   await requireAdmin();
@@ -22,34 +24,31 @@ export default async function Admin() {
 
   return (
     <div className="wrap section">
-      <header className="page-head admin-head">
-        <div>
-          <p className="eyebrow">Panel de la casa</p>
-          <h1>Bienvenido, hombre de hojalata</h1>
-        </div>
+      <header className="admin-head">
+        <h1>Panel</h1>
         <div className="actions">
-          <Link href="/admin/nuevo" className="btn primary">+ Nuevo cuento</Link>
+          <Link href="/admin/nuevo" className="btn primary">Nuevo cuento</Link>
           <form action={logout}><button className="btn">Salir</button></form>
         </div>
       </header>
 
       {volatile && (
         <p className="notice">
-          Atención: en Vercel falta conectar una base de datos (Upstash Redis) y Vercel Blob. Mientras tanto, lo que subas no será permanente. Mira el README.
+          En Vercel falta conectar Upstash Redis y Vercel Blob; mientras tanto, lo que subas no será permanente. Mira el README.
         </p>
       )}
 
       <section className="admin-block">
-        <h2>Mis cuentos subidos <small>({mine.length})</small></h2>
+        <h2>Mis cuentos <small>({mine.length})</small></h2>
         {mine.length === 0 ? (
-          <p className="empty-note">Todavía no has subido ninguno desde el panel. Los {allStories.length} cuentos del blog original ya están en la casa.</p>
+          <p className="empty-note">Aún no has subido cuentos desde el panel. Los {allStories.length} del blog original ya están publicados.</p>
         ) : (
           <ul className="admin-list">
             {mine.map((s) => (
               <li key={s.slug}>
-                <div>
+                <div className="grow">
                   <strong>{s.title}</strong>
-                  <small>{s.kind} · {s.words} palabras {s.draft && <span className="chip">borrador</span>}</small>
+                  <small>{s.words} palabras{s.draft ? " · borrador" : ""}</small>
                 </div>
                 <div className="row-actions">
                   <Link href={`/cuentos/${s.slug}`}>Ver</Link>
@@ -69,13 +68,19 @@ export default async function Admin() {
         ) : (
           <ul className="admin-list">
             {flat.map((c) => (
-              <li key={c.id}>
-                <div>
+              <li key={c.id} style={{ flexWrap: "wrap" }}>
+                <div className="grow">
                   <strong>{c.name}</strong> en <Link href={`/cuentos/${c.slug}#comentarios`}>{titles.get(c.slug) ?? c.slug}</Link>
-                  <small>{new Intl.DateTimeFormat("es-PE", { dateStyle: "medium", timeStyle: "short" }).format(new Date(c.date))}</small>
+                  <small>{when(c.date)}</small>
                   <p className="said">{c.text}</p>
+                  {c.reply && (
+                    <div className="reply-box">
+                      <strong>Tu respuesta</strong>
+                      {c.reply.text}
+                    </div>
+                  )}
                 </div>
-                <div className="row-actions"><DeleteCommentButton slug={c.slug} id={c.id} /></div>
+                <CommentActions slug={c.slug} id={c.id} reply={c.reply} />
               </li>
             ))}
           </ul>

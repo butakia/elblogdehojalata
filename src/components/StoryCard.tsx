@@ -8,16 +8,16 @@ export default function StoryCard({ story, priority = false }: { story: Story; p
       <Link href={`/cuentos/${story.slug}`} className="card-link">
         <div className={`card-cover ${story.cover ? "" : "no-cover"}`}>
           {story.cover ? (
-            <Image src={story.cover} alt="" fill sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 360px" priority={priority} />
+            <Image src={story.cover} alt="" fill sizes="(max-width: 620px) 92vw, (max-width: 960px) 46vw, 340px" priority={priority} />
           ) : (
             <span aria-hidden>{story.title.slice(0, 1)}</span>
           )}
         </div>
         <div className="card-body">
-          <p className="meta">
-            <span className="chip">{story.kind}</span> {story.minutes} min · {formatDate(story.date)}
-          </p>
           <h3>{story.title}</h3>
+          <p className="meta">
+            {story.kind === "microcuento" ? "Microcuento" : "Cuento"} · {story.minutes} min · {formatDate(story.date)}
+          </p>
           <p className="excerpt">{story.excerpt}</p>
         </div>
       </Link>

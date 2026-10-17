@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 export const THEMES = [
   { id: "tinta", name: "Tinta", hint: "Papel crema y tinta sepia" },
   { id: "hojalata", name: "Hojalata", hint: "Taller nocturno de metal y ámbar" },
-  { id: "cheshire", name: "Cheshire", hint: "Morado, sonrisa y fantasía" },
 ] as const;
 
 export default function ThemeSwitcher() {
@@ -33,7 +32,7 @@ export default function ThemeSwitcher() {
       </button>
       {open && (
         <div className="theme-menu" role="menu">
-          <p className="eyebrow">Propuesta de diseño</p>
+          <p>Diseño</p>
           {THEMES.map((t) => (
             <button key={t.id} role="menuitemradio" aria-checked={theme === t.id} className={theme === t.id ? "on" : ""} onClick={() => pick(t.id)}>
               <strong>{t.name}</strong>

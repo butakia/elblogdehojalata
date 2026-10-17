@@ -3,14 +3,14 @@ import * as cheerio from "cheerio";
 
 const KEEP = new Set(["p", "h2", "h3", "blockquote", "ul", "ol", "li", "strong", "em", "a", "br", "hr", "figure", "img", "figcaption"]);
 const RENAME: Record<string, string> = { b: "strong", i: "em", h1: "h2", h4: "h3", h5: "h3", h6: "h3", div: "p" };
+const ALIGNABLE = new Set(["p", "h2", "h3", "blockquote", "li"]);
 
 const safeUrl = (u: string) => /^(https?:\/\/|\/|mailto:)/i.test(u.trim());
 
-/** Deja solo etiquetas y atributos seguros del editor. */
+/** Deja solo etiquetas y atributos seguros del editor (conserva la alineación del texto). */
 export function sanitizeHtml(input: string): string {
   const $ = cheerio.load(`<div id="r">${input}</div>`, null, false);
   $("script, style, iframe, object, embed, form, input, button, svg").remove();
-  // de adentro hacia afuera
   $("#r *")
     .toArray()
     .reverse()
@@ -28,6 +28,10 @@ export function sanitizeHtml(input: string): string {
       }
       const attrs = { ...el.attribs };
       for (const a of Object.keys(attrs)) $el.removeAttr(a);
+      if (ALIGNABLE.has(name)) {
+        const align = /text-align\s*:\s*(left|right|center|justify)/i.exec(attrs.style || "")?.[1]?.toLowerCase();
+        if (align) $el.attr("style", `text-align:${align}`);
+      }
       if (name === "a" && attrs.href && safeUrl(attrs.href)) {
         $el.attr({ href: attrs.href.trim(), target: "_blank", rel: "noopener noreferrer" });
       } else if (name === "a") {
@@ -40,12 +44,10 @@ export function sanitizeHtml(input: string): string {
         } else $el.remove();
       }
     });
-  // texto suelto en la raíz → párrafos
   const root = $("#r");
   root.contents().each((_, n) => {
     if (n.type === "text" && (n as unknown as { data: string }).data.trim()) $(n).replaceWith(`<p>${$.text([n])}</p>`);
   });
-  // párrafos vacíos y figuras sin imagen
   root.find("p, h2, h3, blockquote, li").each((_, el) => {
     if (!$(el).text().trim() && !$(el).find("img").length) $(el).remove();
   });

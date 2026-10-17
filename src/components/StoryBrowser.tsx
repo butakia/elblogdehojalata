@@ -38,7 +38,7 @@ export default function StoryBrowser({ stories }: { stories: Story[] }) {
           <StoryCard key={s.slug} story={s} priority={i < 2} />
         ))}
       </div>
-      {!shown.length && <p className="empty">Nada por aquí… el gato se lo comió.</p>}
+      {!shown.length && <p className="empty">No hay resultados.</p>}
     </>
   );
 }
