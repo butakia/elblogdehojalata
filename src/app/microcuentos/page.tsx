@@ -3,7 +3,7 @@ import Link from "next/link";
 import { formatDate } from "@/lib/content";
 import { getPosts } from "@/lib/stories";
 
-export const metadata: Metadata = { title: "Terraza de los microcuentos" };
+export const metadata: Metadata = { title: "Balcón de mis microcuentos" };
 export const dynamic = "force-dynamic";
 
 export default async function Microcuentos() {
@@ -11,7 +11,7 @@ export default async function Microcuentos() {
   return (
     <div className="wrap section narrow">
       <header className="page-head">
-        <h1>Terraza de los microcuentos</h1>
+        <h1>Balcón de mis microcuentos</h1>
         <p className="lead">Historias breves, para leer de pie.</p>
       </header>
       {posts.length === 0 ? (

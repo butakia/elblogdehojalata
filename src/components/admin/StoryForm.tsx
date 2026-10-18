@@ -48,7 +48,7 @@ export default function StoryForm({ story, wip, section = "cuento" }: { story?: 
   const [banner, setBanner] = useState<Banner>(null);
   const [pending, start] = useTransition();
 
-  // Cuento normal o microcuento (los microcuentos van a la Terraza); textamentos y ensayos no cambian
+  // Cuento normal o microcuento (los microcuentos van al Balcón); textamentos y ensayos no cambian
   const fixed = section === "textamento" || section === "ensayo";
   const effSection: Section = fixed ? section : kind;
   const content: Content = { title, html, cover, coverStyle, coverSize, kind: fixed ? undefined : kind };
@@ -234,7 +234,7 @@ export default function StoryForm({ story, wip, section = "cuento" }: { story?: 
             <button type="button" className={kind === "cuento" ? "on" : ""} onClick={() => setKind("cuento")}>Cuento</button>
             <button type="button" className={kind === "microcuento" ? "on" : ""} onClick={() => setKind("microcuento")}>Microcuento</button>
           </div>
-          <small className="muted">{kind === "microcuento" ? "Se publicará en la Terraza de los microcuentos." : "Se publicará en el Salón de los cuentos."}</small>
+          <small className="muted">{kind === "microcuento" ? "Se publicará en la Balcón de mis microcuentos." : "Se publicará en el Salón de los cuentos."}</small>
         </div>
       )}
       <label>

@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 const ROOMS = [
   { href: "/cuentos", name: "Salón de los cuentos" },
-  { href: "/microcuentos", name: "Terraza de los microcuentos" },
+  { href: "/microcuentos", name: "Balcón de mis microcuentos" },
   { href: "/ensayos", name: "Cocina de los ensayos" },
   { href: "/proyectos", name: "Cochera de los proyectos" },
 ];
