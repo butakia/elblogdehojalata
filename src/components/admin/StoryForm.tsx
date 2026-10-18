@@ -234,7 +234,7 @@ export default function StoryForm({ story, wip, section = "cuento" }: { story?: 
             <button type="button" className={kind === "cuento" ? "on" : ""} onClick={() => setKind("cuento")}>Cuento</button>
             <button type="button" className={kind === "microcuento" ? "on" : ""} onClick={() => setKind("microcuento")}>Microcuento</button>
           </div>
-          <small className="muted">{kind === "microcuento" ? "Se publicará en la Balcón de mis microcuentos." : "Se publicará en el Salón de los cuentos."}</small>
+          <small className="muted">{kind === "microcuento" ? "Se publicará en el Balcón de mis microcuentos." : "Se publicará en el Salón de los cuentos."}</small>
         </div>
       )}
       <label>
