@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Newsreader } from "next/font/google";
 import "./globals.css";
 import "./extras.css";
 import { Header, BottomNav } from "@/components/SiteChrome";
+import NavLoader from "@/components/NavLoader";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 const display = Cormorant_Garamond({ variable: "--font-display", subsets: ["latin"], weight: ["500", "600", "700"], display: "swap" });
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <main>{children}</main>
         <BottomNav />
         <ThemeSwitcher />
+        <NavLoader />
       </body>
     </html>
   );

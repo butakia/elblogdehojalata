@@ -31,6 +31,7 @@ export default async function Home() {
         <div>
           <h1>Saludos, visitante</h1>
           <p className="greet">Te invito a recorrer esta casa de hojalata y descubrir algunos de los textos que alojo celosamente en ella.</p>
+          <p className="greet secret">En el <Link href="/textamentos">Jardín de los textamentos</Link> guardo algunos de mis secretos.</p>
         </div>
       </section>
 

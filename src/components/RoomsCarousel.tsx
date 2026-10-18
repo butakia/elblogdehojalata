@@ -2,27 +2,16 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import CatLoader from "./CatLoader";
 
 type Room = { href: string; name: string };
 
 /**
  * Tarjetas pequeñas de las habitaciones. Si no caben en el ancho disponible,
  * se desplazan solas despacio en bucle (se pausan al tocar o pasar el cursor).
- * Al entrar a una habitación aparece el cargador con la sonrisa del gato.
  */
 export default function RoomsCarousel({ rooms }: { rooms: Room[] }) {
   const rail = useRef<HTMLDivElement>(null);
   const [loop, setLoop] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  // Si se vuelve atrás (bfcache), ocultar el cargador
-  useEffect(() => {
-    const reset = () => setLoading(false);
-    window.addEventListener("pageshow", reset);
-    return () => window.removeEventListener("pageshow", reset);
-  }, []);
-
   // ¿Caben todas? Si no, activar el carrusel.
   useEffect(() => {
     const el = rail.current;
@@ -98,14 +87,7 @@ export default function RoomsCarousel({ rooms }: { rooms: Room[] }) {
             const dup = i >= rooms.length;
             return (
               <li key={`${r.href}-${i}`} aria-hidden={dup || undefined}>
-                <Link
-                  href={r.href}
-                  tabIndex={dup ? -1 : undefined}
-                  onClick={(e) => {
-                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-                    setLoading(true);
-                  }}
-                >
+                <Link href={r.href} tabIndex={dup ? -1 : undefined}>
                   <span>{r.name}</span>
                 </Link>
               </li>
@@ -113,7 +95,6 @@ export default function RoomsCarousel({ rooms }: { rooms: Room[] }) {
           })}
         </ul>
       </div>
-      {loading && <CatLoader />}
     </>
   );
 }

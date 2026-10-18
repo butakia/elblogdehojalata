@@ -189,3 +189,6 @@
 .story-nav a { min-width: 0; max-width: 100%; }
 .story-nav .nt { min-width: 0; overflow-wrap: anywhere; }
 @media (max-width: 719px) { .story-nav { grid-template-columns: minmax(0, 1fr); } .story-nav a, .story-nav a.next { width: 100%; overflow: hidden; } .story-nav .nt { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; overflow-wrap: normal; } }
+
+.hero p.greet.secret { margin-top: 0.8rem; font-size: 1rem; font-style: italic; color: var(--muted); }
+.hero p.greet.secret a { color: var(--accent); }
