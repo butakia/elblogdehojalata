@@ -1,16 +1,23 @@
 import type { Metadata } from "next";
+import GateForm from "@/components/GateForm";
 import StoryView from "@/components/StoryView";
-import { getStory } from "@/lib/stories";
-import { shareMetadata } from "@/lib/meta";
+import { isUnlocked } from "@/lib/gate";
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const story = await getStory((await params).slug);
-  if (!story || story.draft) return { title: "Borrador", robots: { index: false } };
-  return shareMetadata(story, "/textamentos");
-}
+// Sección privada: las vistas previas no revelan título ni imagen
+export const metadata: Metadata = { title: "Textamentos", description: "Sección privada.", robots: { index: false } };
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
-  return <StoryView slug={(await params).slug} section="textamento" />;
+  const { slug } = await params;
+  if (!(await isUnlocked())) {
+    return (
+      <div className="wrap section narrow" style={{ textAlign: "center" }}>
+        <h1>Textamentos</h1>
+        <p className="lead" style={{ marginInline: "auto" }}>Esta sección es privada. Escribe la contraseña para entrar.</p>
+        <GateForm next={`/textamentos/${slug}`} />
+      </div>
+    );
+  }
+  return <StoryView slug={slug} section="textamento" />;
 }

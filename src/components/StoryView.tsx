@@ -30,11 +30,11 @@ export default async function StoryView({ slug, section }: { slug: string; secti
   const comments = await getComments(story.slug);
   const { base, back } = LABELS[section];
 
-  // La portada va dentro del texto (flotante), salvo que se elija "banner".
+  // Todo texto con imagen principal lleva un banner corto y difuminado arriba; ademas la imagen flota dentro del texto salvo que se elija "solo banner".
   const coverStyle = story.coverStyle ?? "right";
   const coverSize = story.coverSize ?? "m";
-  const banner = !!story.cover && coverStyle === "banner";
-  const floating = !!story.cover && !banner;
+  const banner = !!story.cover;
+  const floating = !!story.cover && coverStyle !== "banner";
 
   return (
     <article className="story">
@@ -101,6 +101,9 @@ export default async function StoryView({ slug, section }: { slug: string; secti
         <CommentForm slug={story.slug} />
       </section>
       <p className="back"><Link href={base}>{back}</Link></p>
+      <div className="explore">
+        <Link href="/" className="btn primary">Explorar El blog de Hojalata</Link>
+      </div>
     </article>
   );
 }

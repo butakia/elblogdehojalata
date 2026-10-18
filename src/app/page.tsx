@@ -3,6 +3,7 @@ import Image from "next/image";
 import RoomsCarousel from "@/components/RoomsCarousel";
 import StoryRow from "@/components/StoryRow";
 import { BOOKS } from "@/lib/books";
+import { isUnlocked } from "@/lib/gate";
 import { getPosts, getStories } from "@/lib/stories";
 
 export const dynamic = "force-dynamic";
@@ -17,7 +18,8 @@ const ROOMS = [
 ];
 
 export default async function Home() {
-  const [stories, posts] = await Promise.all([getStories(), getPosts()]);
+  const unlocked = await isUnlocked();
+  const [stories, posts] = await Promise.all([getStories(), unlocked ? getPosts() : Promise.resolve([])]);
 
   return (
     <>
@@ -68,7 +70,9 @@ export default async function Home() {
             <h2>Novedades</h2>
             <Link href="/textamentos">Textamentos</Link>
           </div>
-          {posts.length === 0 ? (
+          {!unlocked ? (
+            <p className="empty-note">Los textamentos son privados. <Link href="/textamentos">Entrar con contraseña</Link></p>
+          ) : posts.length === 0 ? (
             <p className="empty-note">Pronto habrá novedades en Textamentos.</p>
           ) : (
             <ul className="link-list">

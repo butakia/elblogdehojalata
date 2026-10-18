@@ -1,12 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import GateForm from "@/components/GateForm";
 import { formatDate } from "@/lib/content";
+import { isUnlocked } from "@/lib/gate";
 import { getPosts } from "@/lib/stories";
 
-export const metadata: Metadata = { title: "Textamentos" };
+export const metadata: Metadata = { title: "Textamentos", robots: { index: false } };
 export const dynamic = "force-dynamic";
 
 export default async function Textamentos() {
+  if (!(await isUnlocked())) {
+    return (
+      <div className="wrap section narrow" style={{ textAlign: "center" }}>
+        <h1>Textamentos</h1>
+        <p className="lead" style={{ marginInline: "auto" }}>Esta sección es privada. Escribe la contraseña para entrar.</p>
+        <GateForm next="/textamentos" />
+      </div>
+    );
+  }
   const posts = await getPosts();
   return (
     <div className="wrap section narrow">

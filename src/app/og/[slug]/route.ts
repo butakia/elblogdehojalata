@@ -35,7 +35,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
 
   if (slug !== "default") {
     const story = await getStory(slug);
-    if (story && !story.draft && story.cover) {
+    if (story && !story.draft && story.section !== "textamento" && story.cover) {
       const src = await readImage(story.cover, origin);
       if (src) {
         try {

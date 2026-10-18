@@ -14,7 +14,7 @@ type Content = { title: string; html: string; cover: string | null; coverStyle: 
 type Initial = Content & { slug: string; draft: boolean; updatedAt?: string };
 type Wip = Content & { savedAt: string };
 
-const STYLES: [CoverStyle, string][] = [["right", "Derecha"], ["left", "Izquierda"], ["center", "Centro"], ["banner", "Banner arriba"]];
+const STYLES: [CoverStyle, string][] = [["right", "Derecha"], ["left", "Izquierda"], ["center", "Centro"], ["banner", "Solo banner"]];
 const SIZES: [CoverSize, string][] = [["s", "Pequeña"], ["m", "Mediana"], ["l", "Grande"]];
 const BASES: Record<Section, string> = { cuento: "/cuentos", textamento: "/textamentos", ensayo: "/ensayos" };
 
@@ -243,7 +243,7 @@ export default function StoryForm({ story, wip, section = "cuento" }: { story?: 
                 </div>
               </div>
             )}
-            <small className="muted">El texto se acomoda alrededor de la imagen, como en Word.</small>
+            <small className="muted">El banner de arriba se pone solo. Aquí eliges si la imagen también flota dentro del texto, como en Word, o si queda solo el banner.</small>
           </div>
         )}
       </div>
