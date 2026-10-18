@@ -37,6 +37,10 @@ export function sanitizeHtml(input: string): string {
         const keep = attrs.class.split(/ +/).filter((c) => FIGURE_CLASSES.has(c));
         if (keep.length) $el.attr("class", keep.join(" "));
       }
+      if (name === "figure") {
+        const w = /width\s*:\s*(\d{1,3})(?:\.\d+)?%/i.exec(attrs.style || "")?.[1];
+        if (w) $el.attr("style", `width:${Math.max(10, Math.min(100, Number(w)))}%`);
+      }
       if (name === "a" && attrs.href && safeUrl(attrs.href)) {
         $el.attr({ href: attrs.href.trim(), target: "_blank", rel: "noopener noreferrer" });
       } else if (name === "a") {

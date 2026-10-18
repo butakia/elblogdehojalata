@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { autosaveStory, discardWip, saveStory } from "@/app/admin/actions";
 import ImageInput from "./ImageInput";
-import RichEditor from "./RichEditor";
+import MobilePreview from "./MobilePreview";
+import RichEditor, { type EditorHandle } from "./RichEditor";
 
 type CoverStyle = "right" | "left" | "center" | "banner";
 type CoverSize = "s" | "m" | "l";
@@ -14,8 +15,6 @@ type Content = { title: string; html: string; cover: string | null; coverStyle: 
 type Initial = Content & { slug: string; draft: boolean; updatedAt?: string };
 type Wip = Content & { savedAt: string };
 
-const STYLES: [CoverStyle, string][] = [["right", "Derecha"], ["left", "Izquierda"], ["center", "Centro"], ["banner", "Solo banner"]];
-const SIZES: [CoverSize, string][] = [["s", "Pequeña"], ["m", "Mediana"], ["l", "Grande"]];
 const BASES: Record<Section, string> = { cuento: "/cuentos", textamento: "/textamentos", ensayo: "/ensayos" };
 
 // Comparación por texto visible (el HTML del editor y el guardado pueden diferir en detalles)
@@ -28,12 +27,14 @@ type Banner = { source: "device" | "server"; at: string; content: Content } | nu
 
 export default function StoryForm({ story, wip, section = "cuento" }: { story?: Initial; wip?: Wip | null; section?: Section }) {
   const router = useRouter();
+  const editor = useRef<EditorHandle>(null);
   const [title, setTitle] = useState(story?.title ?? "");
   const [html, setHtml] = useState(story?.html ?? "");
   const [initialHtml, setInitialHtml] = useState(story?.html ?? "");
   const [editorKey, setEditorKey] = useState(0);
   const [cover, setCover] = useState<string | null>(story?.cover ?? null);
-  const [coverStyle, setCoverStyle] = useState<CoverStyle>(story?.coverStyle ?? "right");
+  // Las imágenes del texto viven dentro del texto; la imagen principal se muestra como banner y miniatura
+  const [coverStyle, setCoverStyle] = useState<CoverStyle>(story?.coverStyle ?? "banner");
   const [coverSize, setCoverSize] = useState<CoverSize>(story?.coverSize ?? "m");
   const [slug, setSlug] = useState<string | null>(story?.slug ?? null);
   const [isDraft, setIsDraft] = useState(story ? story.draft : true);
@@ -50,7 +51,7 @@ export default function StoryForm({ story, wip, section = "cuento" }: { story?: 
 
   const slugRef = useRef<string | null>(story?.slug ?? null);
   const latest = useRef<Content>(content);
-  const lastSaved = useRef<string>(snap({ title: story?.title ?? "", html: story?.html ?? "", cover: story?.cover ?? null, coverStyle: story?.coverStyle ?? "right", coverSize: story?.coverSize ?? "m" }));
+  const lastSaved = useRef<string>(snap({ title: story?.title ?? "", html: story?.html ?? "", cover: story?.cover ?? null, coverStyle: story?.coverStyle ?? "banner", coverSize: story?.coverSize ?? "m" }));
   const inFlight = useRef(false);
   const again = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -72,7 +73,7 @@ export default function StoryForm({ story, wip, section = "cuento" }: { story?: 
   // ── Recuperación al abrir: copia del dispositivo o copia de trabajo del servidor ──
   useEffect(() => {
     const base = Date.parse(story?.updatedAt ?? "") || 0;
-    const initialContent: Content = { title: story?.title ?? "", html: story?.html ?? "", cover: story?.cover ?? null, coverStyle: story?.coverStyle ?? "right", coverSize: story?.coverSize ?? "m" };
+    const initialContent: Content = { title: story?.title ?? "", html: story?.html ?? "", cover: story?.cover ?? null, coverStyle: story?.coverStyle ?? "banner", coverSize: story?.coverSize ?? "m" };
     let found: Banner = null;
     try {
       const raw = localStorage.getItem(localKey(story?.slug ?? null, section));
@@ -213,37 +214,25 @@ export default function StoryForm({ story, wip, section = "cuento" }: { story?: 
       )}
       <div className="status-line">
         <span className={`chip-status ${published ? "pub" : "draft"}`}>{published ? "Publicado" : "Borrador · solo tú lo ves"}</span>
-        {slug && <Link href="/admin" className="muted">← Panel</Link>}
+        <span className="status-links">
+          <MobilePreview data={{ title, html, cover }} />
+          {slug && <Link href="/admin" className="muted">← Panel</Link>}
+        </span>
       </div>
       <label>
         Título
         <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={120} className="title-input" placeholder="Sin título" />
       </label>
-      <RichEditor key={editorKey} initialHtml={initialHtml} onChange={onEditor} />
+      <RichEditor key={editorKey} ref={editor} initialHtml={initialHtml} onChange={onEditor} />
       <div className="field">
-        <span className="label">Imagen principal <small>(opcional)</small></span>
+        <span className="label">Imagen principal <small>(banner de arriba y miniatura)</small></span>
         <ImageInput value={cover} onChange={setCover} />
         {cover && (
           <div className="cover-opts">
-            <div className="row">
-              <span>Posición</span>
-              <div className="seg" role="group" aria-label="Posición de la imagen">
-                {STYLES.map(([id, l]) => (
-                  <button key={id} type="button" className={coverStyle === id ? "on" : ""} onClick={() => setCoverStyle(id)}>{l}</button>
-                ))}
-              </div>
-            </div>
-            {coverStyle !== "banner" && (
-              <div className="row">
-                <span>Tamaño</span>
-                <div className="seg" role="group" aria-label="Tamaño de la imagen">
-                  {SIZES.map(([id, l]) => (
-                    <button key={id} type="button" className={coverSize === id ? "on" : ""} onClick={() => setCoverSize(id)}>{l}</button>
-                  ))}
-                </div>
-              </div>
-            )}
-            <small className="muted">El banner de arriba se pone solo. Aquí eliges si la imagen también flota dentro del texto, como en Word, o si queda solo el banner.</small>
+            <button type="button" className="btn small" onClick={() => editor.current?.insertFigure(cover, true)}>
+              Insertar también dentro del texto
+            </button>
+            <small className="muted">Las imágenes dentro del texto se mueven, se agrandan y se achican directamente en el editor.</small>
           </div>
         )}
       </div>

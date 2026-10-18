@@ -1,35 +1,41 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useImperativeHandle, useRef, useState } from "react";
 import { importUrl, uploadFile } from "./upload";
 
-type Props = { initialHtml: string; onChange: (html: string) => void };
+export type EditorHandle = { insertFigure: (url: string, atStart?: boolean) => void };
+
+type Props = { initialHtml: string; onChange: (html: string) => void; ref?: React.Ref<EditorHandle> };
 type Align = "left" | "center" | "right";
 type Size = "s" | "m" | "l";
+type FigState = { align: Align; size: Size | null; width: number };
 
 const ALIGNS: [Align, string][] = [["left", "Izquierda"], ["center", "Centro"], ["right", "Derecha"]];
 const SIZES: [Size, string][] = [["s", "Pequeña"], ["m", "Mediana"], ["l", "Grande"]];
+const SIZE_WIDTH: Record<Size, number> = { s: 30, m: 42, l: 58 };
 
 function escapeHtml(s: string) {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-function figureState(fig: HTMLElement): { align: Align; size: Size } {
+function figureState(fig: HTMLElement): FigState {
   const c = fig.classList;
   const align: Align = c.contains("img-left") ? "left" : c.contains("img-center") ? "center" : "right";
-  const size: Size = c.contains("img-s") ? "s" : c.contains("img-l") ? "l" : "m";
-  return { align, size };
+  const custom = /width:\s*(\d+(?:\.\d+)?)%/.exec(fig.getAttribute("style") || "")?.[1];
+  const size: Size | null = custom ? null : c.contains("img-s") ? "s" : c.contains("img-l") ? "l" : "m";
+  return { align, size, width: custom ? Math.round(Number(custom)) : SIZE_WIDTH[size ?? "m"] };
 }
 
-export default function RichEditor({ initialHtml, onChange }: Props) {
+export default function RichEditor({ initialHtml, onChange, ref }: Props) {
   const box = useRef<HTMLDivElement>(null);
   const picker = useRef<HTMLInputElement>(null);
   const saved = useRef<Range | null>(null);
   const fig = useRef<HTMLElement | null>(null);
+  const dragFig = useRef<HTMLElement | null>(null);
   const [words, setWords] = useState(0);
   const [status, setStatus] = useState("");
   const [over, setOver] = useState(false);
-  const [img, setImg] = useState<{ align: Align; size: Size } | null>(null);
+  const [img, setImg] = useState<FigState | null>(null);
 
   useEffect(() => {
     if (!box.current) return;
@@ -38,6 +44,23 @@ export default function RichEditor({ initialHtml, onChange }: Props) {
     sync();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useImperativeHandle(ref, () => ({
+    insertFigure(url: string, atStart = false) {
+      const el = box.current;
+      if (!el) return;
+      const f = document.createElement("figure");
+      f.className = "img-right img-m";
+      const im = document.createElement("img");
+      im.src = url;
+      im.alt = "";
+      f.appendChild(im);
+      if (atStart) el.insertBefore(f, el.firstChild);
+      else el.appendChild(f);
+      sync();
+      selectFigure(f);
+    },
+  }));
 
   function sync() {
     const el = box.current;
@@ -79,7 +102,7 @@ export default function RichEditor({ initialHtml, onChange }: Props) {
     sync();
   }
 
-  // ── imagen seleccionada (posición y tamaño, estilo Word) ──
+  // ── imagen seleccionada: posición, tamaño y lugar dentro del texto, estilo Word ──
   function selectFigure(f: HTMLElement | null) {
     box.current?.querySelectorAll("figure.selected").forEach((e) => e.classList.remove("selected"));
     fig.current = f;
@@ -89,30 +112,75 @@ export default function RichEditor({ initialHtml, onChange }: Props) {
     } else setImg(null);
   }
 
+  function refresh() {
+    if (fig.current) setImg(figureState(fig.current));
+    sync();
+  }
+
   function setAlign(a: Align) {
     const f = fig.current;
     if (!f) return;
     f.classList.remove("img-left", "img-right", "img-center");
     f.classList.add(`img-${a}`);
-    if (!f.classList.contains("img-s") && !f.classList.contains("img-m") && !f.classList.contains("img-l")) f.classList.add("img-m");
-    setImg(figureState(f));
-    sync();
+    refresh();
   }
 
   function setSize(s: Size) {
     const f = fig.current;
     if (!f) return;
+    f.removeAttribute("style");
     f.classList.remove("img-s", "img-m", "img-l");
     f.classList.add(`img-${s}`);
-    if (!f.classList.contains("img-left") && !f.classList.contains("img-center") && !f.classList.contains("img-right")) f.classList.add("img-right");
-    setImg(figureState(f));
-    sync();
+    refresh();
+  }
+
+  function setWidth(w: number) {
+    const f = fig.current;
+    if (!f) return;
+    f.classList.remove("img-s", "img-m", "img-l");
+    f.style.width = `${w}%`;
+    refresh();
   }
 
   function removeFigure() {
     fig.current?.remove();
     selectFigure(null);
     sync();
+  }
+
+  // El bloque de nivel superior que contiene un nodo
+  function topBlock(n: Node | null): HTMLElement | null {
+    const root = box.current;
+    let el = n instanceof HTMLElement ? n : n?.parentElement ?? null;
+    while (el && el.parentElement !== root) el = el.parentElement;
+    return el && root && el.parentElement === root ? el : null;
+  }
+
+  function moveBy(dir: -1 | 1) {
+    const f = fig.current;
+    const b = topBlock(f);
+    if (!f || !b || !box.current) return;
+    if (dir < 0) {
+      const prev = b.previousElementSibling;
+      if (prev) box.current.insertBefore(b, prev);
+    } else {
+      const next = b.nextElementSibling;
+      if (next) box.current.insertBefore(next, b);
+    }
+    f.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    refresh();
+  }
+
+  function dropTarget(x: number, y: number) {
+    const r = document.caretRangeFromPoint?.(x, y);
+    const b = topBlock(r?.startContainer ?? null);
+    if (!b) return null;
+    const rect = b.getBoundingClientRect();
+    return { block: b, after: y > rect.top + rect.height / 2 };
+  }
+
+  function clearDropMarks() {
+    box.current?.querySelectorAll(".drop-before, .drop-after").forEach((e) => e.classList.remove("drop-before", "drop-after"));
   }
 
   async function handleFiles(files: File[]) {
@@ -179,7 +247,15 @@ export default function RichEditor({ initialHtml, onChange }: Props) {
               <button key={id} type="button" className={img.size === id ? "on" : ""} onMouseDown={(e) => e.preventDefault()} onClick={() => setSize(id)}>{label}</button>
             ))}
           </div>
-          <button type="button" className="danger" onMouseDown={(e) => e.preventDefault()} onClick={removeFigure}>Quitar imagen</button>
+          <label className="slider">
+            <span>{img.width}%</span>
+            <input type="range" min={15} max={100} step={5} value={img.width} onChange={(e) => setWidth(Number(e.target.value))} aria-label="Ancho de la imagen" />
+          </label>
+          <div className="group" role="group" aria-label="Mover">
+            <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => moveBy(-1)} title="Subir un párrafo">↑ Subir</button>
+            <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => moveBy(1)} title="Bajar un párrafo">↓ Bajar</button>
+          </div>
+          <button type="button" className="danger" onMouseDown={(e) => e.preventDefault()} onClick={removeFigure}>Quitar</button>
         </div>
       )}
       <div
@@ -196,6 +272,19 @@ export default function RichEditor({ initialHtml, onChange }: Props) {
         onKeyUp={remember}
         onMouseUp={remember}
         onClick={(e) => selectFigure((e.target as HTMLElement).closest("figure"))}
+        onDragStart={(e) => {
+          const f = (e.target as HTMLElement).closest("figure") as HTMLElement | null;
+          if (f && box.current?.contains(f)) {
+            dragFig.current = f;
+            e.dataTransfer.effectAllowed = "move";
+            e.dataTransfer.setData("text/plain", "imagen");
+            selectFigure(f);
+          }
+        }}
+        onDragEnd={() => {
+          dragFig.current = null;
+          clearDropMarks();
+        }}
         onPaste={(e) => {
           const files = Array.from(e.clipboardData.files);
           if (files.length) {
@@ -210,10 +299,35 @@ export default function RichEditor({ initialHtml, onChange }: Props) {
           document.execCommand("insertHTML", false, html);
           sync();
         }}
-        onDragOver={(e) => { if (e.dataTransfer.types.includes("Files")) { e.preventDefault(); setOver(true); } }}
+        onDragOver={(e) => {
+          if (dragFig.current) {
+            e.preventDefault();
+            const t = dropTarget(e.clientX, e.clientY);
+            clearDropMarks();
+            if (t && t.block !== dragFig.current) t.block.classList.add(t.after ? "drop-after" : "drop-before");
+          } else if (e.dataTransfer.types.includes("Files")) {
+            e.preventDefault();
+            setOver(true);
+          }
+        }}
         onDragLeave={() => setOver(false)}
         onDrop={(e) => {
           setOver(false);
+          // Mover una imagen ya puesta a otro lugar del texto
+          if (dragFig.current) {
+            e.preventDefault();
+            const f = dragFig.current;
+            const t = dropTarget(e.clientX, e.clientY);
+            clearDropMarks();
+            dragFig.current = null;
+            if (t && box.current && t.block !== f) {
+              const holder = topBlock(f) ?? f;
+              box.current.insertBefore(holder, t.after ? t.block.nextSibling : t.block);
+              selectFigure(f);
+              sync();
+            }
+            return;
+          }
           if (!e.dataTransfer.files.length) return;
           e.preventDefault();
           const r = document.caretRangeFromPoint?.(e.clientX, e.clientY);
@@ -228,7 +342,7 @@ export default function RichEditor({ initialHtml, onChange }: Props) {
       />
       <div className="editor-foot">
         <span>{words} palabras · ≈ {Math.max(1, Math.round(words / 200))} min</span>
-        <span role="status">{status || (img ? "" : "Toca una imagen para cambiar su posición y tamaño")}</span>
+        <span role="status">{status || (img ? "Arrastra la imagen o usa ↑ ↓ para moverla" : "Toca una imagen para moverla y cambiar su tamaño")}</span>
       </div>
     </div>
   );

@@ -14,7 +14,7 @@ export default function Sobre() {
       </header>
       <div className="about-text">
         <p>
-          Soy {AUTHOR} (Angel Omar Oliden Pacherrez). Escribo cuentos y también dibujo. Este blog nació en 2019 como una casa de hojalata para guardar mis textos, y en él conviven el humor, la ironía y la ternura de lo cotidiano.
+          Soy {AUTHOR} —me gusta apodarme el hombre de hojalata—. Escribo cuentos, cuentitos nada más. Este blog nació en 2019 como una casa de hojalata para guardar mis textos, y en él conviven el humor, la ironía y la ternura de lo cotidiano.
         </p>
         <p>
           He publicado <em>Un padre temporal y otros cuentos</em> y <em>La flor y el bastardo</em>; los encuentras en <Link href="/libros">libros</Link>.

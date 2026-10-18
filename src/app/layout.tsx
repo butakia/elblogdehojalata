@@ -1,11 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Newsreader } from "next/font/google";
-import Link from "next/link";
 import "./globals.css";
 import "./extras.css";
 import { Header, BottomNav } from "@/components/SiteChrome";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
-import { AUTHOR } from "@/lib/content";
 
 const display = Cormorant_Garamond({ variable: "--font-display", subsets: ["latin"], weight: ["500", "600", "700"], display: "swap" });
 const body = Newsreader({ variable: "--font-body", subsets: ["latin"], style: ["normal", "italic"], display: "swap" });
@@ -36,11 +34,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         <Header />
         <main>{children}</main>
-        <footer className="site-footer">
-          <p>
-            © {new Date().getFullYear()} {AUTHOR} · <Link href="/admin" className="footer-admin">Entrar</Link>
-          </p>
-        </footer>
         <BottomNav />
         <ThemeSwitcher />
       </body>

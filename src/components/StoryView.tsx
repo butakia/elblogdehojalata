@@ -59,7 +59,7 @@ export default async function StoryView({ slug, section }: { slug: string; secti
             <Image src={story.cover} alt="" width={640} height={640} sizes="(max-width: 720px) 45vw, 320px" priority />
           </figure>
         )}
-        <div dangerouslySetInnerHTML={{ __html: bodyWithoutCover(story.html, story.cover) }} />
+        <div dangerouslySetInnerHTML={{ __html: floating ? bodyWithoutCover(story.html, story.cover) : story.html }} />
       </div>
       <hr className="story-end" aria-hidden />
       <div className="story-share"><ShareButtons title={story.title} /></div>
