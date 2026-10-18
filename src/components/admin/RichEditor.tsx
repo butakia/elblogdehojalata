@@ -160,6 +160,7 @@ export default function RichEditor({ initialHtml, onChange, ref }: Props) {
     const f = fig.current;
     const b = topBlock(f);
     if (!f || !b || !box.current) return;
+    const y = window.scrollY;
     if (dir < 0) {
       const prev = b.previousElementSibling;
       if (prev) box.current.insertBefore(b, prev);
@@ -167,8 +168,62 @@ export default function RichEditor({ initialHtml, onChange, ref }: Props) {
       const next = b.nextElementSibling;
       if (next) box.current.insertBefore(next, b);
     }
-    f.scrollIntoView({ block: "nearest", behavior: "smooth" });
     refresh();
+    keepInView(f, y);
+  }
+
+  /** Evita que la página salte al mover una imagen: conserva el scroll y solo corrige si la imagen sale de la pantalla. */
+  function keepInView(f: HTMLElement, y: number) {
+    window.scrollTo({ top: y });
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: y });
+      const r = f.getBoundingClientRect();
+      const top = 130; // barras fijas de arriba
+      if (r.top < top) window.scrollBy({ top: r.top - top - 20 });
+      else if (r.bottom > window.innerHeight - 90) window.scrollBy({ top: r.bottom - window.innerHeight + 110 });
+    });
+  }
+
+  /** Pone la imagen justo en el punto indicado, partiendo el párrafo en dos si hace falta (como anclarla en Word). */
+  function placeAt(f: HTMLElement, range: Range | null) {
+    const root = box.current;
+    if (!root || !range) return false;
+    const block = topBlock(range.startContainer);
+    if (!block || block === f) return false;
+    const y = window.scrollY;
+    const textBlock = /^(P|H2|H3|BLOCKQUOTE)$/.test(block.tagName);
+    // Si la imagen vive dentro del mismo bloque que se va a partir, primero se saca
+    const holder = topBlock(f) ?? f;
+    if (holder === block) return false;
+    holder.remove();
+    if (!textBlock) {
+      root.insertBefore(f, block);
+    } else {
+      const tail = document.createRange();
+      tail.setStart(range.startContainer, range.startOffset);
+      tail.setEnd(block, block.childNodes.length);
+      const frag = tail.extractContents();
+      const hasTail = (frag.textContent || "").trim().length > 0 || !!frag.querySelector?.("img");
+      const headEmpty = (block.textContent || "").trim().length === 0 && !block.querySelector("img");
+      if (headEmpty) {
+        // el punto estaba al inicio del bloque: la imagen va antes y el texto se queda entero
+        block.appendChild(frag);
+        root.insertBefore(f, block);
+      } else {
+        root.insertBefore(f, block.nextSibling);
+        if (hasTail) {
+          const rest = document.createElement(block.tagName);
+          const st = block.getAttribute("style");
+          if (st) rest.setAttribute("style", st);
+          rest.appendChild(frag);
+          root.insertBefore(rest, f.nextSibling);
+        }
+      }
+    }
+    selectFigure(f);
+    sync();
+    keepInView(f, y);
+    return true;
   }
 
   function dropTarget(x: number, y: number) {
@@ -252,9 +307,11 @@ export default function RichEditor({ initialHtml, onChange, ref }: Props) {
             <input type="range" min={15} max={100} step={5} value={img.width} onChange={(e) => setWidth(Number(e.target.value))} aria-label="Ancho de la imagen" />
           </label>
           <div className="group" role="group" aria-label="Mover">
-            <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => moveBy(-1)} title="Subir un párrafo">↑ Subir</button>
-            <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => moveBy(1)} title="Bajar un párrafo">↓ Bajar</button>
+            <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => moveBy(-1)} title="Subir un bloque">↑ Subir</button>
+            <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => moveBy(1)} title="Bajar un bloque">↓ Bajar</button>
+            <button type="button" className="here" onMouseDown={(e) => e.preventDefault()} onClick={() => fig.current && placeAt(fig.current, saved.current) } title="Haz clic en el texto donde la quieres y pulsa aquí">⤓ Mover aquí</button>
           </div>
+          <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => selectFigure(null)}>Cerrar</button>
           <button type="button" className="danger" onMouseDown={(e) => e.preventDefault()} onClick={removeFigure}>Quitar</button>
         </div>
       )}
@@ -271,7 +328,11 @@ export default function RichEditor({ initialHtml, onChange, ref }: Props) {
         onBlur={remember}
         onKeyUp={remember}
         onMouseUp={remember}
-        onClick={(e) => selectFigure((e.target as HTMLElement).closest("figure"))}
+        onClick={(e) => {
+          const f = (e.target as HTMLElement).closest("figure") as HTMLElement | null;
+          if (f) selectFigure(f);
+          else remember();
+        }}
         onDragStart={(e) => {
           const f = (e.target as HTMLElement).closest("figure") as HTMLElement | null;
           if (f && box.current?.contains(f)) {
@@ -317,14 +378,17 @@ export default function RichEditor({ initialHtml, onChange, ref }: Props) {
           if (dragFig.current) {
             e.preventDefault();
             const f = dragFig.current;
-            const t = dropTarget(e.clientX, e.clientY);
+            const r = document.caretRangeFromPoint?.(e.clientX, e.clientY) ?? null;
             clearDropMarks();
             dragFig.current = null;
-            if (t && box.current && t.block !== f) {
-              const holder = topBlock(f) ?? f;
-              box.current.insertBefore(holder, t.after ? t.block.nextSibling : t.block);
-              selectFigure(f);
-              sync();
+            if (!placeAt(f, r)) {
+              const t = dropTarget(e.clientX, e.clientY);
+              if (t && box.current && t.block !== f) {
+                const holder = topBlock(f) ?? f;
+                box.current.insertBefore(holder, t.after ? t.block.nextSibling : t.block);
+                selectFigure(f);
+                sync();
+              }
             }
             return;
           }
@@ -342,7 +406,7 @@ export default function RichEditor({ initialHtml, onChange, ref }: Props) {
       />
       <div className="editor-foot">
         <span>{words} palabras · ≈ {Math.max(1, Math.round(words / 200))} min</span>
-        <span role="status">{status || (img ? "Arrastra la imagen o usa ↑ ↓ para moverla" : "Toca una imagen para moverla y cambiar su tamaño")}</span>
+        <span role="status">{status || (img ? "Haz clic en el texto donde la quieres y pulsa «Mover aquí», o arrástrala. En el celular siempre se ve grande." : "Toca una imagen para moverla y cambiar su tamaño")}</span>
       </div>
     </div>
   );

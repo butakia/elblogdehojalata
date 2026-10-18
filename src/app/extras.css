@@ -192,3 +192,16 @@
 
 .hero p.greet.secret { margin-top: 0.8rem; font-size: 1rem; font-style: italic; color: var(--muted); }
 .hero p.greet.secret a { color: var(--accent); }
+
+/* Editor: barra de imagen fija y sin saltos de scroll */
+.editor-area { overflow-anchor: none; }
+.image-bar { position: sticky; top: 56px; z-index: 6; }
+.image-bar .here { font-weight: 700; }
+
+/* En el celular las imágenes siempre se ven más o menos grandes; en PC manda el ancho que elijas */
+@media (max-width: 719px) {
+  .prose figure:not(.img-center), .prose figure[style]:not(.img-center) { width: 50% !important; max-width: none; }
+  .prose figure.img-s:not(.img-center) { width: 42% !important; }
+  .prose figure.img-l:not(.img-center) { width: 64% !important; }
+  .prose figure.img-center, .prose figure.img-center[style] { width: 82% !important; max-width: none; }
+}
