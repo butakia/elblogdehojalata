@@ -10,7 +10,7 @@ export default function GateForm({ next }: { next: string }) {
       <input type="hidden" name="next" value={next} />
       <label>
         Contraseña
-        <input type="password" name="password" required autoFocus autoComplete="off" />
+        <input type="text" name="password" required autoFocus autoComplete="off" autoCapitalize="none" spellCheck={false} />
       </label>
       <div className="form-row">
         <button className="btn primary" disabled={pending}>{pending ? "Entrando…" : "Entrar"}</button>

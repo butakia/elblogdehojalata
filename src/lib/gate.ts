@@ -10,7 +10,7 @@ import { isAdmin } from "./auth";
  */
 const COOKIE = "hj_tx";
 const SALT = "hojalata-textamentos:";
-const DEFAULT_HASH = "db6b0ca5e351cef562f0e171225c0ee7aedc6915cecec46e728155cc9bddf5ba";
+const DEFAULT_HASH = "8c88f8835892043c2aa7933e91b5630cf075cf2a6fdc2c3e6e46b18ef7b9c660";
 
 // Se ignoran mayúsculas y espacios: "El Blog de Hojalata 123" y "elblogdehojalata123" son equivalentes
 const normalize = (s: string) => s.toLowerCase().replace(/\s+/g, "");
