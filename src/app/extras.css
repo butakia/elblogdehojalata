@@ -205,3 +205,18 @@
   .prose figure.img-l:not(.img-center) { width: 64% !important; }
   .prose figure.img-center, .prose figure.img-center[style] { width: 82% !important; max-width: none; }
 }
+
+/* Habitaciones del inicio: opciones fijas */
+.room-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.room-grid a { display: flex; align-items: flex-end; min-height: 92px; height: 100%; padding: 0.85rem 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; text-decoration: none; transition: border-color 0.15s, transform 0.15s; }
+.room-grid a::before { content: "→"; align-self: flex-start; margin-right: auto; color: var(--accent); font-size: 1rem; line-height: 1; position: absolute; }
+.room-grid a { position: relative; }
+.room-grid a span { font-family: var(--font-display), serif; font-size: 1.25rem; font-weight: 600; line-height: 1.1; }
+.room-grid a:hover { border-color: var(--accent); transform: translateY(-2px); }
+@media (min-width: 720px) { .room-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; } .room-grid a { min-height: 112px; padding: 1rem 1.1rem; } .room-grid a span { font-size: 1.4rem; } }
+
+.kind-pick { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.8rem; }
+.kind-pick > span { font-weight: 600; }
+.kind-pick .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; background: var(--surface); }
+.kind-pick .seg button { border: 0; background: transparent; padding: 0.4rem 1rem; color: var(--ink); font-size: 0.95rem; }
+.kind-pick .seg button.on { background: var(--accent); color: var(--accent-ink); font-weight: 700; }

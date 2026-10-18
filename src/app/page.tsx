@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import RoomsCarousel from "@/components/RoomsCarousel";
+import Rooms from "@/components/Rooms";
 import StoryRow from "@/components/StoryRow";
 import { BOOKS } from "@/lib/books";
 import { isUnlocked } from "@/lib/gate";
@@ -10,11 +10,9 @@ export const dynamic = "force-dynamic";
 
 const ROOMS = [
   { href: "/cuentos", name: "Salón de los cuentos" },
-  { href: "/libros", name: "Balcón de los libros" },
-  { href: "/textamentos", name: "Jardín de los textamentos" },
+  { href: "/microcuentos", name: "Terraza de los microcuentos" },
   { href: "/ensayos", name: "Cocina de los ensayos" },
   { href: "/proyectos", name: "Cochera de los proyectos" },
-  { href: "/sobre", name: "Cuarto del autor" },
 ];
 
 export default async function Home() {
@@ -36,7 +34,7 @@ export default async function Home() {
       </section>
 
       <section className="wrap" style={{ paddingBlock: "1.2rem 0.5rem" }}>
-        <RoomsCarousel rooms={ROOMS} />
+        <Rooms rooms={ROOMS} />
       </section>
 
       <section className="wrap section books-section">

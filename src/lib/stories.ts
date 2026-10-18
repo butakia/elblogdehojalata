@@ -3,7 +3,7 @@ import { allStories, type Story } from "./content";
 import { getJSON, setJSON } from "./store";
 import { plainText } from "./sanitize";
 
-export type Section = "cuento" | "textamento" | "ensayo";
+export type Section = "cuento" | "textamento" | "ensayo" | "microcuento";
 export type CoverStyle = "right" | "left" | "center" | "banner";
 export type CoverSize = "s" | "m" | "l";
 export type StoredStory = Story & {

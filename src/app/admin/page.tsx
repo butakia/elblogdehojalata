@@ -13,8 +13,8 @@ export const metadata: Metadata = { title: "Panel", robots: { index: false } };
 export const dynamic = "force-dynamic";
 
 const when = (iso: string) => new Intl.DateTimeFormat("es-PE", { dateStyle: "medium", timeStyle: "short" }).format(new Date(iso));
-const KIND = { textamento: "Textamento", ensayo: "Ensayo" } as const;
-const BASE = { textamento: "textamentos", ensayo: "ensayos" } as const;
+const KIND = { textamento: "Textamento", ensayo: "Ensayo", microcuento: "Microcuento" } as const;
+const BASE = { textamento: "textamentos", ensayo: "ensayos", microcuento: "microcuentos" } as const;
 
 function Thumb({ src, title }: { src: string | null; title: string }) {
   return (
@@ -31,7 +31,7 @@ export default async function Admin() {
   const baseSlugs = new Set(allStories.map((s) => s.slug));
   const mineSlugs = new Set(mine.map((s) => s.slug));
   const originals = allStories.filter((s) => !mineSlugs.has(s.slug));
-  const paths = new Map(mine.map((s) => [s.slug, s.section ? BASE[s.section as "textamento" | "ensayo"] : "cuentos"]));
+  const paths = new Map(mine.map((s) => [s.slug, s.section ? BASE[s.section as keyof typeof BASE] : "cuentos"]));
   const titles = new Map([...allStories, ...mine].map((s) => [s.slug, s.title]));
   const flat = Object.entries(comments)
     .flatMap(([slug, list]) => list.map((c) => ({ ...c, slug })))
@@ -49,7 +49,7 @@ export default async function Admin() {
         <div className="grow">
           <strong>{s.title}</strong>
           <small>
-            {s.section ? KIND[s.section as "textamento" | "ensayo"] : isOriginal ? "Cuento original editado" : "Cuento"} · {s.words} palabras · editado {when(s.updatedAt ?? s.date)}
+            {s.section ? KIND[s.section as keyof typeof KIND] : isOriginal ? "Cuento original editado" : "Cuento"} · {s.words} palabras · editado {when(s.updatedAt ?? s.date)}
           </small>
         </div>
         <div className="row-actions">
@@ -74,6 +74,7 @@ export default async function Admin() {
       <div className="admin-actions">
         <Link href="/admin/nuevo" className="btn primary">Nuevo cuento</Link>
         <Link href="/admin/nuevo?seccion=textamento" className="btn">Nuevo textamento</Link>
+        <Link href="/admin/nuevo?seccion=microcuento" className="btn">Nuevo microcuento</Link>
         <Link href="/admin/nuevo?seccion=ensayo" className="btn">Nuevo ensayo</Link>
         <Link href="/admin/ideas" className="btn">Ideas ({ideas.length})</Link>
       </div>

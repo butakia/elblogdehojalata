@@ -10,16 +10,17 @@ import RichEditor, { type EditorHandle } from "./RichEditor";
 
 type CoverStyle = "right" | "left" | "center" | "banner";
 type CoverSize = "s" | "m" | "l";
-type Section = "cuento" | "textamento" | "ensayo";
-type Content = { title: string; html: string; cover: string | null; coverStyle: CoverStyle; coverSize: CoverSize };
+type Section = "cuento" | "textamento" | "ensayo" | "microcuento";
+type Kind = "cuento" | "microcuento";
+type Content = { title: string; html: string; cover: string | null; coverStyle: CoverStyle; coverSize: CoverSize; kind?: Kind };
 type Initial = Content & { slug: string; draft: boolean; updatedAt?: string };
 type Wip = Content & { savedAt: string };
 
-const BASES: Record<Section, string> = { cuento: "/cuentos", textamento: "/textamentos", ensayo: "/ensayos" };
+const BASES: Record<Section, string> = { cuento: "/cuentos", textamento: "/textamentos", ensayo: "/ensayos", microcuento: "/microcuentos" };
 
 // Comparación por texto visible (el HTML del editor y el guardado pueden diferir en detalles)
-const textOf = (c: Content) => JSON.stringify([c.title.trim(), c.html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim(), c.cover, c.coverStyle, c.coverSize]);
-const snap = (c: Content) => JSON.stringify([c.title, c.html, c.cover, c.coverStyle, c.coverSize]);
+const textOf = (c: Content) => JSON.stringify([c.title.trim(), c.html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim(), c.cover, c.coverStyle, c.coverSize, c.kind ?? null]);
+const snap = (c: Content) => JSON.stringify([c.title, c.html, c.cover, c.coverStyle, c.coverSize, c.kind ?? null]);
 const hhmm = (d: Date | string) => new Date(d).toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit" });
 const localKey = (slug: string | null, section: Section) => `hj-draft:${slug ?? `new-${section}`}`;
 
@@ -36,6 +37,7 @@ export default function StoryForm({ story, wip, section = "cuento" }: { story?: 
   // Las imágenes del texto viven dentro del texto; la imagen principal se muestra como banner y miniatura
   const [coverStyle, setCoverStyle] = useState<CoverStyle>(story?.coverStyle ?? "banner");
   const [coverSize, setCoverSize] = useState<CoverSize>(story?.coverSize ?? "m");
+  const [kind, setKind] = useState<Kind>(section === "microcuento" ? "microcuento" : "cuento");
   const [slug, setSlug] = useState<string | null>(story?.slug ?? null);
   const [isDraft, setIsDraft] = useState(story ? story.draft : true);
   const [error, setError] = useState("");
@@ -46,12 +48,16 @@ export default function StoryForm({ story, wip, section = "cuento" }: { story?: 
   const [banner, setBanner] = useState<Banner>(null);
   const [pending, start] = useTransition();
 
-  const content: Content = { title, html, cover, coverStyle, coverSize };
+  // Cuento normal o microcuento (los microcuentos van a la Terraza); textamentos y ensayos no cambian
+  const fixed = section === "textamento" || section === "ensayo";
+  const effSection: Section = fixed ? section : kind;
+  const content: Content = { title, html, cover, coverStyle, coverSize, kind: fixed ? undefined : kind };
+  const sectionRef = useRef<Section>(effSection);
   const current = snap(content);
 
   const slugRef = useRef<string | null>(story?.slug ?? null);
   const latest = useRef<Content>(content);
-  const lastSaved = useRef<string>(snap({ title: story?.title ?? "", html: story?.html ?? "", cover: story?.cover ?? null, coverStyle: story?.coverStyle ?? "banner", coverSize: story?.coverSize ?? "m" }));
+  const lastSaved = useRef<string>(snap({ title: story?.title ?? "", html: story?.html ?? "", cover: story?.cover ?? null, coverStyle: story?.coverStyle ?? "banner", coverSize: story?.coverSize ?? "m", kind: fixed ? undefined : section === "microcuento" ? "microcuento" : "cuento" }));
   const inFlight = useRef(false);
   const again = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -68,12 +74,13 @@ export default function StoryForm({ story, wip, section = "cuento" }: { story?: 
   };
   useEffect(() => {
     latest.current = content;
+    sectionRef.current = effSection;
   });
 
   // ── Recuperación al abrir: copia del dispositivo o copia de trabajo del servidor ──
   useEffect(() => {
     const base = Date.parse(story?.updatedAt ?? "") || 0;
-    const initialContent: Content = { title: story?.title ?? "", html: story?.html ?? "", cover: story?.cover ?? null, coverStyle: story?.coverStyle ?? "banner", coverSize: story?.coverSize ?? "m" };
+    const initialContent: Content = { title: story?.title ?? "", html: story?.html ?? "", cover: story?.cover ?? null, coverStyle: story?.coverStyle ?? "banner", coverSize: story?.coverSize ?? "m", kind: fixed ? undefined : section === "microcuento" ? "microcuento" : "cuento" };
     let found: Banner = null;
     try {
       const raw = localStorage.getItem(localKey(story?.slug ?? null, section));
@@ -96,6 +103,7 @@ export default function StoryForm({ story, wip, section = "cuento" }: { story?: 
     setCover(c.cover);
     setCoverStyle(c.coverStyle);
     setCoverSize(c.coverSize);
+    if (c.kind) setKind(c.kind);
     setEditorKey((k) => k + 1);
     setBanner(null);
     setStatus({ kind: "dirty" });
@@ -116,7 +124,7 @@ export default function StoryForm({ story, wip, section = "cuento" }: { story?: 
     inFlight.current = true;
     setStatus((s) => ({ ...s, kind: "saving" }));
     try {
-      const res = await autosaveStory({ originalSlug: slugRef.current ?? undefined, title: c.title, html: c.html, cover: c.cover, coverStyle: c.coverStyle, coverSize: c.coverSize, draft: true, section });
+      const res = await autosaveStory({ originalSlug: slugRef.current ?? undefined, title: c.title, html: c.html, cover: c.cover, coverStyle: c.coverStyle, coverSize: c.coverSize, draft: true, section: sectionRef.current });
       if (!res.ok) throw new Error(res.error);
       if (res.slug && res.slug !== slugRef.current) {
         try { localStorage.removeItem(localKey(null, section)); } catch {}
@@ -177,7 +185,7 @@ export default function StoryForm({ story, wip, section = "cuento" }: { story?: 
     setNote("");
     clearTimeout(timer.current);
     start(async () => {
-      const res = await saveStory({ originalSlug: slugRef.current ?? undefined, title, html, cover, draft: asDraft, section, coverStyle, coverSize });
+      const res = await saveStory({ originalSlug: slugRef.current ?? undefined, title, html, cover, draft: asDraft, section: effSection, coverStyle, coverSize });
       if (!res.ok) return setError(res.error);
       try { localStorage.removeItem(localKey(slugRef.current, section)); localStorage.removeItem(localKey(null, section)); } catch {}
       lastSaved.current = snap(latest.current);
@@ -187,7 +195,7 @@ export default function StoryForm({ story, wip, section = "cuento" }: { story?: 
       setStatus({ kind: "saved", at: new Date().toISOString() });
       window.history.replaceState(null, "", `/admin/editar/${res.slug}`);
       if (go === "view" && !asDraft) {
-        router.push(`${BASES[section]}/${res.slug}`);
+        router.push(`${BASES[effSection]}/${res.slug}`);
         router.refresh();
       } else {
         setNote(asDraft ? "Guardado como borrador. Solo tú puedes verlo." : "Cambios guardados.");
@@ -219,6 +227,16 @@ export default function StoryForm({ story, wip, section = "cuento" }: { story?: 
           {slug && <Link href="/admin" className="muted">← Panel</Link>}
         </span>
       </div>
+      {!fixed && (
+        <div className="kind-pick" role="group" aria-label="Tipo de texto">
+          <span>Tipo</span>
+          <div className="seg">
+            <button type="button" className={kind === "cuento" ? "on" : ""} onClick={() => setKind("cuento")}>Cuento</button>
+            <button type="button" className={kind === "microcuento" ? "on" : ""} onClick={() => setKind("microcuento")}>Microcuento</button>
+          </div>
+          <small className="muted">{kind === "microcuento" ? "Se publicará en la Terraza de los microcuentos." : "Se publicará en el Salón de los cuentos."}</small>
+        </div>
+      )}
       <label>
         Título
         <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={120} className="title-input" placeholder="Sin título" />
@@ -245,13 +263,13 @@ export default function StoryForm({ story, wip, section = "cuento" }: { story?: 
             <>
               <button type="button" className="btn primary" disabled={pending} onClick={() => submit(false, "stay")}>{pending ? "Guardando…" : "Guardar cambios"}</button>
               <button type="button" className="btn" disabled={pending} onClick={() => submit(true, "stay")}>Pasar a borrador</button>
-              {slug && <Link className="btn" href={`${BASES[section]}/${slug}`}>Ver publicado</Link>}
+              {slug && <Link className="btn" href={`${BASES[effSection]}/${slug}`}>Ver publicado</Link>}
             </>
           ) : (
             <>
               <button className="btn primary" disabled={pending}>{pending ? "Guardando…" : "Publicar"}</button>
               <button type="button" className="btn" disabled={pending} onClick={() => submit(true, "stay")}>Guardar borrador</button>
-              {slug && <Link className="btn" href={`${BASES[section]}/${slug}`}>Vista previa</Link>}
+              {slug && <Link className="btn" href={`${BASES[effSection]}/${slug}`}>Vista previa</Link>}
             </>
           )}
         </div>

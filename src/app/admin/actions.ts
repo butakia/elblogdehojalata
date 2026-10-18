@@ -25,11 +25,11 @@ export async function logout() {
   redirect("/");
 }
 
-const PUBLIC_PATHS = ["/", "/cuentos", "/textamentos", "/ensayos"];
+const PUBLIC_PATHS = ["/", "/cuentos", "/textamentos", "/ensayos", "/microcuentos"];
 function revalidateAll(slug?: string) {
   for (const p of PUBLIC_PATHS) revalidatePath(p);
   revalidatePath("/admin");
-  if (slug) for (const base of ["/cuentos", "/textamentos", "/ensayos"]) revalidatePath(`${base}/${slug}`);
+  if (slug) for (const base of ["/cuentos", "/textamentos", "/ensayos", "/microcuentos"]) revalidatePath(`${base}/${slug}`);
 }
 
 export type SaveInput = {
@@ -46,7 +46,7 @@ export type SaveInput = {
 const style = (v?: string): CoverStyle => (["right", "left", "center", "banner"].includes(v ?? "") ? (v as CoverStyle) : "right");
 const size = (v?: string): CoverSize => (["s", "m", "l"].includes(v ?? "") ? (v as CoverSize) : "m");
 const cleanCover = (c: string | null) => (c && /^(https?:\/\/|\/)/.test(c) ? c : null);
-const sectionOf = (s?: string): Section | undefined => (s === "textamento" || s === "ensayo" ? s : undefined);
+const sectionOf = (s?: string): Section | undefined => (s === "textamento" || s === "ensayo" || s === "microcuento" ? s : undefined);
 
 /** Guardado explícito: publicar o dejar como borrador. Limpia la copia de trabajo. */
 export async function saveStory(input: SaveInput): Promise<{ ok: true; slug: string } | { ok: false; error: string }> {
@@ -81,7 +81,7 @@ export async function saveStory(input: SaveInput): Promise<{ ok: true; slug: str
     custom: true,
     coverStyle: style(input.coverStyle),
     coverSize: size(input.coverSize),
-    section: existing ? existing.section : sectionOf(input.section),
+    section: existing && (existing.section === "textamento" || existing.section === "ensayo") ? existing.section : sectionOf(input.section),
     draft: input.draft || undefined,
     views: existing?.views,
   };
@@ -150,6 +150,7 @@ export async function autosaveStory(input: SaveInput): Promise<AutosaveResult> {
       ...deriveFields(html || ""),
       coverStyle: style(input.coverStyle),
       coverSize: size(input.coverSize),
+      section: existing.section === "textamento" || existing.section === "ensayo" ? existing.section : sectionOf(input.section),
       updatedAt: savedAt,
     };
     await saveCustomStories(list.map((s) => (s.slug === existing.slug ? next : s)));

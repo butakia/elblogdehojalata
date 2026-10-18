@@ -17,13 +17,14 @@ const LABELS = {
   cuento: { base: "/cuentos", back: "Volver a los cuentos" },
   textamento: { base: "/textamentos", back: "Volver a Textamentos" },
   ensayo: { base: "/ensayos", back: "Volver a la cocina de los ensayos" },
+  microcuento: { base: "/microcuentos", back: "Volver a la terraza de los microcuentos" },
 } as const;
 
 /** Vista de lectura compartida por Cuentos y Textamentos. */
 export default async function StoryView({ slug, section }: { slug: string; section: Section }) {
   const story = await getStory(slug);
   const admin = await isAdmin();
-  const own: Section = story?.section === "textamento" || story?.section === "ensayo" ? story.section : "cuento";
+  const own: Section = story?.section === "textamento" || story?.section === "ensayo" || story?.section === "microcuento" ? story.section : "cuento";
   if (!story || own !== section || (story.draft && !admin)) notFound();
   const list = section === "cuento" ? await getStories() : await getPosts({ section });
   const { newer, older } = neighbours(list, story.slug);
