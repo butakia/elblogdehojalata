@@ -162,3 +162,8 @@
   .story-nav small { flex: none; white-space: nowrap; font-size: 0.8rem; }
   .story-nav .nt { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }
+
+/* Proyecto sin tarjeta: logo, texto y botón sobre el fondo */
+.project-open { text-align: center; padding: 1.2rem 0 0; }
+.project-open .bm-logo { font-size: clamp(2.4rem, 9vw, 3.6rem); margin-bottom: 1.4rem; }
+.project-open p { max-width: 30rem; margin: 0 auto 1.3rem; font-size: 1.15rem; }
