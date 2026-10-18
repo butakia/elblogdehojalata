@@ -61,13 +61,14 @@ export default async function StoryView({ slug, section }: { slug: string; secti
         )}
         <div dangerouslySetInnerHTML={{ __html: bodyWithoutCover(story.html, story.cover) }} />
       </div>
+      <hr className="story-end" aria-hidden />
       <div className="story-share"><ShareButtons title={story.title} /></div>
       <nav className="story-nav" aria-label="Más textos">
         {older ? (
-          <Link href={`${base}/${older.slug}`}><small>← Anterior</small>{older.title}</Link>
+          <Link href={`${base}/${older.slug}`}><small>← Anterior</small><span className="nt">{older.title}</span></Link>
         ) : <span />}
         {newer ? (
-          <Link href={`${base}/${newer.slug}`} className="next"><small>Siguiente →</small>{newer.title}</Link>
+          <Link href={`${base}/${newer.slug}`} className="next"><small>Siguiente →</small><span className="nt">{newer.title}</span></Link>
         ) : <span />}
       </nav>
 
