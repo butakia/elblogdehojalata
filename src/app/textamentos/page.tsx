@@ -13,7 +13,7 @@ export default async function Textamentos() {
     return (
       <div className="wrap section narrow" style={{ textAlign: "center" }}>
         <h1>Textamentos</h1>
-        <p className="lead" style={{ marginInline: "auto" }}>Esta sección es privada. Escribe la contraseña para entrar.</p>
+        <p className="lead" style={{ marginInline: "auto" }}>Si leer mis secretos quieres, escribir la contraseña debes.</p>
         <GateForm next="/textamentos" />
       </div>
     );
