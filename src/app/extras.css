@@ -132,3 +132,8 @@
 .story-banner { height: clamp(120px, 20vw, 210px); background: var(--bg-2); overflow: hidden; }
 .story-banner img { object-fit: cover; object-position: center 30%; filter: blur(1.6px) saturate(0.92); transform: scale(1.05); opacity: 0.9; -webkit-mask-image: linear-gradient(to bottom, #000 35%, transparent 100%); mask-image: linear-gradient(to bottom, #000 35%, transparent 100%); }
 .story-banner + .story-head { margin-top: 0.4rem; }
+
+/* Botón discreto sobre los comentarios */
+.explore { padding: 1.4rem 0 0; }
+.btn.subtle { border-color: var(--line); color: var(--muted); font-weight: 500; font-size: 0.9rem; padding: 0.4rem 1.05rem; background: transparent; box-shadow: none; }
+.btn.subtle:hover { color: var(--ink); border-color: var(--accent); background: transparent; transform: none; }

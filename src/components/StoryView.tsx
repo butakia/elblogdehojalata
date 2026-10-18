@@ -71,9 +71,13 @@ export default async function StoryView({ slug, section }: { slug: string; secti
         ) : <span />}
       </nav>
 
+      <div className="explore">
+        <Link href="/" className="btn small subtle">Explorar El blog de Hojalata</Link>
+      </div>
+
       <section className="comments" aria-labelledby="comentarios">
         <h2 id="comentarios">Comentarios {comments.length > 0 && <small>({comments.length})</small>}</h2>
-        {comments.length === 0 && <p className="empty-note">Aún no hay comentarios. Puedes dejar el primero, sin registrarte.</p>}
+        <p className="empty-note">Apreciaría que me dejes un comentario.</p>
         <ol className="comment-list">
           {comments.map((c) => (
             <li key={c.id}>
@@ -101,9 +105,6 @@ export default async function StoryView({ slug, section }: { slug: string; secti
         <CommentForm slug={story.slug} />
       </section>
       <p className="back"><Link href={base}>{back}</Link></p>
-      <div className="explore">
-        <Link href="/" className="btn primary">Explorar El blog de Hojalata</Link>
-      </div>
     </article>
   );
 }
