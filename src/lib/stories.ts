@@ -39,8 +39,11 @@ export async function setWip(slug: string, wip: Wip | null) {
 
 /** Cuentos importados del blog original + los publicados desde el panel. */
 export async function getStories({ includeDrafts = false } = {}): Promise<Story[]> {
-  const custom = (await getCustomStories()).filter((s) => (includeDrafts || !s.draft) && (!s.section || s.section === "cuento"));
-  return [...custom, ...allStories].sort((a, b) => b.date.localeCompare(a.date));
+  const all = await getCustomStories();
+  const custom = all.filter((s) => (includeDrafts || !s.draft) && (!s.section || s.section === "cuento"));
+  // Si un cuento original tiene copia propia (editada u oculta), manda la copia
+  const overridden = new Set(all.map((s) => s.slug));
+  return [...custom, ...allStories.filter((s) => !overridden.has(s.slug))].sort((a, b) => b.date.localeCompare(a.date));
 }
 
 /** Textamentos y ensayos: textos propios fuera de los cuentos. */

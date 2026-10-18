@@ -117,3 +117,9 @@
 .status-list li { padding-left: 1.5rem; position: relative; }
 .status-list li::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 0.6rem; height: 0.6rem; border-radius: 50%; background: #e08a3c; }
 .status-list li.yes::before { background: #6fbf73; }
+
+/* Miniaturas en el panel */
+.admin-list > li { align-items: center; }
+.mini-thumb { flex: none; width: 48px; height: 48px; border-radius: 8px; overflow: hidden; background: var(--bg-2); border: 1px solid var(--line); display: grid; place-items: center; }
+.mini-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.mini-thumb.blank b { font-family: var(--font-display), serif; color: var(--accent); opacity: 0.7; }

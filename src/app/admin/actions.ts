@@ -7,6 +7,7 @@ import crypto from "node:crypto";
 import { checkPassword, endSession, rateLimit, requireAdmin, startSession } from "@/lib/auth";
 import { removeComment, setReply } from "@/lib/comments";
 import { getIdeas, saveIdeas, type Idea } from "@/lib/ideas";
+import { allStories } from "@/lib/content";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { getJSON, setJSON } from "@/lib/store";
 import { deriveFields, getCustomStories, saveCustomStories, setWip, uniqueSlug, type CoverSize, type CoverStyle, type Section, type StoredStory } from "@/lib/stories";
@@ -56,8 +57,11 @@ export async function saveStory(input: SaveInput): Promise<{ ok: true; slug: str
   if (!html) return { ok: false, error: "El texto está vacío." };
 
   const list = await getCustomStories();
-  const existing = input.originalSlug ? list.find((s) => s.slug === input.originalSlug) : undefined;
-  if (input.originalSlug && !existing) return { ok: false, error: "Solo se pueden editar los textos creados desde el panel." };
+  // Los cuentos del blog original también se editan: al guardar, se crea una copia propia con la misma dirección
+  const inList = input.originalSlug ? list.find((s) => s.slug === input.originalSlug) : undefined;
+  const original = input.originalSlug && !inList ? allStories.find((s) => s.slug === input.originalSlug) : undefined;
+  const existing: StoredStory | undefined = inList ?? (original ? ({ ...original, custom: true } as StoredStory) : undefined);
+  if (input.originalSlug && !existing) return { ok: false, error: "Este texto ya no existe." };
 
   let slug = existing?.slug;
   // Un borrador que nació sin título toma su dirección del título definitivo
@@ -79,11 +83,12 @@ export async function saveStory(input: SaveInput): Promise<{ ok: true; slug: str
     coverSize: size(input.coverSize),
     section: existing ? existing.section : sectionOf(input.section),
     draft: input.draft || undefined,
+    views: existing?.views,
   };
-  // Al publicar por primera vez, la fecha pública es la de hoy
-  if (existing?.draft && !input.draft) story.date = new Date().toISOString();
+  // Al publicar por primera vez, la fecha pública es la de hoy (no aplica a los cuentos originales)
+  if (inList?.draft && !input.draft) story.date = new Date().toISOString();
 
-  await saveCustomStories(existing ? list.map((s) => (s.slug === existing.slug ? story : s)) : [story, ...list]);
+  await saveCustomStories(inList ? list.map((s) => (s.slug === inList.slug ? story : s)) : [story, ...list]);
   await setWip(existing?.slug ?? slug, null);
   revalidateAll(slug);
   return { ok: true, slug };
@@ -105,6 +110,12 @@ export async function autosaveStory(input: SaveInput): Promise<AutosaveResult> {
   const list = await getCustomStories();
   const existing = input.originalSlug ? list.find((s) => s.slug === input.originalSlug) : undefined;
 
+  // Cuento original aún sin copia propia: el autoguardado va a la copia de trabajo
+  const baseOriginal = input.originalSlug && !existing ? allStories.find((s) => s.slug === input.originalSlug) : undefined;
+  if (baseOriginal) {
+    await setWip(baseOriginal.slug, { title: title || baseOriginal.title, html, cover: cleanCover(input.cover), coverStyle: style(input.coverStyle), coverSize: size(input.coverSize), savedAt });
+    return { ok: true, slug: baseOriginal.slug, savedAt };
+  }
   if (input.originalSlug && !existing) return { ok: false, error: "Este texto ya no existe." };
 
   if (!existing) {
@@ -154,7 +165,14 @@ export async function setDraftStatus(slug: string, draft: boolean) {
   await requireAdmin();
   const list = await getCustomStories();
   const s = list.find((x) => x.slug === slug);
-  if (!s) return;
+  if (!s) {
+    // Cuento original: ocultarlo crea una copia propia marcada como borrador
+    const base = allStories.find((x) => x.slug === slug);
+    if (!base) return;
+    await saveCustomStories([{ ...base, custom: true, draft: draft || undefined, updatedAt: new Date().toISOString() } as StoredStory, ...list]);
+    revalidateAll(slug);
+    return;
+  }
   if (s.draft && !draft) s.date = new Date().toISOString();
   s.draft = draft || undefined;
   s.updatedAt = new Date().toISOString();

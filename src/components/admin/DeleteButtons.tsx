@@ -3,11 +3,15 @@
 import { useState, useTransition } from "react";
 import { deleteComment, deleteStory, replyToComment, setDraftStatus } from "@/app/admin/actions";
 
-export function DeleteStoryButton({ slug, title }: { slug: string; title: string }) {
+/** Elimina un texto propio, o restaura el original si es un cuento del blog antiguo que editaste. */
+export function DeleteStoryButton({ slug, title, restore = false }: { slug: string; title: string; restore?: boolean }) {
   const [pending, start] = useTransition();
+  const ask = restore
+    ? `¿Volver «${title}» a su versión original? Tus cambios se guardan en la papelera.`
+    : `¿Eliminar «${title}»? Se guarda una copia en la papelera, pero desaparece de la web.`;
   return (
-    <button className="link-danger" disabled={pending} onClick={() => confirm(`¿Eliminar «${title}»? Se guarda una copia en la papelera, pero desaparece de la web.`) && start(() => deleteStory(slug))}>
-      Eliminar
+    <button className="link-danger" disabled={pending} onClick={() => confirm(ask) && start(() => deleteStory(slug))}>
+      {restore ? "Restaurar original" : "Eliminar"}
     </button>
   );
 }

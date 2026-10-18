@@ -16,11 +16,23 @@ const when = (iso: string) => new Intl.DateTimeFormat("es-PE", { dateStyle: "med
 const KIND = { textamento: "Textamento", ensayo: "Ensayo" } as const;
 const BASE = { textamento: "textamentos", ensayo: "ensayos" } as const;
 
+function Thumb({ src, title }: { src: string | null; title: string }) {
+  return (
+    <span className={`mini-thumb ${src ? "" : "blank"}`} aria-hidden>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      {src ? <img src={src} alt="" loading="lazy" /> : <b>{title.slice(0, 1)}</b>}
+    </span>
+  );
+}
+
 export default async function Admin() {
   await requireAdmin();
   const [mine, comments, ideas] = await Promise.all([getCustomStories(), getAllComments(), getIdeas()]);
+  const baseSlugs = new Set(allStories.map((s) => s.slug));
+  const mineSlugs = new Set(mine.map((s) => s.slug));
+  const originals = allStories.filter((s) => !mineSlugs.has(s.slug));
   const paths = new Map(mine.map((s) => [s.slug, s.section ? BASE[s.section as "textamento" | "ensayo"] : "cuentos"]));
-  const titles = new Map([...mine, ...allStories].map((s) => [s.slug, s.title]));
+  const titles = new Map([...allStories, ...mine].map((s) => [s.slug, s.title]));
   const flat = Object.entries(comments)
     .flatMap(([slug, list]) => list.map((c) => ({ ...c, slug })))
     .sort((a, b) => b.date.localeCompare(a.date));
@@ -29,22 +41,26 @@ export default async function Admin() {
   const drafts = sorted.filter((s) => s.draft);
   const published = sorted.filter((s) => !s.draft);
 
-  const Row = ({ s }: { s: (typeof mine)[number] }) => (
-    <li key={s.slug}>
-      <div className="grow">
-        <strong>{s.title}</strong>
-        <small>
-          {s.section ? KIND[s.section as "textamento" | "ensayo"] : "Cuento"} · {s.words} palabras · editado {when(s.updatedAt ?? s.date)}
-        </small>
-      </div>
-      <div className="row-actions">
-        <Link href={`/${paths.get(s.slug)}/${s.slug}`}>{s.draft ? "Vista previa" : "Ver"}</Link>
-        <Link href={`/admin/editar/${s.slug}`}>Editar</Link>
-        <PublishToggle slug={s.slug} draft={!!s.draft} />
-        <DeleteStoryButton slug={s.slug} title={s.title} />
-      </div>
-    </li>
-  );
+  const Row = ({ s }: { s: (typeof mine)[number] }) => {
+    const isOriginal = baseSlugs.has(s.slug);
+    return (
+      <li key={s.slug}>
+        <Thumb src={s.cover} title={s.title} />
+        <div className="grow">
+          <strong>{s.title}</strong>
+          <small>
+            {s.section ? KIND[s.section as "textamento" | "ensayo"] : isOriginal ? "Cuento original editado" : "Cuento"} · {s.words} palabras · editado {when(s.updatedAt ?? s.date)}
+          </small>
+        </div>
+        <div className="row-actions">
+          <Link href={`/${paths.get(s.slug)}/${s.slug}`}>{s.draft ? "Vista previa" : "Ver"}</Link>
+          <Link href={`/admin/editar/${s.slug}`}>Editar</Link>
+          <PublishToggle slug={s.slug} draft={!!s.draft} />
+          <DeleteStoryButton slug={s.slug} title={s.title} restore={isOriginal} />
+        </div>
+      </li>
+    );
+  };
 
   return (
     <div className="wrap section">
@@ -78,12 +94,33 @@ export default async function Admin() {
       </section>
 
       <section className="admin-block">
-        <h2>Publicados <small>({published.length})</small></h2>
+        <h2>Publicados desde el panel <small>({published.length})</small></h2>
         {published.length === 0 ? (
-          <p className="empty-note">Aún no has publicado nada desde el panel. Los {allStories.length} del blog original ya están publicados.</p>
+          <p className="empty-note">Aún no has publicado ni editado nada desde el panel.</p>
         ) : (
           <ul className="admin-list">{published.map((s) => <Row key={s.slug} s={s} />)}</ul>
         )}
+      </section>
+
+      <section className="admin-block">
+        <h2>Cuentos del blog original <small>({originals.length})</small></h2>
+        <p className="muted">Puedes editar el texto, el título y la imagen o miniatura de cualquiera de ellos. Al guardar, se crea tu versión y el original queda a salvo.</p>
+        <ul className="admin-list">
+          {originals.map((s) => (
+            <li key={s.slug}>
+              <Thumb src={s.cover} title={s.title} />
+              <div className="grow">
+                <strong>{s.title}</strong>
+                <small>{s.cover ? "Con imagen" : "Sin imagen"} · {s.words} palabras</small>
+              </div>
+              <div className="row-actions">
+                <Link href={`/cuentos/${s.slug}`}>Ver</Link>
+                <Link href={`/admin/editar/${s.slug}`}>Editar</Link>
+                <PublishToggle slug={s.slug} draft={false} />
+              </div>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section className="admin-block">
