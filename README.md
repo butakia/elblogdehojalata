@@ -6,7 +6,6 @@ Rediseño de https://elblogdehojalata.wordpress.com hecho con Next.js.
 - `npm run dev:mobile`: servidor local (puerto 3100) abierto a tu red Wi-Fi; muestra la URL para el celular.
 - `npm run build` y `npm start`: versión de producción.
 - `npm run lint`: revisión del código.
-- `npm run extract`: vuelve a generar `content/` e `public/img` desde `scripts/raw-posts.json`.
 
 Secciones: Inicio, Cuentos, Libros, Sobre mí y Proyectos. Textamentos y Cocina de los ensayos solo se abren desde las tarjetas del inicio. Los libros se editan en `src/lib/books.ts` y los proyectos en `src/lib/projects.ts`.
 

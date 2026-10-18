@@ -1,8 +1,21 @@
 import stories from "../../content/stories.json";
 
-export type Story = (typeof stories)[number] & { cover: string | null };
+export type Story = {
+  id: number;
+  slug: string;
+  title: string;
+  date: string;
+  html: string;
+  cover: string | null;
+  excerpt: string;
+  words: number;
+  minutes: number;
+  kind: string;
+  /** Si se define, se muestra este número de lecturas en vez del simulado. */
+  views?: number;
+};
 
-export const allStories = stories as Story[];
+export const allStories = stories as unknown as Story[];
 
 export const LOGO = "/img/2021-06-elgatoblanco.webp";
 export const AUTHOR = "Angel Oliden";

@@ -50,7 +50,7 @@ export default async function StoryView({ slug, section }: { slug: string; secti
         <p className="byline">{AUTHOR}</p>
         <p className="meta">
           {story.minutes} min de lectura · {formatDate(story.date)}
-          {section === "cuento" && <> · <ViewCounter value={simulatedViews(story.slug, story.date)} /></>}
+          {section === "cuento" && <> · <ViewCounter value={story.views ?? simulatedViews(story.slug, story.date)} /></>}
         </p>
       </header>
       <div className="prose story-body">

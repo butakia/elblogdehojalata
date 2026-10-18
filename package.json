@@ -8,8 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "dev:mobile": "node scripts/lan.mjs dev",
-    "start:mobile": "next build && node scripts/lan.mjs start",
-    "extract": "node scripts/extract.mjs && node scripts/optimize.mjs"
+    "start:mobile": "next build && node scripts/lan.mjs start"
   },
   "dependencies": {
     "@vercel/blob": "^2.8.2",
