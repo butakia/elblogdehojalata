@@ -66,6 +66,8 @@ export function sanitizeHtml(input: string): string {
   return (root.html() || "").replace(/\n{2,}/g, "\n").trim();
 }
 
+/** Texto plano del HTML; cada párrafo, título o salto de línea deja un espacio (sin pegar las frases). */
 export function plainText(html: string) {
-  return cheerio.load(html, null, false).text().replace(/\s+/g, " ").trim();
+  const spaced = html.replace(/<\/(p|h[1-6]|li|blockquote|div|figure|figcaption)>|<br\s*\/?>/gi, " ");
+  return cheerio.load(spaced, null, false).text().replace(/\s+/g, " ").trim();
 }

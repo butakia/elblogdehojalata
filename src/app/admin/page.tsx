@@ -12,7 +12,7 @@ import { storeKind } from "@/lib/store";
 export const metadata: Metadata = { title: "Panel", robots: { index: false } };
 export const dynamic = "force-dynamic";
 
-const when = (iso: string) => new Intl.DateTimeFormat("es-PE", { dateStyle: "medium", timeStyle: "short" }).format(new Date(iso));
+const when = (iso: string) => new Intl.DateTimeFormat("es-PE", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Lima" }).format(new Date(iso));
 const KIND = { textamento: "Textamento", ensayo: "Ensayo", microcuento: "Microcuento" } as const;
 const BASE = { textamento: "textamentos", ensayo: "ensayos", microcuento: "microcuentos" } as const;
 

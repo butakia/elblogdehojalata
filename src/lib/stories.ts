@@ -19,7 +19,9 @@ export type StoredStory = Story & {
 export type Wip = { title: string; html: string; cover: string | null; coverStyle: CoverStyle; coverSize: CoverSize; savedAt: string };
 
 export async function getCustomStories() {
-  return getJSON<StoredStory[]>("stories", []);
+  const list = await getJSON<StoredStory[]>("stories", []);
+  // El extracto se recalcula siempre desde el texto: así los guardados antiguos también quedan con sus espacios
+  return list.map((s) => ({ ...s, excerpt: deriveFields(s.html).excerpt }));
 }
 
 export async function saveCustomStories(list: StoredStory[]) {

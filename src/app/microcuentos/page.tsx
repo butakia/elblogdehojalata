@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { formatDate } from "@/lib/content";
+import PostRow from "@/components/PostRow";
 import { getPosts } from "@/lib/stories";
 
 export const metadata: Metadata = { title: "Balcón de mis microcuentos" };
@@ -19,13 +18,7 @@ export default async function Microcuentos() {
       ) : (
         <ul className="posts">
           {posts.map((p) => (
-            <li key={p.slug}>
-              <Link href={`/microcuentos/${p.slug}`}>
-                <h2>{p.title}</h2>
-                <p className="meta">{formatDate(p.date)}</p>
-                <p className="excerpt">{p.excerpt}</p>
-              </Link>
-            </li>
+            <PostRow key={p.slug} post={p} base="/microcuentos" showDate={false} />
           ))}
         </ul>
       )}

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { formatDate } from "@/lib/content";
+import PostRow from "@/components/PostRow";
 import { getPosts } from "@/lib/stories";
 
 export const metadata: Metadata = { title: "Cocina de los ensayos" };
@@ -19,13 +18,7 @@ export default async function Ensayos() {
       ) : (
         <ul className="posts">
           {posts.map((p) => (
-            <li key={p.slug}>
-              <Link href={`/ensayos/${p.slug}`}>
-                <h2>{p.title}</h2>
-                <p className="meta">{formatDate(p.date)} · {p.minutes} min</p>
-                <p className="excerpt">{p.excerpt}</p>
-              </Link>
-            </li>
+            <PostRow key={p.slug} post={p} base="/ensayos" />
           ))}
         </ul>
       )}

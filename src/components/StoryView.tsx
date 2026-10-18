@@ -11,7 +11,7 @@ import { getComments } from "@/lib/comments";
 import { isAdmin } from "@/lib/auth";
 import { simulatedViews } from "@/lib/views";
 
-const dateTime = (iso: string) => new Intl.DateTimeFormat("es-PE", { dateStyle: "medium", timeStyle: "short" }).format(new Date(iso));
+const dateTime = (iso: string) => new Intl.DateTimeFormat("es-PE", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Lima" }).format(new Date(iso));
 
 const LABELS = {
   cuento: { base: "/cuentos", back: "Volver a los cuentos" },
@@ -50,7 +50,7 @@ export default async function StoryView({ slug, section }: { slug: string; secti
         <h1>{story.title}</h1>
         <p className="byline">{AUTHOR}</p>
         <p className="meta">
-          {story.minutes} min de lectura · {formatDate(story.date)}
+          {story.minutes} min de lectura{section !== "microcuento" && <> · {formatDate(story.date)}</>}
           {section === "cuento" && <> · <ViewCounter value={story.views ?? simulatedViews(story.slug, story.date)} /></>}
         </p>
       </header>
