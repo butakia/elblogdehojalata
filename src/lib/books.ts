@@ -18,7 +18,7 @@ export const BOOKS: Book[] = [
     cover: "/img/libro-un-padre-temporal.webp",
     amazon: "https://www.amazon.com/dp/B07T2G16N2",
     physical: true,
-    synopsis: ["Relatos de Angel Oliden con el humor, la ironía y la ternura con que mira lo cotidiano: vínculos de paso y afectos prestados."],
+    synopsis: ["Cuentos de humor, ironía y ternura sobre los vínculos de paso."],
   },
   {
     slug: "la-flor-y-el-bastardo",
