@@ -231,3 +231,5 @@
 .post-row .post-text p { margin: 0 0 0.2rem; }
 .post-row .excerpt { -webkit-line-clamp: 3; }
 @media (max-width: 719px) { .posts a.post-row { text-align: left; } .post-row .thumb { width: 64px; height: 64px; } .post-row .post-text h2 { font-size: 1.3rem; } }
+
+.card .meta .tag{display:inline-block;margin-right:.5rem;padding:.05rem .5rem;border:1px solid currentColor;border-radius:999px;font-size:.72em;letter-spacing:.02em;opacity:.85}

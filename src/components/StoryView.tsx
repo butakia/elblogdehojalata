@@ -17,7 +17,7 @@ const LABELS = {
   cuento: { base: "/cuentos", back: "Volver a los cuentos" },
   textamento: { base: "/textamentos", back: "Volver a Textamentos" },
   ensayo: { base: "/ensayos", back: "Volver a la cocina de los ensayos" },
-  microcuento: { base: "/microcuentos", back: "Volver al balcón de mis microcuentos" },
+  microcuento: { base: "/microcuentos", back: "Volver al balcón de los microcuentos" },
 } as const;
 
 /** Vista de lectura compartida por Cuentos y Textamentos. */

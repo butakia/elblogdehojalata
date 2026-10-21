@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Cuentos" };
 export const dynamic = "force-dynamic";
 
 export default async function Cuentos() {
-  const stories = await getStories();
+  const stories = await getStories({ withMicro: true });
   return (
     <div className="wrap section">
       <header className="page-head">
