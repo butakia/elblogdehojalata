@@ -232,4 +232,4 @@
 .post-row .excerpt { -webkit-line-clamp: 3; }
 @media (max-width: 719px) { .posts a.post-row { text-align: left; } .post-row .thumb { width: 64px; height: 64px; } .post-row .post-text h2 { font-size: 1.3rem; } }
 
-.card .meta .tag{display:inline-block;margin-right:.5rem;padding:.05rem .5rem;border:1px solid currentColor;border-radius:999px;font-size:.72em;letter-spacing:.02em;opacity:.85}
+.card .meta .tag{display:inline-block;margin-right:.5rem;padding:.08rem .6rem;border:1px solid color-mix(in srgb,var(--accent) 55%,transparent);border-radius:999px;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent);font-size:.74em;font-weight:600;letter-spacing:.02em}
