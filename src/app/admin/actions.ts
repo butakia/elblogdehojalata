@@ -10,7 +10,7 @@ import { getIdeas, saveIdeas, type Idea } from "@/lib/ideas";
 import { allStories } from "@/lib/content";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { getJSON, setJSON } from "@/lib/store";
-import { deriveFields, getCustomStories, saveCustomStories, setWip, uniqueSlug, type CoverSize, type CoverStyle, type Section, type StoredStory } from "@/lib/stories";
+import { deriveFields, getCustomStories, saveCustomStories, setWip, slugify, uniqueSlug, type CoverSize, type CoverStyle, type Section, type StoredStory } from "@/lib/stories";
 
 export async function login(_prev: { error?: string }, form: FormData) {
   const ip = ((await headers()).get("x-forwarded-for") || "local").split(",")[0].trim();
@@ -67,6 +67,11 @@ export async function saveStory(input: SaveInput): Promise<{ ok: true; slug: str
   // Un borrador que nació sin título toma su dirección del título definitivo
   if (!slug || (existing?.draft && /^sin-titulo(-\d+)?$/.test(slug))) {
     slug = uniqueSlug(title, list.filter((s) => s.slug !== existing?.slug));
+  } else if (inList) {
+    // La dirección nació de un título a medio escribir ("la"): se completa con el título final ("la-infeliz")
+    const full = slugify(title);
+    const base = slug.replace(/-\d+$/, "");
+    if (base !== full && full.startsWith(base + "-")) slug = uniqueSlug(title, list.filter((s) => s.slug !== inList.slug));
   }
 
   const story: StoredStory = {
