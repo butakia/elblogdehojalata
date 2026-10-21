@@ -3,9 +3,11 @@ export type Book = {
   title: string;
   subtitle?: string;
   cover: string;
-  amazon: string;
+  amazon?: string;
   /** Ejemplares físicos disponibles */
-  physical: boolean;
+  physical?: boolean;
+  /** Todavía no está a la venta: se muestra "Próximamente" en lugar del botón de compra */
+  soon?: boolean;
   /** Reseña breve: un párrafo por elemento. Editable aquí. */
   synopsis: string[];
 };
@@ -27,5 +29,13 @@ export const BOOKS: Book[] = [
     amazon: "https://www.amazon.com/dp/B07T2G16N2",
     physical: false,
     synopsis: ["Una sencilla flor de girasol cambia la vida de un personaje desquiciado, que cuenta su historia entre balbuceos literarios y metáforas extrañas."],
+  },
+  {
+    slug: "once-formas-de-arder",
+    title: "Once formas de arder",
+    subtitle: "Muestra de cuentos del colectivo literario Tinta en llamas",
+    cover: "/img/libro-once-formas-de-arder.webp",
+    soon: true,
+    synopsis: ["Con cuentos de Edgard J. Rivera, Schnaider Chávez, Fernando March y Ángel Oliden."],
   },
 ];

@@ -22,14 +22,20 @@ export default function Libros() {
                   <p key={i}>{p}</p>
                 ))}
               </div>
-              <p className={`stock ${b.physical ? "yes" : "no"}`}>
-                Ejemplares físicos {b.physical ? "disponibles" : "no disponibles"}
-              </p>
-              <div className="book-actions">
-                <a href={b.amazon} target="_blank" rel="noopener noreferrer" className="btn primary small">
-                  Comprar ahora <span aria-hidden>→</span>
-                </a>
-              </div>
+              {b.soon || !b.amazon ? (
+                <p className="stock soon">Próximamente</p>
+              ) : (
+                <>
+                  <p className={`stock ${b.physical ? "yes" : "no"}`}>
+                    Ejemplares físicos {b.physical ? "disponibles" : "no disponibles"}
+                  </p>
+                  <div className="book-actions">
+                    <a href={b.amazon} target="_blank" rel="noopener noreferrer" className="btn primary small">
+                      Comprar ahora <span aria-hidden>→</span>
+                    </a>
+                  </div>
+                </>
+              )}
             </div>
           </article>
         ))}

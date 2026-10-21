@@ -233,3 +233,6 @@
 @media (max-width: 719px) { .posts a.post-row { text-align: left; } .post-row .thumb { width: 64px; height: 64px; } .post-row .post-text h2 { font-size: 1.3rem; } }
 
 .card .meta .tag{display:inline-block;margin-right:.5rem;padding:.08rem .6rem;border:1px solid color-mix(in srgb,var(--accent) 55%,transparent);border-radius:999px;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent);font-size:.74em;font-weight:600;letter-spacing:.02em}
+
+.stock.soon{color:var(--accent);font-weight:600}
+.stock.soon::before{background:var(--accent)}
