@@ -6,3 +6,9 @@ export function simulatedViews(slug: string, dateIso: string) {
   const days = Math.max(0, (Date.now() - new Date(dateIso).getTime()) / 86_400_000);
   return Math.min(200, base + Math.floor(Math.sqrt(days) * 0.6));
 }
+
+/** Microcuentos: empiezan en 21 lecturas y suman una por cada día desde su publicación. */
+export function microViews(dateIso: string) {
+  const days = Math.max(0, Math.floor((Date.now() - new Date(dateIso).getTime()) / 86_400_000));
+  return 21 + days;
+}

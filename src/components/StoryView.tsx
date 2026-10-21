@@ -9,7 +9,7 @@ import { AUTHOR, AUTHOR_PHOTO, bodyWithoutCover, formatDate } from "@/lib/conten
 import { getPosts, getStories, getStory, neighbours, type Section } from "@/lib/stories";
 import { getComments } from "@/lib/comments";
 import { isAdmin } from "@/lib/auth";
-import { simulatedViews } from "@/lib/views";
+import { microViews, simulatedViews } from "@/lib/views";
 
 const dateTime = (iso: string) => new Intl.DateTimeFormat("es-PE", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Lima" }).format(new Date(iso));
 
@@ -51,7 +51,7 @@ export default async function StoryView({ slug, section }: { slug: string; secti
         <p className="byline">{AUTHOR}</p>
         <p className="meta">
           {story.minutes} min de lectura{section !== "microcuento" && <> · {formatDate(story.date)}</>}
-          {section === "cuento" && <> · <ViewCounter value={story.views ?? simulatedViews(story.slug, story.date)} /></>}
+          {(section === "cuento" || section === "microcuento") && <> · <ViewCounter value={story.views ?? (section === "microcuento" ? microViews(story.date) : simulatedViews(story.slug, story.date))} /></>}
         </p>
       </header>
       <div className="prose story-body">
