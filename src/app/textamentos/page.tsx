@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import GateForm from "@/components/GateForm";
 import PostRow from "@/components/PostRow";
+import { isAdmin } from "@/lib/auth";
 import { isUnlocked } from "@/lib/gate";
 import { getPosts } from "@/lib/stories";
 
@@ -18,11 +19,13 @@ export default async function Textamentos() {
     );
   }
   const posts = await getPosts();
+  const admin = await isAdmin();
   return (
     <div className="wrap section narrow">
       <header className="page-head">
         <h1>Textamentos</h1>
         <p className="lead">Pensamientos, proyectos y notas fuera de los cuentos.</p>
+        {admin && <p className="empty-note">Entras sin clave porque tienes la sesión de administrador abierta. Los visitantes ven el candado y deben escribir la contraseña.</p>}
       </header>
       {posts.length === 0 ? (
         <p className="empty-note">Aún no hay textos aquí. Pronto habrá novedades.</p>
