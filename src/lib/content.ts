@@ -1,5 +1,7 @@
 import stories from "../../content/stories.json";
 
+export type Section = "cuento" | "textamento" | "ensayo" | "microcuento";
+
 export type Story = {
   id: number;
   slug: string;
@@ -11,6 +13,8 @@ export type Story = {
   words: number;
   minutes: number;
   kind: string;
+  /** Solo para textos base que viven en otra sección (por ejemplo "microcuento"). */
+  section?: Section;
   /** Si se define, se muestra este número de lecturas en vez del simulado. */
   views?: number;
 };

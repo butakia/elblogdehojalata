@@ -1,9 +1,9 @@
 import "server-only";
-import { allStories, type Story } from "./content";
+import { allStories, type Section, type Story } from "./content";
 import { getJSON, setJSON } from "./store";
 import { plainText } from "./sanitize";
 
-export type Section = "cuento" | "textamento" | "ensayo" | "microcuento";
+export type { Section };
 export type CoverStyle = "right" | "left" | "center" | "banner";
 export type CoverSize = "s" | "m" | "l";
 export type StoredStory = Story & {
@@ -45,12 +45,16 @@ export async function getStories({ includeDrafts = false, withMicro = false } = 
   const custom = all.filter((s) => (includeDrafts || !s.draft) && (!s.section || s.section === "cuento" || (withMicro && s.section === "microcuento")));
   // Si un cuento original tiene copia propia (editada u oculta), manda la copia
   const overridden = new Set(all.map((s) => s.slug));
-  return [...custom, ...allStories.filter((s) => !overridden.has(s.slug))].sort((a, b) => b.date.localeCompare(a.date));
+  const base = allStories.filter((s) => !overridden.has(s.slug) && (!s.section || (withMicro && s.section === "microcuento")));
+  return [...custom, ...base].sort((a, b) => b.date.localeCompare(a.date));
 }
 
 /** Textamentos y ensayos: textos propios fuera de los cuentos. */
 export async function getPosts({ includeDrafts = false, section = "textamento" }: { includeDrafts?: boolean; section?: Section } = {}): Promise<StoredStory[]> {
-  return (await getCustomStories()).filter((s) => s.section === section && (includeDrafts || !s.draft)).sort((a, b) => b.date.localeCompare(a.date));
+  const custom = await getCustomStories();
+  const taken = new Set(custom.map((s) => s.slug));
+  const base = allStories.filter((s) => s.section === section && !taken.has(s.slug)).map((s) => ({ ...s, custom: true as const }));
+  return [...custom.filter((s) => s.section === section && (includeDrafts || !s.draft)), ...base].sort((a, b) => b.date.localeCompare(a.date));
 }
 
 export async function getStory(slug: string) {
