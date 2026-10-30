@@ -257,3 +257,11 @@ table.visitors{border-collapse:collapse;width:100%;font-size:.84rem;min-width:78
 table.visitors th,table.visitors td{text-align:left;padding:.5rem .6rem;border-bottom:1px solid rgba(127,127,127,.2);vertical-align:top}
 table.visitors small{display:block;opacity:.65;font-size:.74rem}
 table.visitors .pages span{display:block}
+
+/* Lectura: sin cortar palabras con guiones. Justificado solo cuando la columna es ancha; en pantallas angostas, alineado a la izquierda */
+.story-body, .editor-area, .about p { hyphens: none; -webkit-hyphens: none; overflow-wrap: break-word; }
+.story-body p, .story-body li, .editor-area p, .editor-area li { text-align: left; text-wrap: pretty; }
+.about p { text-align: left; text-wrap: pretty; }
+@media (min-width: 760px) {
+  .story-body p, .story-body li, .editor-area p, .editor-area li, .about p { text-align: justify; text-justify: inter-word; }
+}
