@@ -45,11 +45,12 @@ export async function POST(req: Request) {
   const sid = clean(body.sid, 40);
   if (!/^[\w-]{6,40}$/.test(vid) || !/^[\w-]{6,40}$/.test(sid)) return new Response(null, { status: 400 });
 
-  let ref = "";
+  let host = "";
   try {
     const r = new URL(clean(body.ref, 300));
-    if (r.host && r.host !== new URL(req.url).host) ref = r.host.replace(/^www\./, "");
+    if (r.host && r.host !== new URL(req.url).host) host = r.host.replace(/^www\./, "");
   } catch {}
+  const ref = sourceLabel(clean(body.src, 30), host);
 
   const name = safeDecode((await cookies()).get("hj_vn")?.value ?? "").slice(0, 40);
   await recordVisit({

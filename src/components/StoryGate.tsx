@@ -1,16 +1,16 @@
 "use client";
 
 import { useActionState } from "react";
-import { unlockTextamentos } from "@/app/textamentos/actions";
+import { unlockStory } from "@/app/acceso";
 
-export default function GateForm({ next }: { next: string }) {
-  const [state, action, pending] = useActionState(unlockTextamentos, {} as { error?: string });
+export default function StoryGate({ next }: { next: string }) {
+  const [state, action, pending] = useActionState(unlockStory, {} as { error?: string });
   return (
     <form action={action} className="comment-form gate">
       <input type="hidden" name="next" value={next} />
       <label>
         Contraseña
-        <input type="text" name="password" required autoFocus autoComplete="off" autoCapitalize="none" spellCheck={false} />
+        <input type="text" name="password" required autoFocus autoComplete="off" inputMode="numeric" placeholder="00-00-00" spellCheck={false} />
       </label>
       <div className="form-row">
         <button className="btn primary" disabled={pending}>{pending ? "Entrando…" : "Entrar"}</button>

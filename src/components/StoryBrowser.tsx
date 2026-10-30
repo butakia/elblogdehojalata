@@ -1,9 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import StoryCard from "./StoryCard";
-import type { Story } from "@/lib/content";
-import type { StoredStory } from "@/lib/stories";
+import StoryCard, { type CardStory } from "./StoryCard";
 
 const FILTERS = [
   ["todos", "Todos"],
@@ -11,7 +9,7 @@ const FILTERS = [
   ["microcuento", "Microcuentos"],
 ] as const;
 
-export default function StoryBrowser({ stories }: { stories: (Story & { section?: StoredStory["section"] })[] }) {
+export default function StoryBrowser({ stories }: { stories: CardStory[] }) {
   const [kind, setKind] = useState<string>("todos");
   const [q, setQ] = useState("");
   const shown = useMemo(() => {

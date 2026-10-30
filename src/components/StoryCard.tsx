@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { formatDate, type Story } from "@/lib/content";
 
-export type CardStory = Story & { section?: string };
+export type CardStory = Pick<Story, "slug" | "title" | "cover" | "excerpt" | "minutes" | "kind" | "date"> & { section?: string; locked?: boolean };
 
 export default function StoryCard({ story, priority = false }: { story: CardStory; priority?: boolean }) {
   return (
@@ -19,9 +19,10 @@ export default function StoryCard({ story, priority = false }: { story: CardStor
           <h3>{story.title}</h3>
           <p className="meta">
             {story.kind === "microcuento" && <span className="tag">Microcuento</span>}
+            {story.locked && <span className="tag">Con contraseña</span>}
             {story.minutes} min{story.section !== "microcuento" && <> · {formatDate(story.date)}</>}
           </p>
-          <p className="excerpt">{story.excerpt}</p>
+          <p className="excerpt">{story.locked ? "Para leerlo hace falta una contraseña." : story.excerpt}</p>
         </div>
       </Link>
     </article>

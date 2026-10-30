@@ -4,18 +4,16 @@ import { cookies } from "next/headers";
 import { isAdmin } from "./auth";
 
 /**
- * Candado sencillo para la sección Textamentos.
- * La contraseña no se guarda en texto plano: solo su huella. Se puede cambiar definiendo
- * la variable TEXTAMENTOS_PASSWORD en el servidor (tiene prioridad sobre la de fábrica).
+ * Candado de los cuentos con contraseña (ver locked.ts).
+ * La contraseña no se guarda en texto plano: solo su huella. Es numérica y se comparan solo los dígitos,
+ * así "04-03-21", "04/03/21" y "040321" valen lo mismo. Se puede cambiar con la variable STORY_PASSWORD.
  */
-const COOKIE = "hj_tx";
-const SALT = "hojalata-textamentos:";
-const DEFAULT_HASH = "8c88f8835892043c2aa7933e91b5630cf075cf2a6fdc2c3e6e46b18ef7b9c660";
+const COOKIE = "hj_lk";
+const SALT = "hojalata-cuentos:";
+const DEFAULT_HASH = "091eacd8cd52078f5e1f47acf23ce67c150435c97a2324950540790d2ebc6176";
 
-// Se ignoran mayúsculas y espacios: "El Blog de Hojalata 123" y "elblogdehojalata123" son equivalentes
-const normalize = (s: string) => s.toLowerCase().replace(/\s+/g, "");
-const hash = (s: string) => crypto.createHash("sha256").update(SALT + normalize(s)).digest("hex");
-const expected = () => (process.env.TEXTAMENTOS_PASSWORD ? hash(process.env.TEXTAMENTOS_PASSWORD) : DEFAULT_HASH);
+const hash = (s: string) => crypto.createHash("sha256").update(SALT + s.replace(/\D/g, "")).digest("hex");
+const expected = () => (process.env.STORY_PASSWORD ? hash(process.env.STORY_PASSWORD) : DEFAULT_HASH);
 
 const safeEqual = (a: string, b: string) => {
   const x = Buffer.from(a);
@@ -24,11 +22,11 @@ const safeEqual = (a: string, b: string) => {
 };
 
 const token = () =>
-  crypto.createHmac("sha256", (process.env.ADMIN_SECRET || process.env.ADMIN_PASSWORD || "dev") + "|gate").update(expected()).digest("hex");
+  crypto.createHmac("sha256", (process.env.ADMIN_SECRET || process.env.ADMIN_PASSWORD || "dev") + "|gate2").update(expected()).digest("hex");
 
-export const checkGatePassword = (input: string) => safeEqual(hash(input), expected());
+export const checkGatePassword = (input: string) => /\d/.test(input) && safeEqual(hash(input), expected());
 
-/** ¿Puede ver Textamentos? El administrador siempre; los demás, tras escribir la contraseña. */
+/** ¿Puede leer los cuentos con contraseña? El administrador siempre; los demás, tras escribirla. */
 export async function isUnlocked() {
   if (await isAdmin()) return true;
   const v = (await cookies()).get(COOKIE)?.value;

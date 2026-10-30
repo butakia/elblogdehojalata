@@ -9,6 +9,9 @@ import { AUTHOR, AUTHOR_PHOTO, bodyWithoutCover, formatDate } from "@/lib/conten
 import { getPosts, getStories, getStory, neighbours, type Section } from "@/lib/stories";
 import { getComments } from "@/lib/comments";
 import { isAdmin } from "@/lib/auth";
+import StoryGate from "@/components/StoryGate";
+import { isUnlocked } from "@/lib/gate";
+import { isLockedSlug } from "@/lib/locked";
 import { microViews, simulatedViews } from "@/lib/views";
 
 const dateTime = (iso: string) => new Intl.DateTimeFormat("es-PE", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Lima" }).format(new Date(iso));
@@ -26,6 +29,23 @@ export default async function StoryView({ slug, section }: { slug: string; secti
   const admin = await isAdmin();
   const own: Section = story?.section === "textamento" || story?.section === "ensayo" || story?.section === "microcuento" ? story.section : "cuento";
   if (!story || own !== section || (story.draft && !admin)) notFound();
+  // Cuentos con contraseña: se ven en las listas, pero el texto no se envía hasta que se escribe la clave
+  if (isLockedSlug(story.slug) && !(await isUnlocked())) {
+    return (
+      <article className="story">
+        <header className="story-head">
+          <h1>{story.title}</h1>
+          <p className="byline">{AUTHOR}</p>
+        </header>
+        <div className="story-lock">
+          <p className="lead">Si leer este cuento quieres, la contraseña ingresar debes.</p>
+          <p className="muted">Es muy personal o todavía lo estoy puliendo, y por ahora lo guardo bajo llave.</p>
+          <StoryGate next={`${LABELS[section].base}/${story.slug}`} />
+        </div>
+        <p className="back"><Link href={LABELS[section].base}>{LABELS[section].back}</Link></p>
+      </article>
+    );
+  }
   const list = section === "cuento" ? await getStories() : await getPosts({ section });
   const { newer, older } = neighbours(list, story.slug);
   const comments = await getComments(story.slug);
@@ -40,6 +60,7 @@ export default async function StoryView({ slug, section }: { slug: string; secti
   return (
     <article className="story">
       <ReaderTools />
+      {isLockedSlug(story.slug) && admin && <p className="draft-banner">Cuento con contraseña: entras sin clave porque tienes la sesión de administrador.</p>}
       {banner && story.cover && (
         <div className="story-banner">
           <Image src={story.cover} alt="" fill priority sizes="100vw" />

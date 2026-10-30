@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { isLockedSlug } from "./locked";
 
 export const SITE_NAME = "El blog de Hojalata";
 
@@ -19,8 +20,9 @@ type Shareable = { slug: string; title: string; excerpt: string };
 
 /** Título, resumen e imagen del texto al compartir el enlace (WhatsApp, Facebook, etc.). */
 export function shareMetadata(story: Shareable, base: string): Metadata {
-  const description = cleanForMeta(story.excerpt) || SITE_NAME;
-  const image = { url: `/og/${story.slug}`, width: 1200, height: 630, alt: story.title };
+  const locked = isLockedSlug(story.slug);
+  const description = locked ? "Cuento con contraseña." : cleanForMeta(story.excerpt) || SITE_NAME;
+  const image = { url: locked ? "/og/default" : `/og/${story.slug}`, width: 1200, height: 630, alt: story.title };
   return {
     title: story.title,
     description,

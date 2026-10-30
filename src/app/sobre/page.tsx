@@ -26,6 +26,10 @@ export default function Sobre() {
             <a href="https://javierbanchii.wordpress.com/" target="_blank" rel="noopener noreferrer">enlace</a>.
           </em>
         </p>
+        <p>Además de escribir, tengo algunos proyectos en marcha.</p>
+        <p style={{ textAlign: "center" }}>
+          <Link href="/proyectos" className="btn primary small">Proyectos <span aria-hidden>→</span></Link>
+        </p>
         <div className="contact">
           <p>
             Críticas, sugerencias y gritos: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { isLockedSlug } from "@/lib/locked";
 
 type Item = { slug: string; title: string; excerpt: string; cover: string | null; section?: string };
 
@@ -20,7 +21,7 @@ export default function StoryRow({ item, base }: { item: Item; base: string }) {
         </span>
         <span className="info">
           <strong>{item.title}</strong>
-          <span className="date">{opening(item.excerpt)}</span>
+          <span className="date">{isLockedSlug(item.slug) ? "Con contraseña" : opening(item.excerpt)}</span>
         </span>
       </Link>
     </li>

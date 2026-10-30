@@ -257,3 +257,7 @@ table.visitors{border-collapse:collapse;width:100%;font-size:.84rem;min-width:78
 table.visitors th,table.visitors td{text-align:left;padding:.5rem .6rem;border-bottom:1px solid rgba(127,127,127,.2);vertical-align:top}
 table.visitors small{display:block;opacity:.65;font-size:.74rem}
 table.visitors .pages span{display:block}
+
+.story-lock{text-align:center;max-width:30rem;margin:1.5rem auto 2rem}
+.story-lock .lead{margin-inline:auto}
+.story-lock .gate{margin-inline:auto;text-align:left}
