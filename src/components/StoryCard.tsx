@@ -22,7 +22,7 @@ export default function StoryCard({ story, priority = false }: { story: CardStor
             {story.locked && <span className="tag">Con contraseña</span>}
             {story.minutes} min{story.section !== "microcuento" && <> · {formatDate(story.date)}</>}
           </p>
-          <p className="excerpt">{story.locked ? "Para leerlo hace falta una contraseña." : story.excerpt}</p>
+          <p className="excerpt">{story.excerpt}</p>
         </div>
       </Link>
     </article>

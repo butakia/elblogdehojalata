@@ -7,10 +7,10 @@ export const metadata: Metadata = { title: "Cuentos" };
 export const dynamic = "force-dynamic";
 
 export default async function Cuentos() {
-  // Al navegador solo llega lo necesario para las tarjetas: nunca el texto completo ni el resumen de los cuentos con contraseña
+  // Al navegador solo llega lo necesario para las tarjetas: nunca el texto completo (los cuentos con contraseña solo muestran su extracto)
   const stories = (await getStories({ withMicro: true })).map((s) => {
     const locked = isLockedSlug(s.slug);
-    return { slug: s.slug, title: s.title, cover: s.cover, excerpt: locked ? "" : s.excerpt, minutes: s.minutes, kind: s.kind, date: s.date, section: s.section, locked };
+    return { slug: s.slug, title: s.title, cover: s.cover, excerpt: s.excerpt, minutes: s.minutes, kind: s.kind, date: s.date, section: s.section, locked };
   });
   return (
     <div className="wrap section">
