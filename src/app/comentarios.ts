@@ -1,7 +1,7 @@
 "use server";
 
 import crypto from "node:crypto";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { addCommentTo } from "@/lib/comments";
 import { getStory } from "@/lib/stories";
@@ -25,6 +25,8 @@ export async function addComment(_prev: CommentState, form: FormData): Promise<C
     return { ok: false, error: "Vas muy rápido. Espera un momento e inténtalo otra vez." };
   }
 
+  // Recuerda el nombre para asociarlo a las visitas de esta persona en el panel
+  if (name !== "Visitante") (await cookies()).set("hj_vn", encodeURIComponent(name), { httpOnly: true, sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 365 });
   await addCommentTo(slug, { id: crypto.randomUUID(), name, text, date: new Date().toISOString() });
   revalidatePath(`/cuentos/${slug}`);
   return { ok: true, message: "¡Gracias! Tu comentario ya está publicado." };

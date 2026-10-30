@@ -4,6 +4,7 @@ import "./globals.css";
 import "./extras.css";
 import { Header, BottomNav } from "@/components/SiteChrome";
 import NavLoader from "@/components/NavLoader";
+import Tracker from "@/components/Tracker";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 const display = Cormorant_Garamond({ variable: "--font-display", subsets: ["latin"], weight: ["500", "600", "700"], display: "swap" });
@@ -38,6 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <BottomNav />
         <ThemeSwitcher />
         <NavLoader />
+        <Tracker />
       </body>
     </html>
   );
