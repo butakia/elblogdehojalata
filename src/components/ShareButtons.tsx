@@ -28,11 +28,12 @@ const InstagramLogo = () => (
 /** Botones para compartir el texto en WhatsApp, Facebook e Instagram. */
 export default function ShareButtons({ title }: { title: string }) {
   const [msg, setMsg] = useState("");
-  const here = () => `${window.location.origin}${window.location.pathname}`;
+  // El parámetro ?o= permite saber en el panel de visitas desde dónde llegó cada persona (WhatsApp no envía referencia)
+  const here = (o: string) => `${window.location.origin}${window.location.pathname}?o=${o}`;
   const open = (u: string) => window.open(u, "_blank", "noopener,noreferrer");
 
   async function instagram() {
-    const url = here();
+    const url = here("share");
     // En el celular se abre el menú de compartir del sistema, donde aparece Instagram
     if (typeof navigator.share === "function") {
       try {
@@ -55,11 +56,11 @@ export default function ShareButtons({ title }: { title: string }) {
     <div className="share" aria-label="Compartir">
       <span className="share-label">Compartir en</span>
       <div className="share-row">
-        <button type="button" className="share-btn wa" onClick={() => open(`https://wa.me/?text=${encodeURIComponent(`${title} ${here()}`)}`)} aria-label="Compartir en WhatsApp">
+        <button type="button" className="share-btn wa" onClick={() => open(`https://wa.me/?text=${encodeURIComponent(`${title} ${here("wa")}`)}`)} aria-label="Compartir en WhatsApp">
           <WhatsAppLogo />
           <span>WhatsApp</span>
         </button>
-        <button type="button" className="share-btn fb" onClick={() => open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(here())}`)} aria-label="Compartir en Facebook">
+        <button type="button" className="share-btn fb" onClick={() => open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(here("fb"))}`)} aria-label="Compartir en Facebook">
           <FacebookLogo />
           <span>Facebook</span>
         </button>

@@ -26,7 +26,7 @@ export default function Tracker() {
   useEffect(() => {
     if (path.startsWith("/admin")) return;
     const id = rand();
-    const body = { k: "v", id, vid: stored("local", "hj-vid"), sid: stored("session", "hj-sid"), path, ref: document.referrer };
+    const body = { k: "v", id, vid: stored("local", "hj-vid"), sid: stored("session", "hj-sid"), path, ref: document.referrer, src: new URLSearchParams(window.location.search).get("o") || new URLSearchParams(window.location.search).get("utm_source") || "" };
     fetch("/api/track", { method: "POST", body: JSON.stringify(body), keepalive: true }).catch(() => {});
 
     let total = 0;

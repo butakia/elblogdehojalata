@@ -1,6 +1,6 @@
 import { cookies, headers } from "next/headers";
 import { isAdmin, rateLimit } from "@/lib/auth";
-import { isBot, parseUA, recordVisit } from "@/lib/visits";
+import { isBot, parseUA, recordVisit, sourceLabel } from "@/lib/visits";
 
 export const dynamic = "force-dynamic";
 

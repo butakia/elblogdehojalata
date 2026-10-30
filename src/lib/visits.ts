@@ -18,6 +18,23 @@ export function parseUA(ua: string) {
   return { device, os, browser };
 }
 
+/** Nombre legible del origen: primero el parámetro ?o= del enlace compartido; si no, el sitio de referencia. */
+export function sourceLabel(src: string, host: string) {
+  const s = src.toLowerCase().replace(/[^a-z0-9_-]/g, "");
+  const named: Record<string, string> = { wa: "WhatsApp", whatsapp: "WhatsApp", fb: "Facebook", facebook: "Facebook", ig: "Instagram", instagram: "Instagram", share: "Compartido desde el celular", tw: "X (Twitter)", tg: "Telegram" };
+  if (s) return named[s] ?? s;
+  if (!host) return "";
+  if (/(^|.)(facebook|fb).com$|^l.facebook.com$|^m.facebook.com$/.test(host)) return "Facebook";
+  if (/instagram.com$/.test(host)) return "Instagram";
+  if (/whatsapp.com$|^wa.me$/.test(host)) return "WhatsApp";
+  if (/^t.co$|twitter.com$|^x.com$/.test(host)) return "X (Twitter)";
+  if (/google./.test(host)) return "Google";
+  if (/bing.com$/.test(host)) return "Bing";
+  if (/duckduckgo.com$/.test(host)) return "DuckDuckGo";
+  if (/wordpress.com$/.test(host)) return "Blog en WordPress";
+  return host;
+}
+
 export const isBot = (ua: string) => !ua || /bot|crawl|spider|slurp|preview|facebookexternalhit|whatsapp|telegram|vercel|headless|lighthouse|curl|wget|python|node-fetch/i.test(ua);
 
 const countryName = (code: string) => {

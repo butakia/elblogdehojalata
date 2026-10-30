@@ -97,7 +97,11 @@ export default async function Visitas() {
         <section className="admin-block"><h2>Sistemas</h2><Bars rows={s.oses} /></section>
         <section className="admin-block"><h2>Navegadores</h2><Bars rows={s.browsers} /></section>
         <section className="admin-block"><h2>Ubicación aproximada</h2><Bars rows={s.places} /></section>
-        <section className="admin-block"><h2>De dónde llegan</h2><Bars rows={s.refs} /></section>
+        <section className="admin-block">
+          <h2>De dónde llegan</h2>
+          <Bars rows={s.refs} />
+          <p className="muted">WhatsApp no avisa de dónde viene el clic. Los botones "Compartir" del sitio añaden <code>?o=wa</code> al enlace y así se reconoce. Si copias un enlace a mano, agrégale <code>?o=wa</code> (WhatsApp), <code>?o=fb</code> (Facebook) o <code>?o=ig</code> (Instagram) al final.</p>
+        </section>
       </div>
 
       <section className="admin-block">
