@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 
-type Item = { slug: string; title: string; excerpt: string; cover: string | null };
+type Item = { slug: string; title: string; excerpt: string; cover: string | null; section?: string };
 
 /** Primera línea muy breve del texto. */
 function opening(text: string, max = 72) {
@@ -14,7 +14,7 @@ function opening(text: string, max = 72) {
 export default function StoryRow({ item, base }: { item: Item; base: string }) {
   return (
     <li>
-      <Link href={`${base}/${item.slug}`} className="row-thumb">
+      <Link href={`${item.section === "microcuento" ? "/microcuentos" : base}/${item.slug}`} className="row-thumb">
         <span className={`thumb ${item.cover ? "" : "blank"}`}>
           {item.cover ? <Image src={item.cover} alt="" width={128} height={128} sizes="64px" /> : <b aria-hidden>{item.title.slice(0, 1)}</b>}
         </span>

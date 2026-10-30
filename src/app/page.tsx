@@ -17,7 +17,7 @@ const ROOMS = [
 
 export default async function Home() {
   const unlocked = await isUnlocked();
-  const [stories, posts] = await Promise.all([getStories(), unlocked ? getPosts() : Promise.resolve([])]);
+  const [stories, posts] = await Promise.all([getStories({ withMicro: true }), unlocked ? getPosts() : Promise.resolve([])]);
 
   return (
     <>
