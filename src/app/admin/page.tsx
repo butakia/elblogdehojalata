@@ -55,6 +55,7 @@ export default async function Admin() {
         <div className="row-actions">
           <Link href={`/${paths.get(s.slug)}/${s.slug}`}>{s.draft ? "Vista previa" : "Ver"}</Link>
           <Link href={`/admin/editar/${s.slug}`}>Editar</Link>
+          <a href={`/api/admin/pdf?slug=${s.slug}`}>PDF</a>
           <PublishToggle slug={s.slug} draft={!!s.draft} />
           <DeleteStoryButton slug={s.slug} title={s.title} restore={isOriginal} />
         </div>
@@ -118,6 +119,7 @@ export default async function Admin() {
               <div className="row-actions">
                 <Link href={`/cuentos/${s.slug}`}>Ver</Link>
                 <Link href={`/admin/editar/${s.slug}`}>Editar</Link>
+                <a href={`/api/admin/pdf?slug=${s.slug}`}>PDF</a>
                 <PublishToggle slug={s.slug} draft={false} />
               </div>
             </li>
