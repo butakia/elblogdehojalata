@@ -37,6 +37,9 @@ export default function Sobre() {
           <p>
             Instagram: <a href={`https://instagram.com/${INSTAGRAM}`} target="_blank" rel="noopener noreferrer">@{INSTAGRAM}</a>
           </p>
+          <p>
+            <button type="button" className="btn small">LinkedIn</button>
+          </p>
         </div>
       </div>
     </div>
