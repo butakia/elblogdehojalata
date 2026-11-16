@@ -21,6 +21,8 @@ type Shareable = { slug: string; title: string; excerpt: string };
 /** Título, resumen e imagen del texto al compartir el enlace (WhatsApp, Facebook, etc.). */
 export function shareMetadata(story: Shareable, base: string): Metadata {
   const locked = isLockedSlug(story.slug);
+  // Al compartir (WhatsApp, Facebook…) el título va sin el «Textamento #N:» del principio
+  const shareTitle = story.title.replace(/^Textamento\s*#\d+:\s*/i, "");
   // Los textamentos bloqueados no avisan de la clave en ningún lado: solo se ve al abrirlos
   const description = locked ? (story.slug.startsWith("textamento-") ? SITE_NAME : "Cuento con contraseña.") : cleanForMeta(story.excerpt) || SITE_NAME;
   const image = { url: locked ? "/og/default" : `/og/${story.slug}`, width: 1200, height: 630, alt: story.title };
@@ -28,7 +30,7 @@ export function shareMetadata(story: Shareable, base: string): Metadata {
     title: story.title,
     description,
     alternates: { canonical: `${base}/${story.slug}` },
-    openGraph: { type: "article", siteName: SITE_NAME, locale: "es_PE", title: story.title, description, url: `${base}/${story.slug}`, images: [image] },
-    twitter: { card: "summary_large_image", title: story.title, description, images: [image.url] },
+    openGraph: { type: "article", siteName: SITE_NAME, locale: "es_PE", title: shareTitle, description, url: `${base}/${story.slug}`, images: [image] },
+    twitter: { card: "summary_large_image", title: shareTitle, description, images: [image.url] },
   };
 }
