@@ -5,7 +5,7 @@ import { formatDate } from "@/lib/content";
 type Post = { slug: string; title: string; excerpt: string; cover: string | null; date: string };
 
 /** Fila de las listas de Balcón, Cocina y Jardín: miniatura, título y extracto. La fecha es opcional. */
-export default function PostRow({ post, base, showDate = true }: { post: Post; base: string; showDate?: boolean }) {
+export default function PostRow({ post, base, showDate = true, locked = false }: { post: Post; base: string; showDate?: boolean; locked?: boolean }) {
   return (
     <li>
       <Link href={`${base}/${post.slug}`} className="post-row">
@@ -14,7 +14,12 @@ export default function PostRow({ post, base, showDate = true }: { post: Post; b
         </span>
         <span className="post-text">
           <h2>{post.title}</h2>
-          {showDate && <p className="meta">{formatDate(post.date)}</p>}
+          {(showDate || locked) && (
+            <p className="meta">
+              {locked && <span className="tag">Con contraseña</span>}
+              {showDate && formatDate(post.date)}
+            </p>
+          )}
           <p className="excerpt">{post.excerpt}</p>
         </span>
       </Link>

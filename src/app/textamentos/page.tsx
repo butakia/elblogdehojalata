@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import PostRow from "@/components/PostRow";
 import { getPosts } from "@/lib/stories";
+import { isLockedSlug } from "@/lib/locked";
 
 export const metadata: Metadata = { title: "Textamentos", description: "Pensamientos, proyectos y notas fuera de los cuentos." };
 export const dynamic = "force-dynamic";
@@ -18,7 +19,7 @@ export default async function Textamentos() {
       ) : (
         <ul className="posts">
           {posts.map((p) => (
-            <PostRow key={p.slug} post={p} base="/textamentos" />
+            <PostRow key={p.slug} post={p} base="/textamentos" locked={isLockedSlug(p.slug)} />
           ))}
         </ul>
       )}

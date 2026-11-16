@@ -18,10 +18,15 @@ export type StoredStory = Story & {
 /** Copia de trabajo (autoguardado) de un texto ya publicado: no toca la versión pública. */
 export type Wip = { title: string; html: string; cover: string | null; coverStyle: CoverStyle; coverSize: CoverSize; savedAt: string };
 
+/** Títulos fijados desde el código para textos guardados en el panel (mandan sobre el título guardado). */
+const TITLE_OVERRIDES: Record<string, string> = {
+  "sobre-la-ia": "Textamento #11: Sobre la IA",
+};
+
 export async function getCustomStories() {
   const list = await getJSON<StoredStory[]>("stories", []);
   // El extracto se recalcula siempre desde el texto: así los guardados antiguos también quedan con sus espacios
-  return list.map((s) => ({ ...s, excerpt: deriveFields(s.html).excerpt }));
+  return list.map((s) => ({ ...s, title: TITLE_OVERRIDES[s.slug] ?? s.title, excerpt: deriveFields(s.html).excerpt }));
 }
 
 export async function saveCustomStories(list: StoredStory[]) {
