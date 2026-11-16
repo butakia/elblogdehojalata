@@ -79,6 +79,8 @@ export default async function Admin() {
         <Link href="/admin/nuevo?seccion=ensayo" className="btn">Nuevo ensayo</Link>
         <Link href="/admin/ideas" className="btn">Ideas ({ideas.length})</Link>
         <Link href="/admin/visitas" className="btn">Visitas</Link>
+        <Link href="/admin/visitas/textamentos" className="btn">Visitas · Textamentos</Link>
+        <Link href="/admin/visitas/republica" className="btn">Visitas · La República</Link>
       </div>
 
       {volatile && (

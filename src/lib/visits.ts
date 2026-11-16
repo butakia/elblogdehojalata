@@ -1,10 +1,56 @@
 import "server-only";
 import { getLog, pushLog } from "./store";
 
-/** Evento guardado: "v" = página vista, "d" = tiempo que estuvo en esa página (ms). */
+/** Evento guardado: "v" = página vista, "d" = tiempo que estuvo en esa página (ms) y hasta dónde bajó, "c" = clic en «Leer más textamentos». */
 export type VisitEvent =
-  | { k: "v"; id: string; t: string; vid: string; sid: string; path: string; ip: string; country: string; region: string; city: string; device: string; os: string; browser: string; ref: string; name: string }
-  | { k: "d"; id: string; t: string; ms: number };
+  | { k: "v"; id: string; t: string; vid: string; sid: string; path: string; ip: string; country: string; region: string; city: string; device: string; os: string; browser: string; ref: string; name: string; lang?: string; tz?: string; scr?: string; lat?: string; lon?: string }
+  | { k: "d"; id: string; t: string; ms: number; sc?: number }
+  | { k: "c"; id: string; t: string; vid: string; sid: string; from: string; to: string; label: string }
+  /** Intento de contraseña en un texto bloqueado. Nunca se guarda lo que escribieron, solo si acertaron. */
+  | { k: "g"; id: string; t: string; vid: string; sid: string; to: string; ok: boolean; limited: boolean; ip: string; country: string; region: string; city: string; device: string; os: string; browser: string };
+
+export type ViewEvent = Extract<VisitEvent, { k: "v" }>;
+export type ClickEvent = Extract<VisitEvent, { k: "c" }>;
+export type GateEvent = Extract<VisitEvent, { k: "g" }>;
+
+/** Ordena los eventos: páginas vistas con su tiempo y desplazamiento, y los clics. */
+export function indexEvents(events: VisitEvent[]) {
+  const views = events.filter((e): e is ViewEvent => e.k === "v");
+  const clicks = events.filter((e): e is ClickEvent => e.k === "c");
+  const gates = events.filter((e): e is GateEvent => e.k === "g");
+  const ms = new Map<string, number>();
+  const scroll = new Map<string, number>();
+  for (const e of events) {
+    if (e.k !== "d") continue;
+    ms.set(e.id, Math.max(ms.get(e.id) ?? 0, Math.min(e.ms, 3_600_000)));
+    if (typeof e.sc === "number") scroll.set(e.id, Math.max(scroll.get(e.id) ?? 0, e.sc));
+  }
+  return { views, clicks, gates, ms: (id: string) => ms.get(id) ?? 0, scroll: (id: string) => scroll.get(id), timed: (id: string) => ms.has(id) };
+}
+
+const decode = (s: string) => {
+  try {
+    return decodeURIComponent(s);
+  } catch {
+    return s;
+  }
+};
+
+/** IP, ubicación aproximada (la da Vercel a partir de la IP) y dispositivo de quien hace la petición. */
+export function requestInfo(h: Headers) {
+  const ua = h.get("user-agent") ?? "";
+  return {
+    ip: (h.get("x-forwarded-for") || "local").split(",")[0].trim(),
+    country: (h.get("x-vercel-ip-country") ?? "").slice(0, 3),
+    region: decode((h.get("x-vercel-ip-country-region") ?? "").slice(0, 40)),
+    city: decode((h.get("x-vercel-ip-city") ?? "").slice(0, 60)),
+    lat: (h.get("x-vercel-ip-latitude") ?? "").slice(0, 12),
+    lon: (h.get("x-vercel-ip-longitude") ?? "").slice(0, 12),
+    ...parseUA(ua),
+  };
+}
+
+export const placeOf =(v: { city: string; region: string; country: string }) => [v.city, v.region, countryName(v.country)].filter((x) => x && x !== "Desconocido").join(", ") || "Desconocido";
 
 const KEY = "visits";
 

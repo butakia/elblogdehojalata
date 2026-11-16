@@ -12,6 +12,7 @@ import { isAdmin } from "@/lib/auth";
 import StoryGate from "@/components/StoryGate";
 import { isUnlocked } from "@/lib/gate";
 import { isLockedSlug } from "@/lib/locked";
+import MoreTextamentos from "@/components/MoreTextamentos";
 import { microViews, simulatedViews } from "@/lib/views";
 
 const dateTime = (iso: string) => new Intl.DateTimeFormat("es-PE", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Lima" }).format(new Date(iso));
@@ -38,7 +39,7 @@ export default async function StoryView({ slug, section }: { slug: string; secti
           <p className="byline">{AUTHOR}</p>
         </header>
         <div className="story-lock">
-          <p className="lead">Si leer este cuento quieres, la contraseña ingresar debes.</p>
+          <p className="lead">{section === "textamento" ? "Este textamento está protegido con llave. Si leer mis secretos quieres, poner la contraseña debes..." : "Si leer este cuento quieres, la contraseña ingresar debes."}</p>
           <p className="muted">Es muy personal o todavía lo estoy puliendo, y por ahora lo guardo bajo llave.</p>
           <StoryGate next={`${LABELS[section].base}/${story.slug}`} />
         </div>
@@ -48,6 +49,9 @@ export default async function StoryView({ slug, section }: { slug: string; secti
   }
   const list = section === "cuento" ? await getStories() : await getPosts({ section });
   const { newer, older } = neighbours(list, story.slug);
+  // Invitación a seguir leyendo: primero los textamentos que se pueden leer, luego los más recientes
+  const others = list.filter((s) => s.slug !== story.slug);
+  const moreItems = [...others.filter((s) => !isLockedSlug(s.slug)), ...others.filter((s) => isLockedSlug(s.slug))].slice(0, 2).map((s) => ({ slug: s.slug, title: s.title }));
   const comments = await getComments(story.slug);
   const { base, back } = LABELS[section];
 
@@ -85,6 +89,7 @@ export default async function StoryView({ slug, section }: { slug: string; secti
       </div>
       <hr className="story-end" aria-hidden />
       <div className="story-share"><ShareButtons title={story.title} /></div>
+      {section === "textamento" && <MoreTextamentos items={moreItems} />}
       <nav className="story-nav" aria-label="Más textos">
         {older ? (
           <Link href={`${base}/${older.slug}`}><small>← Anterior</small><span className="nt">{older.title}</span></Link>

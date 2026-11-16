@@ -21,7 +21,8 @@ type Shareable = { slug: string; title: string; excerpt: string };
 /** Título, resumen e imagen del texto al compartir el enlace (WhatsApp, Facebook, etc.). */
 export function shareMetadata(story: Shareable, base: string): Metadata {
   const locked = isLockedSlug(story.slug);
-  const description = locked ? "Cuento con contraseña." : cleanForMeta(story.excerpt) || SITE_NAME;
+  // Los textamentos bloqueados no avisan de la clave en ningún lado: solo se ve al abrirlos
+  const description = locked ? (story.slug.startsWith("textamento-") ? SITE_NAME : "Cuento con contraseña.") : cleanForMeta(story.excerpt) || SITE_NAME;
   const image = { url: locked ? "/og/default" : `/og/${story.slug}`, width: 1200, height: 630, alt: story.title };
   return {
     title: story.title,

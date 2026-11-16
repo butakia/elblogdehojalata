@@ -1,6 +1,6 @@
 import { cookies, headers } from "next/headers";
 import { isAdmin, rateLimit } from "@/lib/auth";
-import { isBot, parseUA, recordVisit, sourceLabel } from "@/lib/visits";
+import { isBot, recordVisit, requestInfo, sourceLabel } from "@/lib/visits";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +35,20 @@ export async function POST(req: Request) {
 
   if (body.k === "d") {
     const ms = Number(body.ms);
-    if (Number.isFinite(ms) && ms > 0) await recordVisit({ k: "d", id, t, ms: Math.round(ms) });
+    const sc = Number(body.sc);
+    if (Number.isFinite(ms) && ms > 0) await recordVisit({ k: "d", id, t, ms: Math.round(ms), ...(Number.isFinite(sc) ? { sc: Math.max(0, Math.min(100, Math.round(sc))) } : {}) });
+    return new Response(null, { status: 204 });
+  }
+
+  // Clic en «Leer más textamentos», en una tarjeta de lectura o en un textamento de la lista
+  if (body.k === "c") {
+    const from = clean(body.from, 200);
+    const to = clean(body.to, 200);
+    const vid = clean(body.vid, 40);
+    const sid = clean(body.sid, 40);
+    if (!from.startsWith("/textamentos") || !to.startsWith("/textamentos") || !/^[\w-]{6,40}$/.test(vid) || !/^[\w-]{6,40}$/.test(sid)) return new Response(null, { status: 204 });
+    const label = ["boton", "tarjeta", "lista"].includes(String(body.label)) ? String(body.label) : "boton";
+    await recordVisit({ k: "c", id, t, vid, sid, from, to, label });
     return new Response(null, { status: 204 });
   }
 
@@ -60,13 +73,12 @@ export async function POST(req: Request) {
     vid,
     sid,
     path,
-    ip,
-    country: clean(h.get("x-vercel-ip-country"), 3),
-    region: safeDecode(clean(h.get("x-vercel-ip-country-region"), 40)),
-    city: safeDecode(clean(h.get("x-vercel-ip-city"), 60)),
-    ...parseUA(ua),
+    ...requestInfo(h),
     ref,
     name,
+    lang: clean(body.lang, 20),
+    tz: clean(body.tz, 50),
+    scr: clean(body.scr, 20),
   });
   return new Response(null, { status: 204 });
 }

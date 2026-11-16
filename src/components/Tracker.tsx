@@ -26,12 +26,19 @@ export default function Tracker() {
   useEffect(() => {
     if (path.startsWith("/admin")) return;
     const id = rand();
-    const body = { k: "v", id, vid: stored("local", "hj-vid"), sid: stored("session", "hj-sid"), path, ref: document.referrer, src: new URLSearchParams(window.location.search).get("o") || new URLSearchParams(window.location.search).get("utm_source") || "" };
+    const body = { k: "v", id, vid: stored("local", "hj-vid"), sid: stored("session", "hj-sid"), path, lang: navigator.language, tz: Intl.DateTimeFormat().resolvedOptions().timeZone, scr: `${window.screen.width}x${window.screen.height}`, ref: document.referrer, src: new URLSearchParams(window.location.search).get("o") || new URLSearchParams(window.location.search).get("utm_source") || "" };
     fetch("/api/track", { method: "POST", body: JSON.stringify(body), keepalive: true }).catch(() => {});
 
     let total = 0;
     let since = document.visibilityState === "visible" ? Date.now() : 0;
     let sent = 0;
+    let maxScroll = 0;
+    const onScroll = () => {
+      const room = document.documentElement.scrollHeight - window.innerHeight;
+      maxScroll = Math.max(maxScroll, room > 0 ? Math.min(100, (window.scrollY / room) * 100) : 100);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
     const flush = () => {
       if (since) {
         total += Date.now() - since;
@@ -39,7 +46,7 @@ export default function Tracker() {
       }
       if (total - sent < 1000) return;
       sent = total;
-      const data = JSON.stringify({ k: "d", id, ms: total });
+      const data = JSON.stringify({ k: "d", id, ms: total, sc: Math.round(maxScroll) });
       if (!navigator.sendBeacon?.("/api/track", data)) fetch("/api/track", { method: "POST", body: data, keepalive: true }).catch(() => {});
     };
     const onVis = () => {
@@ -49,6 +56,7 @@ export default function Tracker() {
     document.addEventListener("visibilitychange", onVis);
     window.addEventListener("pagehide", flush);
     return () => {
+      window.removeEventListener("scroll", onScroll);
       document.removeEventListener("visibilitychange", onVis);
       window.removeEventListener("pagehide", flush);
       flush();
