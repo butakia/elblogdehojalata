@@ -232,6 +232,18 @@
 .post-row .excerpt { -webkit-line-clamp: 3; }
 @media (max-width: 719px) { .posts a.post-row { text-align: left; } .post-row .thumb { width: 64px; height: 64px; } .post-row .post-text h2 { font-size: 1.3rem; } }
 
+/* Textamentos: tipografía más legible (letra del cuerpo en vez de la decorativa, más grande y con más contraste) y sin miniatura vacía */
+.post-row .meta .tag { margin-right: 0.6rem; }
+.posts.textamentos a.post-row { padding: 1.35rem 0; }
+.posts.textamentos .post-text h2 { font-family: var(--font-body), Georgia, serif; font-weight: 700; font-size: 1.4rem; line-height: 1.28; letter-spacing: 0; margin-bottom: 0.3rem; }
+.posts.textamentos .post-text .meta { font-size: 0.95rem; color: var(--ink); opacity: 0.7; }
+.posts.textamentos .post-text .excerpt { font-size: 1.08rem; line-height: 1.6; color: var(--ink); opacity: 0.85; }
+.story-textamento .story-head h1 { font-family: var(--font-body), Georgia, serif; font-weight: 700; line-height: 1.22; }
+.story-textamento .story-body { font-size: var(--read-size, 1.28rem); line-height: 1.85; }
+.story-textamento .story-body p, .story-textamento .story-body li { text-align: left; }
+.story-textamento .story-body, .story-textamento .story-body p { hyphens: manual; -webkit-hyphens: manual; }
+@media (max-width: 719px) { .posts.textamentos .post-text h2 { font-size: 1.25rem; } .posts.textamentos .post-text .excerpt { font-size: 1.02rem; } }
+
 .card .meta .tag{display:inline-block;margin-right:.5rem;padding:.08rem .6rem;border:1px solid color-mix(in srgb,var(--accent) 55%,transparent);border-radius:999px;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent);font-size:.74em;font-weight:600;letter-spacing:.02em}
 
 .stock.soon{color:var(--accent);font-weight:600}

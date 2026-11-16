@@ -32,7 +32,7 @@ export default async function StoryView({ slug, section }: { slug: string; secti
   // Cuentos con contraseña: se ven en las listas, pero el texto no se envía hasta que se escribe la clave
   if (isLockedSlug(story.slug) && !(await isUnlocked())) {
     return (
-      <article className="story">
+      <article className={`story story-${section}`}>
         <header className="story-head">
           <h1>{story.title}</h1>
           <p className="byline">{AUTHOR}</p>
@@ -58,7 +58,7 @@ export default async function StoryView({ slug, section }: { slug: string; secti
   const floating = !!story.cover && coverStyle !== "banner";
 
   return (
-    <article className="story">
+    <article className={`story story-${section}`}>
       <ReaderTools />
       {isLockedSlug(story.slug) && admin && <p className="draft-banner">Cuento con contraseña: entras sin clave porque tienes la sesión de administrador.</p>}
       {banner && story.cover && (

@@ -17,9 +17,9 @@ export default async function Textamentos() {
       {posts.length === 0 ? (
         <p className="empty-note">Aún no hay textos aquí. Pronto habrá novedades.</p>
       ) : (
-        <ul className="posts">
+        <ul className="posts textamentos">
           {posts.map((p) => (
-            <PostRow key={p.slug} post={p} base="/textamentos" locked={isLockedSlug(p.slug)} />
+            <PostRow key={p.slug} post={p} base="/textamentos" locked={isLockedSlug(p.slug)} hideBlankThumb />
           ))}
         </ul>
       )}
