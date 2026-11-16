@@ -9,6 +9,8 @@ export type Story = {
   date: string;
   html: string;
   cover: string | null;
+  /** Imagen propia (1200x630) para la vista previa al compartir; si no hay, se usa la portada. */
+  ogImage?: string;
   excerpt: string;
   words: number;
   minutes: number;

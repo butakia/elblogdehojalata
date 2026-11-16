@@ -36,8 +36,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
 
   if (slug !== "default") {
     const story = await getStory(slug);
-    if (story && !story.draft && !isLockedSlug(story.slug) && story.cover) {
-      const src = await readImage(story.cover, origin);
+    const shareImg = story && "ogImage" in story && typeof story.ogImage === "string" ? story.ogImage : story?.cover;
+    if (story && !story.draft && !isLockedSlug(story.slug) && shareImg) {
+      const src = await readImage(shareImg, origin);
       if (src) {
         try {
           out = await sharp(src).rotate().resize(W, H, { fit: "cover", position: "attention" }).jpeg({ quality: 84 }).toBuffer();
