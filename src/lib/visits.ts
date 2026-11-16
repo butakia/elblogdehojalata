@@ -4,7 +4,7 @@ import { getLog, pushLog } from "./store";
 /** Evento guardado: "v" = página vista, "d" = tiempo que estuvo en esa página (ms) y hasta dónde bajó, "c" = clic en «Leer más textamentos». */
 export type VisitEvent =
   | { k: "v"; id: string; t: string; vid: string; sid: string; path: string; ip: string; country: string; region: string; city: string; device: string; os: string; browser: string; ref: string; name: string; lang?: string; tz?: string; scr?: string; lat?: string; lon?: string }
-  | { k: "d"; id: string; t: string; ms: number; sc?: number }
+  | { k: "d"; id: string; t: string; ms: number; sc?: number; z?: number; bz?: number; im?: number }
   | { k: "c"; id: string; t: string; vid: string; sid: string; from: string; to: string; label: string }
   /** Intento de contraseña en un texto bloqueado. Nunca se guarda lo que escribieron, solo si acertaron. */
   | { k: "g"; id: string; t: string; vid: string; sid: string; to: string; ok: boolean; limited: boolean; ip: string; country: string; region: string; city: string; device: string; os: string; browser: string };
@@ -20,12 +20,20 @@ export function indexEvents(events: VisitEvent[]) {
   const gates = events.filter((e): e is GateEvent => e.k === "g");
   const ms = new Map<string, number>();
   const scroll = new Map<string, number>();
+  const zoom = new Map<string, { pinch: number; browser: number; imgTaps: number }>();
   for (const e of events) {
     if (e.k !== "d") continue;
     ms.set(e.id, Math.max(ms.get(e.id) ?? 0, Math.min(e.ms, 3_600_000)));
     if (typeof e.sc === "number") scroll.set(e.id, Math.max(scroll.get(e.id) ?? 0, e.sc));
+    const cur = zoom.get(e.id) ?? { pinch: 1, browser: 1, imgTaps: 0 };
+    zoom.set(e.id, { pinch: Math.max(cur.pinch, e.z ?? 1), browser: Math.max(cur.browser, e.bz ?? 1), imgTaps: Math.max(cur.imgTaps, e.im ?? 0) });
   }
-  return { views, clicks, gates, ms: (id: string) => ms.get(id) ?? 0, scroll: (id: string) => scroll.get(id), timed: (id: string) => ms.has(id) };
+  /** Zoom de una visita: pellizco en el celular, zoom del navegador y toques sobre imágenes. */
+  const zoomOf = (id: string) => {
+    const z = zoom.get(id) ?? { pinch: 1, browser: 1, imgTaps: 0 };
+    return { ...z, any: z.pinch > 1.05 || z.browser > 1.05 || z.imgTaps > 0 };
+  };
+  return { views, clicks, gates, ms: (id: string) => ms.get(id) ?? 0, scroll: (id: string) => scroll.get(id), timed: (id: string) => ms.has(id), zoomOf };
 }
 
 const decode = (s: string) => {

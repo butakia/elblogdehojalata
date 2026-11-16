@@ -36,7 +36,22 @@ export async function POST(req: Request) {
   if (body.k === "d") {
     const ms = Number(body.ms);
     const sc = Number(body.sc);
-    if (Number.isFinite(ms) && ms > 0) await recordVisit({ k: "d", id, t, ms: Math.round(ms), ...(Number.isFinite(sc) ? { sc: Math.max(0, Math.min(100, Math.round(sc))) } : {}) });
+    const z = Number(body.z);
+    const bz = Number(body.bz);
+    const im = Number(body.im);
+    const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
+    if (Number.isFinite(ms) && ms > 0) {
+      await recordVisit({
+        k: "d",
+        id,
+        t,
+        ms: Math.round(ms),
+        ...(Number.isFinite(sc) ? { sc: clamp(Math.round(sc), 0, 100) } : {}),
+        ...(Number.isFinite(z) ? { z: clamp(z, 1, 10) } : {}),
+        ...(Number.isFinite(bz) ? { bz: clamp(bz, 0.25, 10) } : {}),
+        ...(Number.isFinite(im) ? { im: clamp(Math.round(im), 0, 500) } : {}),
+      });
+    }
     return new Response(null, { status: 204 });
   }
 

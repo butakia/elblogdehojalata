@@ -47,6 +47,10 @@ export default async function VisitasRepublica() {
         <div><b>{[...visitsOf.values()].filter((n) => n > 1).length}</b><span>Volvieron a leerlo</span></div>
         <div><b>{dur(avg(timed.map((v) => ix.ms(v.id))))}</b><span>Tiempo medio leyendo</span></div>
         <div><b>{scrolled.length ? Math.round(avg(scrolled.map((v) => ix.scroll(v.id) ?? 0))) : 0}%</b><span>Hasta dónde bajan (media)</span></div>
+        <div><b>{mine.filter((v) => ix.zoomOf(v.id).any).length}</b><span>Hicieron zoom o tocaron la imagen</span></div>
+        <div><b>{mine.filter((v) => ix.zoomOf(v.id).pinch > 1.05).length}</b><span>Agrandaron con los dedos</span></div>
+        <div><b>{mine.filter((v) => ix.zoomOf(v.id).browser > 1.05).length}</b><span>Zoom del navegador</span></div>
+        <div><b>{mine.filter((v) => ix.zoomOf(v.id).imgTaps > 0).length}</b><span>Tocaron la imagen</span></div>
         <div><b>{clicks.length}</b><span>Clics para seguir leyendo</span></div>
         <div><b>{gatesHere}</b><span>Intentos de contraseña aquí</span></div>
       </div>
@@ -70,7 +74,12 @@ export default async function VisitasRepublica() {
                       <td>{v.name || <span className="muted">Anónimo</span>}<small>{(visitsOf.get(v.vid) ?? 1) > 1 ? `Lo ha leído ${visitsOf.get(v.vid)} veces` : "Primera vez"}</small></td>
                       <td><code>{v.ip}</code><small>{placeOf(v)}{v.lat && v.lon ? ` · ${v.lat}, ${v.lon}` : ""}</small></td>
                       <td>{v.device}<small>{v.os} · {v.browser}</small><small>{[v.scr, v.lang, v.tz].filter(Boolean).join(" · ")}</small></td>
-                      <td>{ix.timed(v.id) ? dur(ix.ms(v.id)) : "—"}<small>{ix.scroll(v.id) !== undefined ? `Bajó hasta el ${ix.scroll(v.id)}%` : ""}</small>{click && <small>Siguió leyendo ({click.label === "boton" ? "botón" : click.label})</small>}</td>
+                      <td>{ix.timed(v.id) ? dur(ix.ms(v.id)) : "—"}<small>{ix.scroll(v.id) !== undefined ? `Bajó hasta el ${ix.scroll(v.id)}%` : ""}</small>{(() => {
+                        const z = ix.zoomOf(v.id);
+                        if (!z.any) return null;
+                        const bits = [z.pinch > 1.05 && `Agrandó con los dedos hasta ×${z.pinch.toFixed(1)}`, z.browser > 1.05 && `Zoom del navegador ${Math.round(z.browser * 100)}%`, z.imgTaps > 0 && `Tocó la imagen ${z.imgTaps} ${z.imgTaps === 1 ? "vez" : "veces"}`].filter(Boolean);
+                        return <small>🔍 {bits.join(" · ")}</small>;
+                      })()}{click && <small>Siguió leyendo ({click.label === "boton" ? "botón" : click.label})</small>}</td>
                       <td>{v.ref || <span className="muted">Directo</span>}</td>
                       <td className="pages">
                         <small>{trail.length} {trail.length === 1 ? "página" : "páginas"} · {dur(total)} en total</small>

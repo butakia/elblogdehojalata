@@ -39,14 +39,37 @@ export default function Tracker() {
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
+
+    // Zoom: pellizco en el celular (visualViewport.scale), zoom del navegador (cambia devicePixelRatio) y toques sobre las imágenes del texto
+    const vv = window.visualViewport;
+    const dpr0 = window.devicePixelRatio || 1;
+    let pinch = 1;
+    let browserZoom = 1;
+    let imgTaps = 0;
+    const onZoom = () => {
+      if (vv) pinch = Math.max(pinch, vv.scale);
+      browserZoom = Math.max(browserZoom, (window.devicePixelRatio || 1) / dpr0);
+    };
+    const onImg = (e: Event) => {
+      if ((e.target as Element | null)?.closest?.(".story-body img")) imgTaps++;
+    };
+    vv?.addEventListener("resize", onZoom);
+    window.addEventListener("resize", onZoom);
+    document.addEventListener("click", onImg);
+    let sentSig = "";
+
     const flush = () => {
       if (since) {
         total += Date.now() - since;
         since = document.visibilityState === "visible" ? Date.now() : 0;
       }
-      if (total - sent < 1000) return;
+      const z = Math.round(pinch * 100) / 100;
+      const bz = Math.round(browserZoom * 100) / 100;
+      const sig = `${z}|${bz}|${imgTaps}|${Math.round(maxScroll)}`;
+      if (total <= 0 || (total - sent < 1000 && sig === sentSig)) return;
       sent = total;
-      const data = JSON.stringify({ k: "d", id, ms: total, sc: Math.round(maxScroll) });
+      sentSig = sig;
+      const data = JSON.stringify({ k: "d", id, ms: total, sc: Math.round(maxScroll), z, bz, im: imgTaps });
       if (!navigator.sendBeacon?.("/api/track", data)) fetch("/api/track", { method: "POST", body: data, keepalive: true }).catch(() => {});
     };
     const onVis = () => {
@@ -57,6 +80,9 @@ export default function Tracker() {
     window.addEventListener("pagehide", flush);
     return () => {
       window.removeEventListener("scroll", onScroll);
+      vv?.removeEventListener("resize", onZoom);
+      window.removeEventListener("resize", onZoom);
+      document.removeEventListener("click", onImg);
       document.removeEventListener("visibilitychange", onVis);
       window.removeEventListener("pagehide", flush);
       flush();
